@@ -154,12 +154,40 @@
   var start = cfg.start ? toDate(cfg.start) : null;
   var weekly = cfg.weeklyHours || 7;
 
+  /* 주차 배정: 시트의 '주차' 열과 같은 계산이에요.
+     메인·보스·복습 과제를 주당 공부 시간으로 채워 나가고, 시즌은 항상 새 주차에서 시작해요. 사이드는 '선택'. */
+  var EPS = 1e-6, cum = 0, prevSeason = null;
+  quests.forEach(function (q) {
+    if (prevSeason !== null && q.season !== prevSeason) cum = Math.ceil(cum / weekly - EPS) * weekly;
+    prevSeason = q.season;
+    if (!q.main) { q.optional = true; return; }
+    var from = cum, to = cum + q.hours;
+    cum = to;
+    q.weekStart = Math.floor(from / weekly + EPS) + 1;
+    q.weekEnd = Math.max(q.weekStart, Math.ceil(to / weekly - EPS));
+  });
+  var totalWeeks = Math.max(1, Math.ceil(cum / weekly - EPS));
+  function weekLabel(q) { return q.optional ? "선택" : q.weekStart === q.weekEnd ? q.weekStart + "주차" : q.weekStart + "~" + q.weekEnd + "주차"; }
+  function weekStartDate(w) { return addDays(start, (w - 1) * 7); }
+  function fmtShort(d) { return (d.getMonth() + 1) + "월 " + d.getDate() + "일"; }
+  function weekDates(w) { return start ? fmtShort(weekStartDate(w)) + " ~ " + fmtShort(addDays(weekStartDate(w), 6)) : ""; }
+
   var totalMain = 0;
   seasons.forEach(function (s) {
-    if (start) s.planStart = addDays(start, totalMain / weekly * 7);
     totalMain += s.mainHours;
-    if (start) s.planEnd = addDays(start, Math.max(totalMain / weekly * 7 - 1, 0));
+    var mains = s.quests.filter(function (q) { return !q.optional; });
+    s.weekFrom = Math.min.apply(null, mains.map(function (q) { return q.weekStart; }));
+    s.weekTo = Math.max.apply(null, mains.map(function (q) { return q.weekEnd; }));
+    if (start && mains.length) {
+      s.planStart = weekStartDate(s.weekFrom);
+      s.planEnd = addDays(weekStartDate(s.weekTo), 6);
+    }
   });
+  var currentWeek = start ? Math.floor((today - start) / DAY / 7) + 1 : 1;
+  var viewWeek = Math.max(1, Math.min(currentWeek, totalWeeks));
+  var courseEnd = start ? addDays(weekStartDate(totalWeeks), 6) : null;
+  var overdue = quests.filter(function (q) { return !q.optional && !q.done && q.weekEnd < currentWeek; });
+  var ahead = quests.filter(function (q) { return !q.optional && q.done && q.weekStart > currentWeek; });
   var doneMain = seasons.reduce(function (a, s) { return a + s.mainDoneHours; }, 0);
   var mainCount = seasons.reduce(function (a, s) { return a + s.mainCount; }, 0);
   var mainDoneCount = seasons.reduce(function (a, s) { return a + s.mainDone; }, 0);
@@ -195,7 +223,8 @@
     } else if (allDone) {
       text = "아홉 시즌을 모두 마쳤어요. 1년 동안 수고했어요!";
     } else {
-      text = "지금 수강 중인 과목은 " + current.meta.code + " " + current.meta.title + "이에요. 전체 메인 과제의 " + overallPct + "%를 끝냈어요.";
+      text = (currentWeek > totalWeeks ? "예정된 " + totalWeeks + "주차가 지났어요. " : "지금은 " + currentWeek + "주차, ") +
+        current.meta.code + " " + current.meta.title + " 수강 중이에요. 전체 메인 과제의 " + overallPct + "%를 끝냈어요.";
     }
     statusEl.textContent = text;
   }
@@ -205,13 +234,9 @@
     var note;
     if (today < start) note = (start.getMonth() + 1) + "월 " + start.getDate() + "일에 개강해요. 첫 과제부터 천천히 가봐요.";
     else if (allDone) note = "모든 배지를 모았어요.";
-    else {
-      var expected = Math.min(totalMain, Math.max(0, (today - start) / DAY / 7 * weekly));
-      var diff = doneMain - expected;
-      if (diff >= 1) note = "일정보다 " + Math.round(diff) + "시간 앞서 있어요.";
-      else if (diff <= -1) note = "일정보다 " + Math.round(-diff) + "시간 늦었어요. 오늘 15분만 해볼까요?";
-      else note = "딱 일정대로 가고 있어요.";
-    }
+    else if (overdue.length) note = "지난 주차에서 밀린 과제가 " + overdue.length + "개 있어요. 오늘 15분만 해볼까요?";
+    else if (ahead.length) note = "다음 주차 과제를 " + ahead.length + "개 미리 끝냈어요. 일정보다 앞서 있어요.";
+    else note = "딱 일정대로 가고 있어요.";
     noteEl.textContent = note;
   }
 
@@ -232,17 +257,32 @@
     }).join("");
   }
 
+  /* 이번 주차 강의: 밀린 과제 → 이번 주차 과제. 다 끝냈으면 다음 주차 미리 보기 */
   var nextEl = $("next-quests");
   if (nextEl) {
-    var upcoming = [];
-    seasons.slice(Math.max(currentIndex, 0)).forEach(function (s) {
-      s.quests.forEach(function (q) { if (q.main && !q.done && upcoming.length < 3) upcoming.push(q); });
-    });
-    nextEl.innerHTML = upcoming.length ? upcoming.map(function (q) {
-      return '<li><span class="todo-title">' + (q.type !== "메인" ? '<span class="tag tag-' + esc(q.type) + '">' + esc(q.type) + "</span> " : "") + esc(q.quest) + "</span>" +
-        '<span class="todo-meta">' + esc(q.season) + ", 약 " + q.hours + "시간</span>" +
-        (q.recall ? '<span class="todo-recall">인출: ' + esc(q.recall) + "</span>" : "") + "</li>";
-    }).join("") : '<li class="empty">남은 과제가 없어요.</li>';
+    var w = viewWeek;
+    var titleEl = $("todo-title"), datesEl = $("week-dates");
+    if (titleEl) titleEl.textContent = w + "주차 강의";
+    if (datesEl) datesEl.textContent = (start ? weekDates(w) + ", " : "") + "주 " + weekly + "시간 기준" + (currentWeek < 1 ? ". 개강 전이라 1주차를 보여줘요." : "");
+    var thisWeek = quests.filter(function (q) { return !q.optional && q.weekStart <= w && q.weekEnd >= w; });
+    var late = currentWeek >= 1 ? overdue.filter(function (q) { return thisWeek.indexOf(q) === -1; }) : [];
+    function item(q, extraTag) {
+      var tags = (extraTag ? '<span class="tag tag-밀림">' + extraTag + "</span> " : "") +
+        (q.type !== "메인" ? '<span class="tag tag-' + esc(q.type) + '">' + esc(q.type) + "</span> " : "");
+      return '<li class="' + (q.done ? "is-done" : "") + '"><span class="todo-title">' + tags + esc(q.quest) + "</span>" +
+        '<span class="todo-meta">' + esc(weekLabel(q)) + ", " + esc(q.season) + ", 약 " + q.hours + "시간" + (q.done ? ", 끝냄" : "") + "</span>" +
+        (q.recall && !q.done ? '<span class="todo-recall">인출: ' + esc(q.recall) + "</span>" : "") + "</li>";
+    }
+    var html = late.map(function (q) { return item(q, "밀림"); }).join("") + thisWeek.map(function (q) { return item(q); }).join("");
+    var left = late.length + thisWeek.filter(function (q) { return !q.done; }).length;
+    if (!left) {
+      var preview = quests.filter(function (q) { return !q.optional && !q.done && q.weekStart > w; }).slice(0, 2);
+      html += '<li class="week-clear">이번 주차 강의를 다 들었어요!' + (preview.length ? " 다음 주차를 미리 시작해도 좋아요." : "") + "</li>" +
+        preview.map(function (q) { return item(q, "예습"); }).join("");
+    }
+    nextEl.innerHTML = html || '<li class="empty">남은 과제가 없어요.</li>';
+    var first = nextEl.querySelector("li:not(.is-done):not(.week-clear)");
+    if (first) first.classList.add("is-cursor");
   }
 
   var cardEl = $("student-card");
@@ -256,7 +296,7 @@
       ["연속 출석", streak + "주"],
       ["백지 인출", quests.filter(function (q) { return q.recalled; }).length + "회"],
       ["제출 리포트", (C.reports || []).length + "편"],
-      ["완주 예정", last && last.planEnd ? fmtMonth(last.planEnd) : "-"]
+      ["종강 예정", courseEnd ? totalWeeks + "주차, " + fmtMonth(courseEnd) : totalWeeks + "주차"]
     ];
     cardEl.innerHTML =
       '<div class="card-top">' +
@@ -305,7 +345,7 @@
       if (b) b.setAttribute(allDone || i <= currentIndex ? "data-unlocked" : "data-locked", "");
     }
     sel("data-season-dates", s.meta.id).forEach(function (el) {
-      el.textContent = s.planStart ? fmtFull(s.planStart) + " ~ " + fmtFull(s.planEnd) : "개강일을 설정하세요";
+      el.textContent = s.planStart ? s.weekFrom + "~" + s.weekTo + "주차 (" + fmtFull(s.planStart) + " ~ " + fmtFull(s.planEnd) + ")" : s.weekFrom + "~" + s.weekTo + "주차";
     });
     sel("data-season-progress", s.meta.id).forEach(function (el) {
       el.textContent = s.mainDone + "/" + s.mainCount + (s.bossBeaten ? ", 보스 격파" : "");
@@ -313,6 +353,39 @@
     sel("data-season-fill", s.meta.id).forEach(function (el) {
       el.style.width = Math.round(s.ratio * 100) + "%";
     });
+  });
+
+  document.querySelectorAll(".season tbody").forEach(function (tbody) {
+    var rows = Array.prototype.slice.call(tbody.querySelectorAll("tr[data-quest]"));
+    if (!rows.length) return;
+    var cols = rows[0].children.length;
+    function headRow(label, sub, cls) {
+      var tr = document.createElement("tr");
+      tr.className = "week-row" + (cls ? " " + cls : "");
+      tr.innerHTML = '<th scope="rowgroup" colspan="' + cols + '">' + esc(label) + (sub ? ' <span class="week-sub">' + esc(sub) + "</span>" : "") +
+        (cls === "is-now" ? ' <span class="now-tag">이번 주</span>' : "") + "</th>";
+      return tr;
+    }
+    var main = [], side = [];
+    rows.forEach(function (r) { var q = byId[r.getAttribute("data-quest")]; (q && q.optional ? side : main).push(r); });
+    var frag = document.createDocumentFragment(), lastWeek = null;
+    main.forEach(function (r) {
+      var q = byId[r.getAttribute("data-quest")];
+      if (q && q.weekStart !== lastWeek) {
+        lastWeek = q.weekStart;
+        frag.appendChild(headRow(q.weekStart + "주차", weekDates(q.weekStart), q.weekStart === currentWeek ? "is-now" : ""));
+      }
+      if (q && q.weekEnd > q.weekStart) {
+        var cell = r.querySelector(".c-quest");
+        if (cell) cell.insertAdjacentHTML("beforeend", ' <span class="span-weeks">' + esc(weekLabel(q)) + "에 걸쳐</span>");
+      }
+      frag.appendChild(r);
+    });
+    if (side.length) {
+      frag.appendChild(headRow("선택 과제", "주차에 넣지 않았어요. 재밌어서 더 하고 싶을 때만 해요.", "is-side"));
+      side.forEach(function (r) { frag.appendChild(r); });
+    }
+    tbody.appendChild(frag);
   });
 
   drawBadges();

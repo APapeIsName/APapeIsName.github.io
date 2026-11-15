@@ -18,9 +18,10 @@ page_id: home
   <section class="screen screen-bottom" aria-label="오늘의 메뉴">
     <div class="menu-grid">
       <section class="window" aria-labelledby="todo-title">
-        <h2 id="todo-title">이번에 할 과제</h2>
+        <h2 id="todo-title">이번 주차 강의</h2>
+        <p class="week-dates" id="week-dates"></p>
         <ol class="menu-list" id="next-quests"></ol>
-        <p class="hint">과제를 마치면 리포트를 내고 "이 과제를 끝냈어요"를 체크하세요. 지도가 바로 움직여요.</p>
+        <p class="hint">과제를 마치면 리포트를 내고 "이 과제를 끝냈어요"를 체크하세요. 지도가 바로 움직여요. 전체 주차는 <a href="{{ '/syllabus/' | relative_url }}">계획서</a>에 있어요.</p>
       </section>
 
       <section class="window" aria-labelledby="card-title">

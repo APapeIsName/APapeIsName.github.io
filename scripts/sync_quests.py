@@ -5,7 +5,7 @@
     python3 scripts/sync_quests.py ~/Downloads/퀘스트.csv
 
 하는 일:
-  1. CSV에서 '완료'로 시작하는 헤더 행을 찾아 그 아래 행만 읽어요(위쪽 요약 칸은 건너뜀).
+  1. CSV에서 '퀘스트' 열이 있는 헤더 행을 찾아 그 아래 행만 읽어요(위쪽 요약 칸은 건너뜀).
   2. _data/quests.csv를 영어 열 이름으로 다시 써요. 각 과제에는 고정 id가 붙어요.
      id는 '시즌 코드 + 시즌·과제 이름의 해시'라서, 시트에서 행 순서를 바꿔도 그대로예요.
      (과제 이름을 고치면 id가 바뀌니, 그 과제에 이미 낸 리포트의 quest 값도 고쳐야 해요.)
@@ -51,8 +51,8 @@ def read_rows(path: Path):
     with path.open(encoding="utf-8-sig", newline="") as f:
         rows = list(csv.reader(f))
     for i, row in enumerate(rows):
-        first = (row[0] if row else "").strip()
-        if first in ("완료", "done", "id"):
+        cells = {c.strip() for c in row}
+        if "퀘스트" in cells or "quest" in cells:
             header = [h.strip() for h in row]
             keys = [HEADER_MAP.get(h, h) for h in header]
             out = []
@@ -61,7 +61,7 @@ def read_rows(path: Path):
                 if rec.get("quest"):
                     out.append(rec)
             return out
-    sys.exit("헤더 행('완료' 또는 'done'으로 시작)을 찾지 못했어요. 시트의 '퀘스트' 탭을 CSV로 내려받았는지 확인해 주세요.")
+    sys.exit("'퀘스트' 열이 있는 헤더 행을 찾지 못했어요. 시트의 '퀘스트' 탭을 CSV로 내려받았는지 확인해 주세요.")
 
 
 def write_data(records):
