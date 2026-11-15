@@ -14,7 +14,7 @@ REPO_OWNER = "APapeIsName"
 REPO_NAME = "APapeIsName.github.io"
 REPO_BRANCH = "main"
 # GitHub OAuth App의 Client ID (공개돼도 되는 값)
-GITHUB_CLIENT_ID = ""
+GITHUB_CLIENT_ID = "Ov23lidAhwaKmLuWyfCL"
 
 # 비밀값은 여기에 쓰지 말고 `npx wrangler secret put 이름` 으로 넣어요.
 #   GITHUB_CLIENT_SECRET  OAuth App의 Client secret
