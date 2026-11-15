@@ -14,7 +14,7 @@ xp_per_level: 300
 # 저장소 이름이 username.github.io 이면 baseurl은 "" 그대로 두세요.
 # 다른 이름(예: cs-study)이면 baseurl: "/cs-study" 로 바꿔요.
 url: "https://apapeisname.github.io"
-baseurl: "/github-blog"
+baseurl: ""
 
 lang: ko
 timezone: Asia/Seoul

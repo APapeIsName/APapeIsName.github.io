@@ -2,7 +2,7 @@
 # 아래 구성대로 '과제 리포트' 작성 화면이 만들어져요.
 media:
   input: assets/uploads
-  output: /github-blog/assets/uploads   # baseurl을 바꾸면 여기도 같이 바꿔요
+  output: /assets/uploads   # baseurl을 쓰면 앞에 붙여요 (예: /cs-study/assets/uploads)
 
 content:
   - name: reports
