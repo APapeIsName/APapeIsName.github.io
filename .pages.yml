@@ -1,0 +1,307 @@
+# Pages CMS 설정 파일이에요. https://app.pagescms.org 에서 이 저장소를 열면
+# 아래 구성대로 '과제 리포트' 작성 화면이 만들어져요.
+media:
+  input: assets/uploads
+  output: /github-blog/assets/uploads   # baseurl을 바꾸면 여기도 같이 바꿔요
+
+content:
+  - name: reports
+    label: 과제 리포트
+    type: collection
+    path: _posts
+    format: yaml-frontmatter
+    filename: "{year}-{month}-{day}-{quest}-{hour}{minute}.md"
+    subfolders: false
+    view:
+      primary: title
+      fields: [title, date, kind]
+      sort: date
+      order: desc
+    fields:
+      - name: title
+        label: 제목
+        type: string
+        required: true
+        description: "예: Malloc Lab 1차 제출, 명시적 가용 리스트로 바꾸기까지"
+      - name: date
+        label: 제출일
+        type: date
+        required: true
+      - name: quest
+        label: 과제
+        type: select
+        required: true
+        description: 계획서의 과제 중 하나를 골라요. 시즌과 과목은 자동으로 붙어요.
+        options:
+          placeholder: 과제를 고르세요
+          values:
+            # >>> quests
+            - name: "S0-69fab2"
+              label: "[S0] 게임 규칙 탭 읽고, 학습 블로그(GitHub Pages) 배포하기"
+            - name: "S0-863670"
+              label: "[S0] Missing Semester: 셸과 Git 강의"
+            - name: "S1-0540f7"
+              label: "[S1] 1.1 프로시저와 표현식"
+            - name: "S1-8bbf66"
+              label: "[S1] 1.1 연습문제 풀기"
+            - name: "S1-02fabd"
+              label: "[S1] 1.2 재귀 프로세스와 반복 프로세스"
+            - name: "S1-de69f7"
+              label: "[S1] 1.3 고차 함수 + 연습문제"
+            - name: "S1-b5fa02"
+              label: "[S1] 2.1~2.2 데이터 추상화와 계층적 데이터"
+            - name: "S1-ae18ac"
+              label: "[S1] 2.3~2.5 기호 데이터와 범용 연산"
+            - name: "S1-00196c"
+              label: "[S1] 3.1~3.2 상태와 환경 모델"
+            - name: "S1-3cf879"
+              label: "[S1] 3.3~3.5 가변 데이터와 스트림"
+            - name: "S1-7a046a"
+              label: "[S1] 61A 프로젝트 하나 완성 (Hog 또는 Scheme 인터프리터)"
+            - name: "S1-62a82f"
+              label: "[S1] 시즌 결산: 백지 마인드맵 + Claude 모의 면접 30분"
+            - name: "S2-5eb821"
+              label: "[S2] S1 백지 복습 (30분)"
+            - name: "S2-96abcf"
+              label: "[S2] 1장 개관 + 2장 정수 표현"
+            - name: "S2-42969c"
+              label: "[S2] 2장 부동소수점"
+            - name: "S2-19ca67"
+              label: "[S2] Data Lab"
+            - name: "S2-bbb409"
+              label: "[S2] 3장 어셈블리: 제어 흐름과 프로시저"
+            - name: "S2-1f83bd"
+              label: "[S2] 3장 배열, 구조체, 버퍼 오버플로"
+            - name: "S2-08fd4f"
+              label: "[S2] Bomb Lab"
+            - name: "S2-20b72f"
+              label: "[S2] Attack Lab"
+            - name: "S2-aaa2ce"
+              label: "[S2] 6장 메모리 계층과 캐시"
+            - name: "S2-2e91c0"
+              label: "[S2] Cache Lab"
+            - name: "S2-74e823"
+              label: "[S2] 7장 링킹"
+            - name: "S2-376122"
+              label: "[S2] 8장 프로세스와 시그널"
+            - name: "S2-1ccc9d"
+              label: "[S2] Shell Lab"
+            - name: "S2-6b09a2"
+              label: "[S2] 9장 가상 메모리"
+            - name: "S2-8b0c8b"
+              label: "[S2] Malloc Lab"
+            - name: "S2-40b1c7"
+              label: "[S2] 10~12장 + Proxy Lab"
+            - name: "S2-4822e4"
+              label: "[S2] 시즌 결산: 백지 마인드맵 + Claude 모의 면접 30분"
+            - name: "S3-55900d"
+              label: "[S3] S2 백지 복습 (30분)"
+            - name: "S3-2afdc6"
+              label: "[S3] S1 재복습 (20분)"
+            - name: "S3-ac2d74"
+              label: "[S3] 프로세스, 프로세스 API, 제한적 직접 실행"
+            - name: "S3-1c1be3"
+              label: "[S3] CPU 스케줄링 (FIFO부터 MLFQ까지)"
+            - name: "S3-e40832"
+              label: "[S3] 주소 공간, 세그멘테이션, 페이징, TLB"
+            - name: "S3-584840"
+              label: "[S3] 스와핑과 페이지 교체 정책"
+            - name: "S3-e54e24"
+              label: "[S3] 스레드와 락"
+            - name: "S3-3d57eb"
+              label: "[S3] 조건 변수, 세마포어, 동시성 버그"
+            - name: "S3-53c5ba"
+              label: "[S3] I/O 장치, 디스크, 파일 시스템 구현"
+            - name: "S3-452bc3"
+              label: "[S3] 크래시 일관성과 저널링"
+            - name: "S3-a6e2fe"
+              label: "[S3] 스레드 안전한 생산자-소비자 큐 구현 + 부하 테스트"
+            - name: "S3-acfae6"
+              label: "[S3] xv6 랩 2~3개 (시스템 콜, 페이지 테이블)"
+            - name: "S3-6b4429"
+              label: "[S3] 시즌 결산: 백지 마인드맵 + Claude 모의 면접 30분"
+            - name: "S4-d8e79d"
+              label: "[S4] S3 백지 복습 (30분)"
+            - name: "S4-8f78f1"
+              label: "[S4] S2 재복습 (20분)"
+            - name: "S4-7ca9d7"
+              label: "[S4] 증명과 귀납법"
+            - name: "S4-12ea74"
+              label: "[S4] 집합, 관계, 함수"
+            - name: "S4-c5d4a5"
+              label: "[S4] 그래프 이론"
+            - name: "S4-31211f"
+              label: "[S4] 셈과 조합"
+            - name: "S4-75b33c"
+              label: "[S4] 확률 기초와 조건부 확률"
+            - name: "S4-ab9aee"
+              label: "[S4] 확률 변수, 기댓값, 편차"
+            - name: "S4-2504c0"
+              label: "[S4] 정수론과 RSA"
+            - name: "S4-a0198a"
+              label: "[S4] 선형대수 직관"
+            - name: "S4-f2be01"
+              label: "[S4] 생일 문제로 해시 충돌 확률 계산 + 코드로 검증"
+            - name: "S4-c70053"
+              label: "[S4] 시즌 결산: 백지 마인드맵 + Claude 모의 면접 30분"
+            - name: "S5-9123d8"
+              label: "[S5] S4 백지 복습 (30분)"
+            - name: "S5-77dcb4"
+              label: "[S5] S3 재복습 (20분)"
+            - name: "S5-cbc181"
+              label: "[S5] 알고리즘 분석과 빅오"
+            - name: "S5-d906b3"
+              label: "[S5] 자료구조와 해싱 + 문제 5개"
+            - name: "S5-c2e568"
+              label: "[S5] 정렬과 분할 정복 + 문제 5개"
+            - name: "S5-7c2be7"
+              label: "[S5] 그래프 탐색 BFS/DFS + 문제 5개"
+            - name: "S5-0adb81"
+              label: "[S5] 가중 그래프: 최단 경로, MST + 문제 5개"
+            - name: "S5-1f32c9"
+              label: "[S5] 동적 계획법 + 문제 5개"
+            - name: "S5-f50408"
+              label: "[S5] NP-완전성과 휴리스틱 감 잡기"
+            - name: "S5-b3c463"
+              label: "[S5] LeetCode 누적 100문제"
+            - name: "S5-a4bbed"
+              label: "[S5] 지하철 노선 최단 경로 탐색기 만들기"
+            - name: "S5-a6c0ee"
+              label: "[S5] 시즌 결산: 백지 마인드맵 + Claude 모의 면접 30분"
+            - name: "S6-9680a3"
+              label: "[S6] S5 백지 복습 (30분)"
+            - name: "S6-e91a22"
+              label: "[S6] S4 재복습 (20분)"
+            - name: "S6-e158c1"
+              label: "[S6] 1장 개요: 지연과 계층 구조"
+            - name: "S6-77bf2c"
+              label: "[S6] 2장 HTTP와 DNS"
+            - name: "S6-e58375"
+              label: "[S6] Wireshark 랩: HTTP, DNS"
+            - name: "S6-4dc900"
+              label: "[S6] 3장 UDP와 신뢰성 있는 전송의 원리"
+            - name: "S6-4ba52c"
+              label: "[S6] 3장 TCP와 혼잡 제어"
+            - name: "S6-638e2a"
+              label: "[S6] Wireshark 랩: TCP"
+            - name: "S6-49562e"
+              label: "[S6] 4~5장 IP와 라우팅"
+            - name: "S6-441198"
+              label: "[S6] 소켓으로 HTTP 서버 직접 만들기"
+            - name: "S6-9b01e5"
+              label: "[S6] TCP 직접 구현 랩"
+            - name: "S6-fad36b"
+              label: "[S6] 시즌 결산: 백지 마인드맵 + Claude 모의 면접 30분"
+            - name: "S7-119343"
+              label: "[S7] S6 백지 복습 (30분)"
+            - name: "S7-05e988"
+              label: "[S7] S5 재복습 (20분)"
+            - name: "S7-5667c2"
+              label: "[S7] 디스크, 파일 구조, 버퍼 관리"
+            - name: "S7-0b2966"
+              label: "[S7] B+Tree 인덱스"
+            - name: "S7-e842b0"
+              label: "[S7] 해시 인덱스와 외부 정렬"
+            - name: "S7-6a2e13"
+              label: "[S7] 조인 알고리즘과 쿼리 최적화"
+            - name: "S7-6f4ded"
+              label: "[S7] 트랜잭션, 2PL, MVCC"
+            - name: "S7-a2862e"
+              label: "[S7] 로깅과 복구 (ARIES)"
+            - name: "S7-63f6c8"
+              label: "[S7] 나만의 작은 KV 저장소 (append-only 로그 + 해시 인덱스)"
+            - name: "S7-ffd1bf"
+              label: "[S7] Red Book 논문 3편 골라 읽기"
+            - name: "S7-c4551a"
+              label: "[S7] BusTub 프로젝트 (버퍼 풀, 인덱스)"
+            - name: "S7-8973e1"
+              label: "[S7] 시즌 결산: 백지 마인드맵 + Claude 모의 면접 30분"
+            - name: "S8-2b6b79"
+              label: "[S8] S7 백지 복습 (30분)"
+            - name: "S8-7243dd"
+              label: "[S8] S6 재복습 (20분)"
+            - name: "S8-fd0c6a"
+              label: "[S8] 시작하기와 스캐너 구현"
+            - name: "S8-5fb8bd"
+              label: "[S8] 코드 표현과 파서"
+            - name: "S8-791d2d"
+              label: "[S8] 표현식 평가, 문장과 상태"
+            - name: "S8-dd3339"
+              label: "[S8] 제어 흐름과 함수"
+            - name: "S8-d48bfa"
+              label: "[S8] 리졸빙, 바인딩, 클래스"
+            - name: "S8-21fecc"
+              label: "[S8] 나만의 Lox 완성 + 문법 하나 직접 추가"
+            - name: "S8-a3f310"
+              label: "[S8] 2부 바이트코드 VM (clox)"
+            - name: "S8-cf4e78"
+              label: "[S8] 시즌 결산: 백지 마인드맵 + Claude 모의 면접 30분"
+            - name: "S9-a84167"
+              label: "[S9] S8 백지 복습 (30분)"
+            - name: "S9-454e50"
+              label: "[S9] S7 재복습 (20분)"
+            - name: "S9-c73598"
+              label: "[S9] DDIA 1~2장: 신뢰성·확장성, 데이터 모델"
+            - name: "S9-42a919"
+              label: "[S9] DDIA 3장: 저장소와 검색"
+            - name: "S9-0875ad"
+              label: "[S9] DDIA 4장: 인코딩과 진화"
+            - name: "S9-65b042"
+              label: "[S9] DDIA 5~6장: 복제와 파티셔닝"
+            - name: "S9-03be58"
+              label: "[S9] DDIA 7장: 트랜잭션"
+            - name: "S9-9cb89e"
+              label: "[S9] DDIA 8~9장: 분산 시스템의 문제, 일관성과 합의"
+            - name: "S9-513e60"
+              label: "[S9] MapReduce 논문 + 랩"
+            - name: "S9-1eac1f"
+              label: "[S9] Raft 논문 정독"
+            - name: "S9-c7ca82"
+              label: "[S9] Raft 랩: 리더 선출"
+            - name: "S9-9885b7"
+              label: "[S9] Raft 랩: 로그 복제"
+            - name: "S9-24c7c5"
+              label: "[S9] Raft 랩: 영속성과 스냅샷 + 테스트 수백 번 통과"
+            - name: "S9-0791b6"
+              label: "[S9] Raft 위에 장애 허용 KV 서버"
+            - name: "S9-b0ba95"
+              label: "[S9] DDIA 10~12장: 배치와 스트림 처리"
+            - name: "S9-fafeb5"
+              label: "[S9] 엔딩: 1년 회고 + 최종 모의 면접"
+            # <<< quests
+      - name: kind
+        label: 종류
+        type: select
+        options:
+          values: [과제 리포트, 강의 노트, 보스 회고, 시즌 결산]
+      - name: hours
+        label: 이번에 쓴 시간 (시간)
+        type: number
+      - name: complete
+        label: 이 과제를 끝냈어요
+        type: boolean
+        description: 체크하면 계획서와 대시보드의 진도에 바로 반영돼요.
+      - name: recalled
+        label: 책을 덮고 백지 인출을 했어요
+        type: boolean
+      - name: goal
+        label: 1. 학습 목표
+        type: text
+        description: 이번 과제로 무엇을 설명할 수 있게 되고 싶은지 한두 줄로 적어요.
+      - name: recall_note
+        label: 2. 백지 인출 결과
+        type: text
+        description: 책을 덮고 떠올린 내용을 고치지 말고 그대로 적어요. 틀려도 괜찮아요.
+      - name: body
+        label: 3. 정리
+        type: rich-text
+      - name: gaps
+        label: 4. 못 떠올린 것과 틀린 것
+        type: text
+        description: 인출 결과를 책과 대조해서 빠졌거나 틀린 부분을 적어요. 다음 복습 거리가 돼요.
+      - name: stuck
+        label: 5. 막힌 점과 해결
+        type: text
+      - name: next_steps
+        label: 6. 다음에 할 일
+        type: text

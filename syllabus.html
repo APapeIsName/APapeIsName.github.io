@@ -1,0 +1,69 @@
+---
+layout: default
+page_id: syllabus
+title: 계획서
+permalink: /syllabus/
+---
+<header class="page-head">
+  <h1>계획서</h1>
+  <p>시즌마다 참고하는 대학 강의와 교재, 과제 목록이에요. 체크 표시는 끝낸 과제, 노란 테두리는 지금 듣는 시즌이에요. 시즌 보스를 깨면 배지가 켜지고, 리포트를 낸 과제에는 제출 링크가 붙어요.</p>
+</header>
+
+{% assign groups = site.data.quests | group_by: "season" %}
+{% for g in groups %}
+{% assign s = site.data.seasons | where: "id", g.name | first %}
+<section class="season" id="{{ s.slug }}" data-season="{{ g.name }}">
+  <header class="window season-head">
+    <span class="season-badge" data-badge="{{ s.code }}" aria-hidden="true"></span>
+    <div class="season-title">
+      <h2><span class="season-code">{{ s.code }}</span> {{ s.title }}</h2>
+      <p class="season-blurb">{{ s.blurb }}</p>
+    </div>
+    <dl class="season-facts">
+      <div><dt>참고 강의</dt><dd>{{ s.refs }}</dd></div>
+      <div><dt>교재</dt><dd>{{ s.book }}</dd></div>
+      <div><dt>예정 기간</dt><dd data-season-dates="{{ g.name }}">계산 중</dd></div>
+    </dl>
+    <div class="bar-row season-bar">
+      <span class="bar-label">진도</span>
+      <span class="bar bar-hp"><span data-season-fill="{{ g.name }}"></span></span>
+      <span class="bar-num" data-season-progress="{{ g.name }}">계산 중</span>
+    </div>
+  </header>
+
+  <div class="table-scroll">
+  <table class="quests">
+    <thead>
+      <tr>
+        <th scope="col" class="c-state"><span class="sr">상태</span></th>
+        <th scope="col">과제</th>
+        <th scope="col">인출 방법</th>
+        <th scope="col" class="c-res">자료</th>
+        <th scope="col" class="c-num">시간</th>
+        <th scope="col" class="c-sub">리포트</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for q in g.items %}
+      {% assign linked = site.posts | where: "quest", q.id %}
+      <tr data-quest="{{ q.id }}" class="type-{{ q.type }}">
+        <td class="c-state"><span class="check" role="img" aria-label="미완료"></span></td>
+        <td class="c-quest">
+          {% if q.type != "메인" %}<span class="tag tag-{{ q.type }}">{{ q.type }}</span>{% endif %}
+          {{ q.quest }}
+        </td>
+        <td class="c-recall">{{ q.recall }}</td>
+        <td class="c-res">{{ q.resource }}</td>
+        <td class="c-num">{{ q.hours }}</td>
+        <td class="c-sub">
+          {% if linked.size > 0 %}
+            {% for p in linked %}<a href="{{ p.url | relative_url }}">제출 {{ forloop.index }}</a>{% unless forloop.last %}<br>{% endunless %}{% endfor %}
+          {% else %}<span class="unsubmitted">미제출</span>{% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</section>
+{% endfor %}

@@ -1,0 +1,37 @@
+---
+layout: default
+page_id: reports
+title: 리포트
+permalink: /reports/
+---
+<header class="page-head">
+  <h1>리포트</h1>
+  <p>과제마다 제출한 리포트를 모았어요. 시즌을 골라서 볼 수 있어요.</p>
+</header>
+
+<div class="filters" role="group" aria-label="시즌으로 거르기">
+  <button type="button" class="chip" data-filter="all" aria-pressed="true">전체</button>
+  {% for s in site.data.seasons %}
+  <button type="button" class="chip" data-filter="{{ s.id }}" aria-pressed="false">{{ s.code }} {{ s.title }}</button>
+  {% endfor %}
+</div>
+
+<section class="window">
+{% if site.posts.size > 0 %}
+<ul class="report-list report-list-full">
+  {% for p in site.posts %}
+  {% assign q = site.data.quests | where: "id", p.quest | first %}
+  <li data-season="{{ q.season }}">
+    <time datetime="{{ p.date | date: '%Y-%m-%d' }}">{{ p.date | date: "%Y. %-m. %-d." }}</time>
+    <div>
+      <a href="{{ p.url | relative_url }}">{{ p.title }}</a>
+      <span class="report-meta">{{ q.season }}, {{ q.quest }}{% if p.kind %} ({{ p.kind }}){% endif %}</span>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+<p class="empty" id="filter-empty" hidden>이 시즌에는 아직 리포트가 없어요.</p>
+{% else %}
+<p class="empty">아직 제출한 리포트가 없어요.</p>
+{% endif %}
+</section>

@@ -1,0 +1,71 @@
+# 시즌(과목) 정보. id는 _data/quests.csv의 season 값과 똑같아야 해요.
+- id: S0 튜토리얼
+  code: S0
+  slug: s0
+  title: 오리엔테이션
+  refs: MIT Missing Semester
+  book: "-"
+  blurb: 학습 환경을 갖추고 과정 규칙을 익혀요.
+- id: S1 SICP
+  code: S1
+  slug: s1
+  title: 프로그램의 구조와 해석
+  refs: Berkeley CS 61A
+  book: Structure and Interpretation of Computer Programs
+  blurb: 추상화로 프로그램을 쌓는 법을 익혀요.
+- id: S2 CS:APP
+  code: S2
+  slug: s2
+  title: 컴퓨터 시스템
+  refs: CMU 15-213, Berkeley CS 61C
+  book: "Computer Systems: A Programmer's Perspective, 3판"
+  blurb: 코드가 기계 위에서 실제로 어떻게 돌아가는지 따라가요.
+- id: S3 운영체제
+  code: S3
+  slug: s3
+  title: 운영체제
+  refs: Berkeley CS 162
+  book: "Operating Systems: Three Easy Pieces"
+  blurb: 가상화, 동시성, 영속성. 운영체제의 세 가지 이야기.
+- id: S4 CS 수학
+  code: S4
+  slug: s4
+  title: 컴퓨터 과학을 위한 수학
+  refs: MIT 6.042J
+  book: Mathematics for Computer Science
+  blurb: 증명, 그래프, 조합, 확률로 정확하게 추론하는 법.
+- id: S5 알고리즘
+  code: S5
+  slug: s5
+  title: 알고리즘
+  refs: Steven Skiena 강의
+  book: The Algorithm Design Manual, 3판
+  blurb: 문제를 모델링하고 알맞은 알고리즘을 고르는 감각.
+- id: S6 네트워크
+  code: S6
+  slug: s6
+  title: 컴퓨터 네트워크
+  refs: Stanford CS 144
+  book: "Computer Networking: A Top-Down Approach"
+  blurb: URL을 입력한 순간부터 패킷이 오가는 길을 따라가요.
+- id: S7 데이터베이스
+  code: S7
+  slug: s7
+  title: 데이터베이스 시스템
+  refs: Berkeley CS 186
+  book: Readings in Database Systems
+  blurb: 저장, 인덱스, 쿼리 실행, 트랜잭션의 내부.
+- id: S8 인터프리터
+  code: S8
+  slug: s8
+  title: 언어와 인터프리터
+  refs: Alex Aiken 컴파일러 강의
+  book: Crafting Interpreters
+  blurb: 나만의 언어가 실제로 돌아가게 만들어요.
+- id: S9 분산 시스템
+  code: S9
+  slug: s9
+  title: 분산 시스템
+  refs: MIT 6.824
+  book: Designing Data-Intensive Applications
+  blurb: 복제, 합의, 장애. 그리고 Raft를 직접 구현해요.

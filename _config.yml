@@ -1,0 +1,38 @@
+# ── 내 정보 ───────────────────────────────────────────────
+title: CS 기본기 독학 과정
+student: APapeIsName        # 리포트의 '제출자'로 표시돼요. 원하는 이름으로 바꾸세요
+description: 현직 개발자의 1년짜리 CS 독학 기록. 계획서, 진도, 과제 리포트를 모두 공개해요.
+
+# ── 과정 설정 ─────────────────────────────────────────────
+course_start: 2026-11-16     # 개강일 (월요일 추천)
+weekly_hours: 7              # 일주일에 공부할 시간. 일정 대비 진도 계산에 쓰여요
+xp_per_hour: 10
+xp_per_recall: 5
+xp_per_level: 300
+
+# ── 배포 설정 ─────────────────────────────────────────────
+# 저장소 이름이 username.github.io 이면 baseurl은 "" 그대로 두세요.
+# 다른 이름(예: cs-study)이면 baseurl: "/cs-study" 로 바꿔요.
+url: "https://apapeisname.github.io"
+baseurl: "/github-blog"
+
+lang: ko
+timezone: Asia/Seoul
+markdown: kramdown
+kramdown:
+  input: GFM
+permalink: /reports/:year/:month/:day/:title/
+
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: report
+
+exclude:
+  - README.md
+  - scripts
+  - Gemfile
+  - Gemfile.lock
+  - vendor

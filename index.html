@@ -1,0 +1,57 @@
+---
+layout: default
+page_id: home
+---
+<div class="ds">
+  <section class="screen screen-top" aria-labelledby="intro-title">
+    <h1 id="intro-title">{{ site.title }}</h1>
+    <ol class="map" id="track" aria-label="시즌 지도"></ol>
+    <div class="dialog" aria-live="polite">
+      <p id="status-line">진도를 불러오는 중이에요.</p>
+      <p id="schedule-note"></p>
+      <span class="dialog-cursor" aria-hidden="true"></span>
+    </div>
+  </section>
+
+  <div class="hinge" aria-hidden="true"><span></span><span></span></div>
+
+  <section class="screen screen-bottom" aria-label="오늘의 메뉴">
+    <div class="menu-grid">
+      <section class="window" aria-labelledby="todo-title">
+        <h2 id="todo-title">이번에 할 과제</h2>
+        <ol class="menu-list" id="next-quests"></ol>
+        <p class="hint">과제를 마치면 리포트를 내고 "이 과제를 끝냈어요"를 체크하세요. 지도가 바로 움직여요.</p>
+      </section>
+
+      <section class="window" aria-labelledby="card-title">
+        <h2 id="card-title">학생증</h2>
+        <div id="student-card"></div>
+      </section>
+
+      <section class="window window-wide" aria-labelledby="ledger-title">
+        <h2 id="ledger-title">출석부</h2>
+        <div class="heatmap" id="heatmap" role="img" aria-label="최근 26주 동안 리포트를 내거나 과제를 끝낸 날"></div>
+      </section>
+    </div>
+  </section>
+</div>
+
+<section class="window recent" aria-labelledby="recent-title">
+  <h2 id="recent-title">최근 제출한 리포트</h2>
+  {% if site.posts.size > 0 %}
+  <ul class="report-list">
+    {% for p in site.posts limit: 5 %}
+    {% assign q = site.data.quests | where: "id", p.quest | first %}
+    <li>
+      <time datetime="{{ p.date | date: '%Y-%m-%d' }}">{{ p.date | date: "%-m월 %-d일" }}</time>
+      <div>
+        <a href="{{ p.url | relative_url }}">{{ p.title }}</a>
+        <span class="report-meta">{{ q.season }}{% if p.complete %}, 과제 완료{% endif %}</span>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="empty">아직 제출한 리포트가 없어요. 첫 과제를 끝내고 리포트를 올려보세요.</p>
+  {% endif %}
+</section>

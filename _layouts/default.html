@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
+  <meta name="description" content="{{ page.description | default: site.description }}">
+  <script>
+    /* 화면이 그려지기 전에 저장된 테마를 적용해서 깜빡임을 막아요 */
+    (function () { try { var t = localStorage.getItem("theme"); if (t) document.documentElement.setAttribute("data-theme", t); } catch (e) {} })();
+  </script>
+  <link rel="preload" href="{{ '/assets/fonts/Galmuri11.woff2' | relative_url }}" as="font" type="font/woff2" crossorigin>
+  <link rel="icon" type="image/svg+xml" href="{{ '/assets/favicon.svg' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+</head>
+<body class="page-{{ page.page_id | default: 'report' }}">
+  <a class="skip" href="#main">본문으로 건너뛰기</a>
+  <header class="masthead">
+    <div class="wrap masthead-inner">
+      <a class="brand" href="{{ '/' | relative_url }}"><span class="brand-badge" data-badge="S0" data-unlocked aria-hidden="true"></span>{{ site.title }}</a>
+      <nav aria-label="주 메뉴">
+        <a href="{{ '/' | relative_url }}" {% if page.page_id == 'home' %}aria-current="page"{% endif %}>대시보드</a>
+        <a href="{{ '/syllabus/' | relative_url }}" {% if page.page_id == 'syllabus' %}aria-current="page"{% endif %}>계획서</a>
+        <a href="{{ '/reports/' | relative_url }}" {% if page.page_id == 'reports' %}aria-current="page"{% endif %}>리포트</a>
+        <a href="{{ '/about/' | relative_url }}" {% if page.page_id == 'about' %}aria-current="page"{% endif %}>과정 소개</a>
+        <button type="button" class="theme-toggle" id="theme-toggle" aria-label="다크 모드로 바꾸기">
+          <span class="theme-icon" aria-hidden="true"></span><span class="theme-label">다크 모드</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="wrap">
+    {{ content }}
+  </main>
+
+  <footer class="colophon">
+    <div class="wrap">
+      <p>{{ site.student }}의 학습 기록. {{ site.course_start | date: "%Y년 %-m월 %-d일" }} 개강. 픽셀 폰트는 갈무리(SIL OFL)를 썼어요.</p>
+    </div>
+  </footer>
+
+  {% include course-data.html %}
+  <script src="{{ '/assets/js/course.js' | relative_url }}"></script>
+</body>
+</html>

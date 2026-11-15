@@ -1,0 +1,18 @@
+<script>
+window.COURSE = {
+  config: {
+    start: {{ site.course_start | date: "%Y-%m-%d" | jsonify }},
+    weeklyHours: {{ site.weekly_hours | default: 7 }},
+    xpPerHour: {{ site.xp_per_hour | default: 10 }},
+    xpPerRecall: {{ site.xp_per_recall | default: 5 }},
+    xpPerLevel: {{ site.xp_per_level | default: 300 }},
+    student: {{ site.student | jsonify }},
+    syllabusUrl: {{ '/syllabus/' | relative_url | jsonify }}
+  },
+  seasons: {{ site.data.seasons | jsonify }},
+  quests: {{ site.data.quests | jsonify }},
+  reports: [{% for p in site.posts %}
+    {"date": {{ p.date | date: "%Y-%m-%d" | jsonify }}, "quest": {{ p.quest | jsonify }}, "complete": {% if p.complete %}true{% else %}false{% endif %}, "recalled": {% if p.recalled %}true{% else %}false{% endif %}, "hours": {{ p.hours | default: 0 }}, "title": {{ p.title | jsonify }}, "url": {{ p.url | relative_url | jsonify }}}{% unless forloop.last %},{% endunless %}{% endfor %}
+  ]
+};
+</script>

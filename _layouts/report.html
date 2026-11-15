@@ -1,0 +1,45 @@
+---
+layout: default
+---
+{% assign q = site.data.quests | where: "id", page.quest | first %}
+{% assign s = site.data.seasons | where: "id", q.season | first %}
+{% assign body = content | strip %}
+<article class="report">
+  <header class="window report-cover">
+    <div class="cover-top">
+      <span class="season-badge" data-badge="{{ s.code | default: 'S0' }}" data-unlocked aria-hidden="true"></span>
+      <div>
+        <p class="report-kind">{{ page.kind | default: "과제 리포트" }}</p>
+        <h1>{{ page.title }}</h1>
+      </div>
+    </div>
+    <table class="cover-table">
+      <tbody>
+        <tr><th scope="row">과목</th><td>{% if s %}<a href="{{ '/syllabus/' | relative_url }}#{{ s.slug }}">{{ s.code }} {{ s.title }}</a>{% else %}지정 안 됨{% endif %}</td></tr>
+        <tr><th scope="row">과제</th><td>{% if q %}{{ q.quest }}{% else %}{{ page.quest | default: "지정 안 됨" }}{% endif %}</td></tr>
+        {% if q.recall %}<tr><th scope="row">인출 방법</th><td>{{ q.recall }}</td></tr>{% endif %}
+        <tr><th scope="row">제출자</th><td>{{ site.student }}</td></tr>
+        <tr><th scope="row">제출일</th><td><time datetime="{{ page.date | date: '%Y-%m-%d' }}">{{ page.date | date: "%Y년 %-m월 %-d일" }}</time></td></tr>
+        {% if page.hours %}<tr><th scope="row">쓴 시간</th><td>{{ page.hours }}시간</td></tr>{% endif %}
+      </tbody>
+    </table>
+    <p class="stamps" aria-label="과제 상태">
+      {% if page.complete %}<span class="stamp stamp-clear">과제 클리어</span>{% else %}<span class="stamp stamp-wip">진행 중</span>{% endif %}
+      {% if page.recalled %}<span class="stamp stamp-recall">인출 OK</span>{% endif %}
+    </p>
+  </header>
+
+  <div class="report-body">
+    {% if page.goal %}<section><h2>학습 목표</h2><div class="prose-text">{{ page.goal | markdownify }}</div></section>{% endif %}
+    {% if page.recall_note %}<section class="recall"><h2>백지 인출 결과</h2><div class="prose-text">{{ page.recall_note | markdownify }}</div></section>{% endif %}
+    {% if body != "" %}<section><h2>정리</h2><div class="prose-text">{{ content }}</div></section>{% endif %}
+    {% if page.gaps %}<section class="gaps"><h2>못 떠올린 것과 틀린 것</h2><div class="prose-text">{{ page.gaps | markdownify }}</div></section>{% endif %}
+    {% if page.stuck %}<section><h2>막힌 점과 해결</h2><div class="prose-text">{{ page.stuck | markdownify }}</div></section>{% endif %}
+    {% if page.next_steps %}<section><h2>다음에 할 일</h2><div class="prose-text">{{ page.next_steps | markdownify }}</div></section>{% endif %}
+  </div>
+
+  <nav class="report-nav" aria-label="다른 리포트">
+    {% if page.previous %}<a href="{{ page.previous.url | relative_url }}">◀ {{ page.previous.title }}</a>{% else %}<span></span>{% endif %}
+    <a href="{{ '/reports/' | relative_url }}">리포트 전체 보기</a>
+  </nav>
+</article>
