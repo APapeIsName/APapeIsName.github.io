@@ -8,7 +8,7 @@ compatibility_date = "2025-10-01"
 # 블로그 주소. 끝에 / 없이.
 BLOG_ORIGIN = "https://apapeisname.github.io"
 # 내 GitHub 숫자 ID (https://api.github.com/users/APapeIsName 의 "id"). 이 계정만 글을 쓸 수 있어요.
-OWNER_GITHUB_ID = ""
+OWNER_GITHUB_ID = "84262085"
 # 글을 커밋할 저장소
 REPO_OWNER = "APapeIsName"
 REPO_NAME = "APapeIsName.github.io"
