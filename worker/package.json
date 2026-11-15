@@ -1,0 +1,24 @@
+{
+  "name": "cs-study-api",
+  "version": "1.0.0",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "vitest run",
+    "typecheck": "tsc"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261115.1",
+    "typescript": "^7.0.2",
+    "vitest": "^3.2.7",
+    "wrangler": "^4.162.0"
+  },
+  "dependencies": {
+    "yaml": "^2.9.1"
+  },
+  "private": true,
+  "type": "module"
+}

@@ -27,9 +27,17 @@
 4. 1~2분 뒤 주소로 들어가면 사이트가 떠요. 이후로는 푸시할 때마다 자동으로 다시 만들어져요.
 5. `_config.yml`에서 `student`(이름), `course_start`(개강일), `weekly_hours`(주당 공부 시간)를 내 것으로 바꿔요.
 
-## 2. 리포트 쓰기 (세 가지 방법, 결과는 모두 같은 md 파일)
+## 2. 리포트 쓰기 (네 가지 방법, 결과는 모두 같은 md 파일)
 
-### 방법 A. 브라우저에서 노션처럼 쓰기: Pages CMS (추천)
+### 방법 A. 블로그에서 바로 쓰기 (추천)
+
+머리말의 **로그인**으로 GitHub 로그인을 하면, 블로그 주인 계정에만 **글쓰기** 메뉴가 생겨요. `/write/` 화면은 리포트 모양 그대로 칸을 채우는 방식이고, **제출하기**를 누르면 1~2분 뒤 블로그에 올라가요. 쓰는 동안 이 브라우저에 임시 저장되고, 리포트 아래 **이 리포트 고치기**로 다시 고치거나 지울 수 있어요.
+
+다른 GitHub 계정도 로그인은 되지만 글쓰기는 막혀 있어요. 권한 검사는 서버에서 해요.
+
+처음 한 번 글쓰기 서버(Cloudflare Worker)를 띄워야 해요. 순서는 [`worker/README.md`](worker/README.md)에 있어요. `_config.yml`의 `api_base`가 비어 있으면 로그인 버튼이 숨겨져요.
+
+### 방법 B. 브라우저에서 노션처럼 쓰기: Pages CMS
 
 1. https://app.pagescms.org 에 들어가 GitHub으로 로그인해요.
 2. 이 저장소를 고르면(처음엔 GitHub 앱 설치를 물어봐요) 왼쪽에 **과제 리포트** 메뉴가 생겨요.
@@ -38,13 +46,13 @@
 
 어떤 칸이 보일지는 `.pages.yml`에서 정해요.
 
-### 방법 B. github.com에서 바로 쓰기
+### 방법 C. github.com에서 바로 쓰기
 
 저장소의 `_posts` 폴더에서 **Add file → Create new file**을 눌러 `2026-11-20-S2-xxxxxx-1.md`처럼 이름을 짓고, `_drafts/report-template.md` 내용을 붙여 넣어 채워요. 과제 id는 `_data/quests.csv`의 `id` 열에 있어요.
 
-### 방법 C. 내 편집기로 쓰고 푸시하기
+### 방법 D. 내 편집기로 쓰고 푸시하기
 
-VS Code, Obsidian, Typora 등으로 `_posts`에 md 파일을 만들고 커밋, 푸시하면 돼요. 형식은 방법 B와 같아요.
+VS Code, Obsidian, Typora 등으로 `_posts`에 md 파일을 만들고 커밋, 푸시하면 돼요. 형식은 방법 C와 같아요.
 
 ## 주차는 어떻게 정해지나요
 
@@ -87,6 +95,9 @@ bundle exec jekyll serve
 | `_posts/` | 리포트 |
 | `.pages.yml` | 브라우저 편집기(Pages CMS) 설정 |
 | `scripts/sync_quests.py` | 시트 CSV → 과제 목록 동기화 |
+| `write.html` | 블로그 안 글쓰기 화면 (`assets/js/write.js`, 로그인은 `assets/js/auth.js`) |
+| `worker/` | 로그인과 발행을 맡는 Cloudflare Worker (Jekyll 빌드에서는 빠져요) |
+| `assets/lib/` | 미리보기용 marked(MIT), DOMPurify(Apache-2.0/MPL-2.0) |
 | `assets/` | 스타일, 스크립트, 픽셀 폰트 |
 
 ## 폰트

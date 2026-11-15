@@ -40,6 +40,9 @@ layout: default
 
   <nav class="report-nav" aria-label="다른 리포트">
     {% if page.previous %}<a href="{{ page.previous.url | relative_url }}">◀ {{ page.previous.title }}</a>{% else %}<span></span>{% endif %}
-    <a href="{{ '/reports/' | relative_url }}">리포트 전체 보기</a>
+    <span class="report-nav-end">
+      <a class="owner-only" hidden href="{{ '/write/' | relative_url }}?path={{ page.path | url_encode }}">이 리포트 고치기</a>
+      <a href="{{ '/reports/' | relative_url }}">리포트 전체 보기</a>
+    </span>
   </nav>
 </article>

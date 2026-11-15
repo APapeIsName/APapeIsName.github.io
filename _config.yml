@@ -16,6 +16,11 @@ xp_per_level: 300
 url: "https://apapeisname.github.io"
 baseurl: ""
 
+# ── 글쓰기 서버 ───────────────────────────────────────────
+# worker/ 폴더의 Cloudflare Worker 주소. 비워 두면 로그인 버튼이 숨겨져요.
+# 예: https://cs-study-api.<내 계정>.workers.dev
+api_base: ""
+
 lang: ko
 timezone: Asia/Seoul
 markdown: kramdown
@@ -36,3 +41,4 @@ exclude:
   - Gemfile
   - Gemfile.lock
   - vendor
+  - worker

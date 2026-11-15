@@ -1,0 +1,101 @@
+---
+layout: default
+page_id: write
+title: 리포트 쓰기
+permalink: /write/
+noindex: true
+scripts:
+  - /assets/lib/marked.umd.js
+  - /assets/lib/purify.min.js
+  - /assets/js/write.js
+---
+<div class="dialog write-gate" id="write-gate" role="status">
+  <p id="write-gate-text">로그인 상태를 확인하고 있어요.</p>
+  <p class="gate-actions" id="write-gate-actions"></p>
+  <span class="dialog-cursor" aria-hidden="true"></span>
+</div>
+
+<form class="report write-form" id="write-form" hidden novalidate>
+  <p class="write-notice" id="w-notice" hidden>
+    <span id="w-notice-text"></span>
+    <button type="button" class="link-btn" id="w-notice-action"></button>
+  </p>
+
+  <header class="window report-cover">
+    <div class="cover-top">
+      <span class="season-badge" id="w-badge" data-badge="S0" data-unlocked aria-hidden="true"></span>
+      <div>
+        <label class="sr" for="w-kind">리포트 종류</label>
+        <select id="w-kind" class="kind-select">
+          <option>과제 리포트</option>
+          <option>강의 노트</option>
+          <option>보스 회고</option>
+          <option>시즌 결산</option>
+        </select>
+        <label class="sr" for="w-title">제목</label>
+        <textarea id="w-title" class="title-input" rows="1" maxlength="200" placeholder="제목을 입력하세요" required></textarea>
+        <div class="preview title-preview" data-for="w-title" hidden></div>
+      </div>
+    </div>
+    <table class="cover-table">
+      <tbody>
+        <tr><th scope="row"><label for="w-quest">과제</label></th><td><select id="w-quest" class="quest-select" required></select></td></tr>
+        <tr><th scope="row">과목</th><td id="w-subject">과제를 고르면 채워져요</td></tr>
+        <tr id="w-recall-row"><th scope="row">인출 방법</th><td id="w-recall"></td></tr>
+        <tr><th scope="row">제출자</th><td>{{ site.student }}</td></tr>
+        <tr><th scope="row"><label for="w-date">제출일</label></th><td><input type="date" id="w-date" class="cell-input" required></td></tr>
+        <tr><th scope="row"><label for="w-hours">쓴 시간</label></th><td><input type="number" id="w-hours" class="cell-input hours-input" min="0" max="200" step="0.5" inputmode="decimal"> 시간</td></tr>
+      </tbody>
+    </table>
+    <p class="stamps" role="group" aria-label="과제 상태">
+      <label class="stamp-toggle is-clear"><input type="checkbox" id="w-complete"><span>과제 클리어</span></label>
+      <label class="stamp-toggle is-recall"><input type="checkbox" id="w-recalled"><span>인출 OK</span></label>
+    </p>
+  </header>
+
+  <div class="report-body">
+    <section>
+      <h2><label for="w-goal">학습 목표</label></h2>
+      <textarea id="w-goal" class="field" rows="2" maxlength="20000" placeholder="이 과제를 마치면 무엇을 할 수 있게 되나요?"></textarea>
+      <div class="preview prose-text" data-for="w-goal" hidden></div>
+    </section>
+    <section class="recall">
+      <h2><label for="w-recall_note">백지 인출 결과</label></h2>
+      <textarea id="w-recall_note" class="field" rows="5" maxlength="20000" placeholder="자료를 덮고 떠올린 것을 그대로 적어요. 틀려도 괜찮아요."></textarea>
+      <div class="preview prose-text" data-for="w-recall_note" hidden></div>
+    </section>
+    <section>
+      <h2><label for="w-body">정리</label></h2>
+      <textarea id="w-body" class="field field-body" rows="12" maxlength="100000" placeholder="배운 내용을 내 말로 정리해요. 마크다운을 쓸 수 있어요. (## 소제목, **굵게**, `코드`, ``` 코드 블록)"></textarea>
+      <div class="preview prose-text" data-for="w-body" hidden></div>
+    </section>
+    <section class="gaps">
+      <h2><label for="w-gaps">못 떠올린 것과 틀린 것</label></h2>
+      <textarea id="w-gaps" class="field" rows="3" maxlength="20000" placeholder="자료와 대조해서 빠뜨렸거나 틀린 것을 적어요. 다음 복습 때 이것부터 봐요."></textarea>
+      <div class="preview prose-text" data-for="w-gaps" hidden></div>
+    </section>
+    <section>
+      <h2><label for="w-stuck">막힌 점과 해결</label></h2>
+      <textarea id="w-stuck" class="field" rows="3" maxlength="20000" placeholder="어디서 막혔고 어떻게 풀었나요?"></textarea>
+      <div class="preview prose-text" data-for="w-stuck" hidden></div>
+    </section>
+    <section>
+      <h2><label for="w-next_steps">다음에 할 일</label></h2>
+      <textarea id="w-next_steps" class="field" rows="2" maxlength="20000" placeholder="- 다음 과제 읽기"></textarea>
+      <div class="preview prose-text" data-for="w-next_steps" hidden></div>
+    </section>
+  </div>
+
+  <div class="dialog write-dialog" id="w-dialog" role="status" aria-live="polite" hidden>
+    <p id="w-dialog-text"></p>
+    <p class="gate-actions" id="w-dialog-actions"></p>
+    <span class="dialog-cursor" aria-hidden="true"></span>
+  </div>
+
+  <div class="write-bar">
+    <p class="saved" id="w-saved" aria-live="polite"></p>
+    <button type="button" class="px-btn is-ghost" id="w-delete" hidden>리포트 지우기</button>
+    <button type="button" class="px-btn" id="w-preview-toggle" aria-pressed="false">미리보기</button>
+    <button type="submit" class="px-btn is-primary" id="w-submit">제출하기</button>
+  </div>
+</form>

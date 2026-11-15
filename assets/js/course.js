@@ -82,6 +82,7 @@
   }
 
   if (!C) { drawBadges(); return; }
+  C.drawBadges = drawBadges;
   var cfg = C.config;
   var DAY = 86400000;
 
@@ -188,6 +189,8 @@
   var courseEnd = start ? addDays(weekStartDate(totalWeeks), 6) : null;
   var overdue = quests.filter(function (q) { return !q.optional && !q.done && q.weekEnd < currentWeek; });
   var ahead = quests.filter(function (q) { return !q.optional && q.done && q.weekStart > currentWeek; });
+  // 글쓰기 화면(write.js)도 같은 주차 계산을 써요.
+  C.computed = { quests: quests, currentWeek: currentWeek, totalWeeks: totalWeeks, overdue: overdue, weekLabel: weekLabel, weekDates: weekDates };
   var doneMain = seasons.reduce(function (a, s) { return a + s.mainDoneHours; }, 0);
   var mainCount = seasons.reduce(function (a, s) { return a + s.mainCount; }, 0);
   var mainDoneCount = seasons.reduce(function (a, s) { return a + s.mainDone; }, 0);

@@ -9,6 +9,7 @@
     /* 화면이 그려지기 전에 저장된 테마를 적용해서 깜빡임을 막아요 */
     (function () { try { var t = localStorage.getItem("theme"); if (t) document.documentElement.setAttribute("data-theme", t); } catch (e) {} })();
   </script>
+  {% if page.noindex %}<meta name="robots" content="noindex">{% endif %}
   <link rel="preload" href="{{ '/assets/fonts/Galmuri11.woff2' | relative_url }}" as="font" type="font/woff2" crossorigin>
   <link rel="icon" type="image/svg+xml" href="{{ '/assets/favicon.svg' | relative_url }}">
   <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
@@ -23,6 +24,7 @@
         <a href="{{ '/syllabus/' | relative_url }}" {% if page.page_id == 'syllabus' %}aria-current="page"{% endif %}>계획서</a>
         <a href="{{ '/reports/' | relative_url }}" {% if page.page_id == 'reports' %}aria-current="page"{% endif %}>리포트</a>
         <a href="{{ '/about/' | relative_url }}" {% if page.page_id == 'about' %}aria-current="page"{% endif %}>과정 소개</a>
+        <span class="auth-slot" id="auth-slot" hidden></span>
         <button type="button" class="theme-toggle" id="theme-toggle" aria-label="다크 모드로 바꾸기">
           <span class="theme-icon" aria-hidden="true"></span><span class="theme-label">다크 모드</span>
         </button>
@@ -42,5 +44,8 @@
 
   {% include course-data.html %}
   <script src="{{ '/assets/js/course.js' | relative_url }}"></script>
+  <script src="{{ '/assets/js/auth.js' | relative_url }}"></script>
+  {% for js in page.scripts %}<script src="{{ js | relative_url }}"></script>
+  {% endfor %}
 </body>
 </html>
