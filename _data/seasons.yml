@@ -37,10 +37,10 @@
 - id: S5 알고리즘
   code: S5
   slug: s5
-  title: 알고리즘
-  refs: Steven Skiena 강의
-  book: The Algorithm Design Manual, 3판
-  blurb: 문제를 모델링하고 알맞은 알고리즘을 고르는 감각.
+  title: 자료구조와 알고리즘
+  refs: MIT 6.006 (현 6.1210)
+  book: MIT 6.006 강의 노트 (참고서 The Algorithm Design Manual)
+  blurb: 시퀀스와 집합 인터페이스를 여러 자료구조로 직접 구현하며, 상황에 맞는 자료구조와 알고리즘을 고르는 감각을 길러요.
 - id: S6 네트워크
   code: S6
   slug: s6
