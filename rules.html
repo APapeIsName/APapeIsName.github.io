@@ -1,0 +1,68 @@
+---
+layout: default
+page_id: rules
+title: 게임 규칙
+permalink: /rules/
+---
+<header class="page-head">
+  <h1>게임 규칙</h1>
+  <p>1년 동안 지치지 않고 끝까지 가기 위한 규칙이에요. 막히거나 하기 싫은 날 먼저 펼쳐 보세요.</p>
+</header>
+
+<div class="rules">
+  <section class="window rule-group">
+    <h2>매일 하는 방식</h2>
+    <dl class="rule-list">
+      <div class="rule is-key">
+        <dt>과제 루프</dt>
+        <dd>
+          <ol class="loop">
+            <li><b>입력</b> 교재를 읽고 강의를 들어요.</li>
+            <li><b>인출</b> 자료를 덮고 백지에 15분 동안 떠올려 적어요.</li>
+            <li><b>적용</b> 문제를 풀거나 랩을 구현해요.</li>
+            <li><b>제출</b> 리포트를 이 블로그에 올려요.</li>
+          </ol>
+          <p>"과제 클리어"와 "인출 OK"는 따로 체크해요. 읽기만 하고 인출을 안 했다면 클리어만 찍어요.</p>
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="window rule-group">
+    <h2>지쳐도 끊기지 않게</h2>
+    <dl class="rule-list">
+      <div class="rule"><dt>게으른 날 규칙</dt><dd>공부하기 싫은 날은 15분만 해요. 지난 과제 하나를 백지에 떠올려 적으면 그날도 성공이에요.</dd></div>
+      <div class="rule"><dt>이틀 규칙</dt><dd>하루 쉬는 건 괜찮아요. 이틀 연속으로만 쉬지 않아요.</dd></div>
+      <div class="rule"><dt>사이드는 진짜 선택</dt><dd>메인과 보스만 해도 충분해요. 사이드는 재밌어서 더 하고 싶을 때만 해요.</dd></div>
+      <div class="rule"><dt>휴식 주</dt><dd>시즌 사이에 1주는 새 공부 없이 결산과 복습만 해도 돼요.</dd></div>
+      <div class="rule"><dt>막혔을 때</dt><dd>30분 막히면 힌트 하나, 2시간 막히면 해설을 봐요. 대신 다음 날 백지에서 다시 구현해요.</dd></div>
+      <div class="rule"><dt>AI 사용 규칙</dt><dd>랩 정답은 받지 않아요. 개념 질문과 디버깅 힌트까지만 받아요.</dd></div>
+    </dl>
+  </section>
+
+  <section class="window rule-group">
+    <h2>오래 기억하게</h2>
+    <dl class="rule-list">
+      <div class="rule"><dt>복습 과제</dt><dd>시즌을 시작할 때마다 직전 시즌을 백지로 복습하고, 두 시즌 전 내용을 한 번 더 떠올려요. 잊을 때쯤 다시 꺼내는 게 기억을 가장 오래 남겨요.</dd></div>
+      <div class="rule"><dt>연결 질문</dt><dd>인출 방법에 "(연결 질문)"이 붙은 과제는 예전 시즌 개념과 비교하는 문제예요. 과목들이 하나로 이어지는 재미가 여기서 나와요.</dd></div>
+      <div class="rule"><dt>시즌 결산</dt><dd>시즌이 끝나면 Claude에게 모의 면접을 요청해 30분 동안 꼬리질문을 받아요. 막힌 질문은 다음 시즌 첫 복습에 넣어요.</dd></div>
+    </dl>
+  </section>
+
+  <section class="window rule-group">
+    <h2>재미있게</h2>
+    <dl class="rule-list">
+      <div class="rule"><dt>보스 과제</dt><dd>시즌마다 손에 잡히는 결과물 하나를 만들어요. GitHub에 올리고 README를 써요.</dd></div>
+      <div class="rule"><dt>XP와 레벨</dt><dd>공부 1시간에 {{ site.xp_per_hour }} XP, 인출 체크 하나에 {{ site.xp_per_recall }} XP를 받고, {{ site.xp_per_level }} XP마다 레벨이 올라요. 대시보드의 학생증에서 볼 수 있어요.</dd></div>
+      <div class="rule"><dt>레벨업 보상</dt><dd>레벨이 오를 때 받을 작은 보상을 미리 정해 둬요. 읽고 싶던 책이나 좋아하는 저녁처럼요.</dd></div>
+      <div class="rule"><dt>언제 멈춰도 남는다</dt><dd>S2까지만 해도 독학 엔지니어에게 가장 효율이 높다고 꼽히는 CS:APP을 끝낸 셈이에요. 시즌마다 보스 결과물도 남고요.</dd></div>
+    </dl>
+  </section>
+
+  <section class="window rule-group">
+    <h2>속도 조절</h2>
+    <dl class="rule-list">
+      <div class="rule"><dt>페이스 조절</dt><dd>지금은 일주일에 {{ site.weekly_hours }}시간 공부하는 일정이에요. 바쁜 달엔 줄여도 괜찮아요. 시트 퀘스트 탭의 E7과 블로그 <code>_config.yml</code>의 <code>weekly_hours</code>를 같이 바꾸면 과제별 주차와 종강 주차가 다시 계산돼요. 시즌은 항상 새 주차에서 시작해요.</dd></div>
+    </dl>
+  </section>
+</div>

@@ -22,6 +22,7 @@
       <nav aria-label="주 메뉴">
         <a href="{{ '/' | relative_url }}" {% if page.page_id == 'home' %}aria-current="page"{% endif %}>대시보드</a>
         <a href="{{ '/syllabus/' | relative_url }}" {% if page.page_id == 'syllabus' %}aria-current="page"{% endif %}>계획서</a>
+        <a href="{{ '/rules/' | relative_url }}" {% if page.page_id == 'rules' %}aria-current="page"{% endif %}>게임 규칙</a>
         <a href="{{ '/reports/' | relative_url }}" {% if page.page_id == 'reports' %}aria-current="page"{% endif %}>리포트</a>
         <a href="{{ '/about/' | relative_url }}" {% if page.page_id == 'about' %}aria-current="page"{% endif %}>과정 소개</a>
         <span class="auth-slot" id="auth-slot" hidden></span>
