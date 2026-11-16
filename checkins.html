@@ -1,0 +1,20 @@
+---
+layout: default
+page_id: checkins
+title: 출석부
+permalink: /checkins/
+scripts:
+  - /assets/js/checkin.js
+---
+<header class="page-head">
+  <h1>출석부</h1>
+  <p>공부를 시작할 때 한 마디로 출석 체크하고, 끝나면 마무리 한 마디와 함께 상황 종료해요.</p>
+</header>
+
+{% include now-card.html %}
+
+<section class="window checkin-log" aria-labelledby="log-title">
+  <h2 id="log-title">기록</h2>
+  <p class="checkin-summary" id="checkin-summary"></p>
+  <div id="checkin-days"><p class="empty">기록을 불러오는 중이에요.</p></div>
+</section>

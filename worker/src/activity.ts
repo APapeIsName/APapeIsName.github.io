@@ -41,6 +41,7 @@ export function signalsFrom(events: GhEvent[], stars: { starred_at?: string }[],
     if (e.type === "PushEvent") {
       days.add(dayKey(t));
       const msgs = (e.payload?.commits || []).map((c) => c.message || "");
+      if (msgs.length > 0 && msgs.every((msg) => /^(출석|상황 종료|출석 기록)/.test(msg))) continue; // 출석 체크는 커밋으로 치지 않아요
       const isPost = msgs.length > 0 && msgs.every((msg) => /^(노트|리포트|시리즈|태그|새 태그)/.test(msg));
       if (isPost) postAt = Math.max(postAt ?? 0, t);
       else commitAt = Math.max(commitAt ?? 0, t);

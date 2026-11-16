@@ -8,6 +8,7 @@ import { getConditions, phaseOf, weatherLabel } from "./weather";
 import { pickRandomEvent, renderScene, situation, type SceneEvents } from "./scene";
 import { activityAt } from "./schedule";
 import { getSignals } from "./activity";
+import { deleteCheckin, endCheckin, getStatus, startCheckin } from "./checkins";
 
 /** 프로필 README 그림: 서울의 시간대와 날씨대로 그때그때 그려요. 누구나 볼 수 있어요. */
 export async function sceneResponse(url: URL, now = Date.now(), fetcher: typeof fetch = fetch, env?: Env, roll: () => number = Math.random): Promise<Response> {
@@ -96,6 +97,21 @@ async function route(req: Request, env: Env, url: URL): Promise<Response> {
     if (m === "GET") return json(await getNote(env, path));
     if (m === "PUT") return json(await updateNote(env, path, await readJson(req)));
     if (m === "DELETE") return json(await deleteNote(env, path, url.searchParams.get("sha")));
+  }
+
+  // 출석 체크: 보는 건 누구나, 남기는 건 주인만
+  if (p === "/api/status" && m === "GET") return json(await getStatus(env));
+  if (p === "/api/checkins" && m === "POST") {
+    await requireOwner(req, env);
+    return json(await startCheckin(env, await readJson(req)), 201);
+  }
+  if (p === "/api/checkins/end" && m === "POST") {
+    await requireOwner(req, env);
+    return json(await endCheckin(env, await readJson(req)));
+  }
+  if (p === "/api/checkins" && m === "DELETE") {
+    await requireOwner(req, env);
+    return json(await deleteCheckin(env, url.searchParams.get("id") || ""));
   }
 
   // 시리즈와 태그: 주인만

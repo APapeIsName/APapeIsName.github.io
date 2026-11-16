@@ -167,3 +167,41 @@ describe("리포트 완성 기준", () => {
     expect(r.status).toBe(400);
   });
 });
+
+import { resetCheckinMemo } from "../src/checkins";
+describe("출석 체크", () => {
+  beforeEach(() => resetCheckinMemo());
+  it("누구나 지금 상태를 볼 수 있어요", async () => {
+    const r = await worker.fetch(new Request("https://api.dev/api/status"), env);
+    expect(r.status).toBe(200);
+    expect((await r.json()).current).toBe(null);
+  });
+  it("손님은 출석 체크를 못 해요", async () => {
+    expect((await api("/api/checkins", "POST", { kind: "공부", text: "OS 3장" }, guest)).status).toBe(403);
+  });
+  it("출석 체크하고, 새로 하면 앞의 것을 끝내고, 상황 종료해요", async () => {
+    let r = await api("/api/checkins", "POST", { kind: "공부", text: "OS 3장 읽는 중" });
+    expect(r.status).toBe(201);
+    let d = await r.json();
+    expect(d.current.text).toBe("OS 3장 읽는 중");
+    expect(d.current.start).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+09:00$/);
+    expect(commits.at(-1)).toBe("출석: OS 3장 읽는 중");
+    resetCheckinMemo();
+    r = await api("/api/checkins", "POST", { kind: "작업", text: "블로그 손보기" });
+    d = await r.json();
+    expect(d.recent[1].end).toBeTruthy(); // 앞의 출석은 자동으로 끝
+    expect(d.current.kind).toBe("작업");
+    resetCheckinMemo();
+    r = await api("/api/checkins/end", "POST", { note: "3장 끝!" });
+    d = await r.json();
+    expect(d.current).toBe(null);
+    expect(d.last.note).toBe("3장 끝!");
+    expect(commits.at(-1)).toBe("상황 종료: 3장 끝!");
+    expect(parseYaml(repo.get("_data/checkins.yml")!.text)).toHaveLength(2);
+    resetCheckinMemo();
+    expect((await api("/api/checkins/end", "POST", {})).status).toBe(409);
+    expect((await api("/api/checkins", "POST", { kind: "공부", text: "" })).status).toBe(400);
+    expect((await api("/api/checkins", "POST", { kind: "공부", text: "x".repeat(141) })).status).toBe(400);
+    expect((await api(`/api/checkins?id=${d.last.id}`, "DELETE")).status).toBe(200);
+  });
+});

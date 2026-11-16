@@ -1,6 +1,8 @@
 ---
 layout: default
 page_id: home
+scripts:
+  - /assets/js/checkin.js
 ---
 {% assign feed = site.posts | concat: site.notes | sort: "date" | reverse %}
 {% capture tag_str %}{% for t in site.data.tags %}{{ t.name }}|{% endfor %}{% for n in site.notes %}{% for t in n.tags %}{{ t }}|{% endfor %}{% endfor %}{% endcapture %}
@@ -15,6 +17,8 @@ page_id: home
     <div><dt>시리즈</dt><dd>{{ site.data.series.size | default: 0 }}개</dd></div>
   </dl>
 </section>
+
+{% include now-card.html %}
 
 <div class="home-grid">
   <section class="window home-feed" aria-labelledby="feed-title">

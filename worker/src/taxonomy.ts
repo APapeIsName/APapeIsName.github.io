@@ -58,7 +58,7 @@ function compact<T extends object>(o: T): T {
   return Object.fromEntries(Object.entries(o).filter(([, v]) => v !== undefined && v !== "")) as T;
 }
 
-async function readList<T>(env: Env, path: string): Promise<{ items: T[]; sha?: string }> {
+export async function readList<T>(env: Env, path: string): Promise<{ items: T[]; sha?: string }> {
   try {
     const f = await getFile(env, path);
     const data = parseYaml(f.text);
@@ -74,7 +74,7 @@ function dump(header: string, items: object[]): string {
 }
 
 /** 읽고, 바꾸고, 저장해요. 그사이 다른 저장이 끼어들면(409) 한 번 다시 읽어서 해요. */
-async function modify<T>(env: Env, path: string, header: string, message: string, change: (items: T[]) => T[] | null): Promise<T[]> {
+export async function modify<T>(env: Env, path: string, header: string, message: string, change: (items: T[]) => T[] | null): Promise<T[]> {
   for (let attempt = 0; ; attempt++) {
     const { items, sha } = await readList<T>(env, path);
     const next = change(items.slice());

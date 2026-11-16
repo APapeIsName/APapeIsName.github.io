@@ -207,6 +207,7 @@
   (C.reports || []).forEach(function (r) { if (r.date) activity[r.date] = (activity[r.date] || 0) + 1; });
   quests.forEach(function (q) { if (q.doneDate) activity[q.doneDate] = (activity[q.doneDate] || 0) + 1; });
   (C.notes || []).forEach(function (n) { if (n.date) activity[n.date] = (activity[n.date] || 0) + 1; });
+  (C.checkins || []).forEach(function (c) { var d = String(c.start || "").slice(0, 10); if (d) activity[d] = (activity[d] || 0) + 1; });
 
   function mondayOf(d) { var x = new Date(d.getTime()); x.setDate(x.getDate() - (x.getDay() + 6) % 7); return x; }
   function weekHasActivity(monday) {
