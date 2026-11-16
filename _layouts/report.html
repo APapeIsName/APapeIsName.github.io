@@ -6,16 +6,8 @@ layout: default
 {% assign body = content | strip %}
 {% assign tpl = site.data.report_template %}
 {% assign overrides = tpl.quest_placeholders[page.quest] %}
-{% comment %} 필수 칸이 비었는지 봐요. 칸 전체가 (괄호)로 감싸진 글은 옛 안내 문구라서 빈 칸으로 쳐요. {% endcomment %}
-{% assign missing = "" %}
-{% assign recall_ok = false %}
-{% for sec in tpl.sections %}
-  {% if sec.key == "body" %}{% assign v = body %}{% else %}{% assign v = page[sec.key] | strip %}{% endif %}
-  {% assign ok = false %}
-  {% if v and v != "" %}{% assign f = v | slice: 0 %}{% assign l = v | slice: -1 %}{% assign ok = true %}{% if f == "(" and l == ")" %}{% assign ok = false %}{% endif %}{% endif %}
-  {% if sec.key == "recall_note" %}{% assign recall_ok = ok %}{% endif %}
-  {% if sec.required and ok == false %}{% assign missing = missing | append: sec.title | append: "|" %}{% endif %}
-{% endfor %}
+{% assign rp = page %}{% assign rp_body = body %}{% include report-check.html %}
+{% assign missing = rc_missing %}{% assign recall_ok = rc_recall_ok %}
 {% assign missing_list = missing | split: "|" %}
 <article class="report">
   <header class="window report-cover">

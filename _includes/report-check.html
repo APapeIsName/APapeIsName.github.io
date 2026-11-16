@@ -1,0 +1,5 @@
+{% comment %}
+  리포트 하나가 완성됐는지 봐요. 쓰기 전에 rp(리포트)와 rp_body(본문)를 정해 두세요.
+  결과: rc_missing(빈 필수 칸 제목, "|"로 이어 붙임), rc_missing_keys, rc_recall_ok, rc_complete
+  칸 전체가 (괄호)로 감싸진 글은 옛 안내 문구라서 빈 칸으로 쳐요.
+{% endcomment %}{% assign rc_missing = "" %}{% assign rc_missing_keys = "" %}{% assign rc_recall_ok = false %}{% for rc_sec in site.data.report_template.sections %}{% if rc_sec.key == "body" %}{% assign rc_v = rp_body | strip %}{% else %}{% assign rc_v = rp[rc_sec.key] | strip %}{% endif %}{% assign rc_ok = false %}{% if rc_v and rc_v != "" %}{% assign rc_f = rc_v | slice: 0 %}{% assign rc_l = rc_v | slice: -1 %}{% assign rc_ok = true %}{% if rc_f == "(" and rc_l == ")" %}{% assign rc_ok = false %}{% endif %}{% endif %}{% if rc_sec.key == "recall_note" %}{% assign rc_recall_ok = rc_ok %}{% endif %}{% if rc_sec.required and rc_ok == false %}{% assign rc_missing = rc_missing | append: rc_sec.title | append: "|" %}{% assign rc_missing_keys = rc_missing_keys | append: rc_sec.key | append: "|" %}{% endif %}{% endfor %}{% assign rc_complete = false %}{% if rp.complete and rc_missing == "" %}{% assign rc_complete = true %}{% endif %}

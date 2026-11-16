@@ -1,0 +1,6 @@
+---
+layout: null
+permalink: /assets/progress-light.svg
+sitemap: false
+---
+{% assign theme = "light" %}{% include progress-card.svg %}
