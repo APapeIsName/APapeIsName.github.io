@@ -1,7 +1,9 @@
 /* DS 시절 RPG 메뉴 느낌의 픽셀 테마. 라이트/다크 두 벌. */
 
 @font-face { font-family: "Galmuri11"; src: url("../fonts/Galmuri11.woff2") format("woff2"); font-weight: 400; font-display: swap; }
-@font-face { font-family: "Galmuri11"; src: url("../fonts/Galmuri11-Bold.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+/* 굵은 갈무리11은 11픽셀 안에 획을 두껍게 넣느라 '틀', '블', '를'처럼 획이 많은 글자가 뭉개져요.
+   굵게 써도 보통 굵기 글꼴을 쓰게 해서, 브라우저가 가짜 굵게를 만들지도 않게 해요. 강조는 크기와 색으로 해요. */
+@font-face { font-family: "Galmuri11"; src: url("../fonts/Galmuri11.woff2") format("woff2"); font-weight: 700; font-display: swap; }
 @font-face { font-family: "GalmuriMono11"; src: url("../fonts/GalmuriMono11.woff2") format("woff2"); font-display: swap; }
 
 /* ── 색 ───────────────────────────────────────── */
