@@ -125,6 +125,7 @@ export function renderScene(s: SceneInput): string {
   look.lamp = look.lamp && sit.home && sit.awake;
   look.bulbs = look.bulbs && sit.home && sit.awake;
   const screenOn = sit.atDesk || ev.commit || ev.post;
+  let catKeyframes = "";
   const rnd = rng(7);
   const o: string[] = [];
   const r = (x: number, y: number, w = 1, h = 1, c = "#000", op?: number, cls = "", style = "") =>
@@ -309,7 +310,10 @@ export function renderScene(s: SceneInput): string {
     raw(`<g class="${rand.kind === "turn" ? "ev-hide" : ""}" style="${evStyle}">`);
     quilt(32);
     raw(`</g>`);
-    if (rand.kind === "turn") { raw(`<g class="ev" style="${evStyle}">`); quilt(46); r(16, 53, 4, 2, "#2a1f2e"); raw(`</g>`); }
+    if (rand.kind === "turn") {
+      raw(`<g class="evA" style="${evStyle}">`); quilt(39); raw(`</g>`);
+      raw(`<g class="evB" style="${evStyle}">`); quilt(46); r(16, 53, 4, 2, "#2a1f2e"); raw(`</g>`);
+    }
     raw(`<text class="zz px" x="${27 * P}" y="${52 * P}" font-size="12" fill="#c9d4f5">z</text><text class="zz px" style="animation-delay:-1.5s" x="${30 * P}" y="${49 * P}" font-size="16" fill="#c9d4f5">Z</text>`);
   } else if (sit.shown === "rest") {
     r(16, 44, 7, 3, "#2a1f2e"); // 머리카락
@@ -388,9 +392,24 @@ export function renderScene(s: SceneInput): string {
   // 고양이: 책상에 사람이 있거나 자고 있으면 침대 끝, 아니면 의자 위
   const onBed = sit.atDesk || sit.shown === "sleep";
   const [cx0, cy0] = onBed ? [72, 57] : [ch + 5, 59];
+  // 고양이 질주: 제자리에서 뛰어내려 오른쪽으로 달려 나갔다가, 왼쪽에서 다시 들어와 제자리로 뛰어올라요.
+  // 화면 밖에서만 반대편으로 넘어가서 순간이동처럼 보이지 않아요.
+  if (rand.kind === "catRun") {
+    const dyFloor = (84 - cy0) * P;
+    const rx = W * P + 40 - cx0 * P, lx = -70 - cx0 * P;
+    catKeyframes = `@keyframes catrun{0%{transform:translate(0,0)}1%{transform:translate(9px,-12px)}2.2%{transform:translate(18px,${dyFloor}px)}7%{transform:translate(${rx}px,${dyFloor}px)}7.01%{transform:translate(${lx}px,${dyFloor}px)}12.8%{transform:translate(-18px,${dyFloor}px)}14%{transform:translate(-9px,-12px)}15%,100%{transform:translate(0,0)}}`;
+    raw(`<g class="catrun" style="${evStyle}">`);
+  }
   raw(`<g class="${rand.kind === "catRun" ? "ev-hide" : ""}" style="${evStyle}">`);
   drawCat(r, raw, cx0, cy0);
   raw(`</g>`);
+  if (rand.kind === "catRun") {
+    const c2 = "#d99a2b", cx = cx0, cy = cy0 + 1;
+    raw(`<g class="ev" style="${evStyle}">`);
+    r(cx, cy, 10, 3, c2); r(cx + 9, cy - 2, 4, 3, c2); r(cx + 9, cy - 3, 1, 1, c2); r(cx + 12, cy - 3, 1, 1, c2); r(cx - 3, cy - 1, 3, 1, c2); r(cx + 11, cy - 1, 1, 1, "#5a3a10");
+    raw(`<g class="legA">`); r(cx + 1, cy + 3, 1, 2, c2); r(cx + 8, cy + 3, 1, 2, c2); raw(`</g><g class="legB">`); r(cx + 3, cy + 3, 1, 2, c2); r(cx + 6, cy + 3, 1, 2, c2); raw(`</g>`);
+    raw(`</g></g>`);
+  }
   // 책상에 앉은 사람 (뒷모습)
   if (sit.atDesk) {
     r(136, 48, 14, 11, "#4fb3d9"); // 몸
@@ -399,27 +418,22 @@ export function renderScene(s: SceneInput): string {
     r(133, 50, 3, 7, "#4fb3d9"); r(150, 50, 3, 7, "#4fb3d9"); // 팔
     raw(`<g class="typeA">`); r(129, 57, 3, 1, "#e8b892"); raw(`</g><g class="typeB">`); r(130, 56, 3, 1, "#e8b892"); raw(`</g>`);
     raw(`</g>`);
-    if (rand.kind === "stretch") { raw(`<g class="ev" style="${evStyle}">`); r(135, 33, 2, 16, "#4fb3d9"); r(149, 33, 2, 16, "#4fb3d9"); r(135, 31, 2, 2, "#e8b892"); r(149, 31, 2, 2, "#e8b892"); raw(`</g>`); }
+    if (rand.kind === "stretch") {
+      // 내림 → 반쯤 → 쭉 → 반쯤 → 내림
+      raw(`<g class="evA" style="${evStyle}">`); r(132, 44, 3, 6, "#4fb3d9"); r(151, 44, 3, 6, "#4fb3d9"); r(132, 42, 3, 2, "#e8b892"); r(151, 42, 3, 2, "#e8b892"); raw(`</g>`);
+      raw(`<g class="evB" style="${evStyle}">`); r(135, 33, 2, 16, "#4fb3d9"); r(149, 33, 2, 16, "#4fb3d9"); r(135, 31, 2, 2, "#e8b892"); r(149, 31, 2, 2, "#e8b892"); raw(`</g>`);
+    }
     r(141, 46, 4, 2, "#e8b892"); // 목
     r(139, 38, 8, 9, "#2a1f2e"); // 머리
     r(138, 40, 10, 6, "#2a1f2e");
     r(138, 38, 10, 1, "#454a66"); r(137, 40, 2, 4, "#454a66"); r(147, 40, 2, 4, "#454a66"); // 헤드폰
   }
-  // 랜덤: 고양이가 바닥을 가로질러 뛰어가요
-  if (rand.kind === "catRun") {
-    raw(`<g class="ev" style="${evStyle}"><g class="run" style="${evStyle}">`);
-    const cy = 84, cx = -16;
-    const c2 = "#d99a2b";
-    r(cx, cy, 10, 3, c2); r(cx + 9, cy - 2, 4, 3, c2); r(cx + 9, cy - 3, 1, 1, c2); r(cx + 12, cy - 3, 1, 1, c2); r(cx - 3, cy - 1, 3, 1, c2);
-    raw(`<g class="legA">`); r(cx + 1, cy + 3, 1, 2, c2); r(cx + 8, cy + 3, 1, 2, c2); raw(`</g><g class="legB">`); r(cx + 3, cy + 3, 1, 2, c2); r(cx + 6, cy + 3, 1, 2, c2); raw(`</g>`);
-    raw(`</g></g>`);
-  }
   // 랜덤: 창턱에 새가 내려앉았다 날아가요
   if (rand.kind === "bird") {
-    raw(`<g class="ev" style="${evStyle}"><g class="bird" style="${evStyle}">`);
+    raw(`<g clip-path="url(#win)"><g class="ev" style="${evStyle}"><g class="bird" style="${evStyle}">`);
     const bx3 = wx + 49, by3 = wy + wh - 3; // 창밖 난간에 앉아요
     r(bx3, by3, 4, 3, "#5a4a3a"); r(bx3 + 3, by3 - 1, 2, 2, "#5a4a3a"); r(bx3 + 5, by3, 1, 1, "#e2a52c"); r(bx3 + 1, by3 + 1, 2, 1, "#c86b4a"); r(bx3 + 1, by3 + 3, 1, 1, "#3a2e22"); r(bx3 + 3, by3 + 3, 1, 1, "#3a2e22");
-    raw(`</g></g>`);
+    raw(`</g></g></g>`);
   }
 
   // ── 오른쪽: 책장 ──
@@ -542,15 +556,17 @@ export function renderScene(s: SceneInput): string {
 .cur{animation:blink 1s steps(1) infinite}.colon{animation:blink 2s steps(1) infinite}@keyframes blink{50%{opacity:0}}
 .bulb{animation:bl 1.8s steps(1) infinite}@keyframes bl{50%{opacity:.35}}
 .glow{animation:gl 3s ease-in-out infinite}@keyframes gl{50%{opacity:.75}}
-.drip{animation:dr 7s linear infinite}@keyframes dr{0%{transform:translateY(0)}100%{transform:translateY(${38 * P}px)}}
+.drip{animation:dr 7s linear infinite}@keyframes dr{0%{transform:translateY(0);opacity:0}8%{opacity:1}85%{opacity:1}100%{transform:translateY(${38 * P}px);opacity:0}}
 .dust{animation:du 6s ease-in-out infinite}@keyframes du{0%,100%{transform:translate(0,0);opacity:.2}50%{transform:translate(6px,-9px);opacity:.8}}
 .flash{animation:fl 13s linear infinite}@keyframes fl{0%,90%,94%,100%{fill-opacity:0}91%{fill-opacity:.35}92%{fill-opacity:.05}93%{fill-opacity:.25}}
 .clouds{animation:cl 140s linear infinite}.clouds-fast{animation:cl 60s linear infinite}@keyframes cl{to{transform:translateX(${70 * P}px)}}
 .ev{opacity:0;animation:evshow 40s linear infinite}@keyframes evshow{0%,15%{opacity:1}15.01%,100%{opacity:0}}
 .ev-hide{animation:evhide 40s linear infinite}@keyframes evhide{0%,15%{opacity:0}15.01%,100%{opacity:1}}
-.run{animation:run 40s linear infinite}@keyframes run{0%{transform:translateX(0)}12%{transform:translateX(900px)}100%{transform:translateX(900px)}}
+.catrun{animation:catrun 40s linear infinite}
+.evA{opacity:0;animation:evA 40s linear infinite}@keyframes evA{0%,1.5%{opacity:1}1.51%,13.49%{opacity:0}13.5%,15%{opacity:1}15.01%,100%{opacity:0}}
+.evB{opacity:0;animation:evB 40s linear infinite}@keyframes evB{0%,1.49%{opacity:0}1.5%,13.5%{opacity:1}13.51%,100%{opacity:0}}
 .legA{animation:blink .25s steps(1) infinite}.legB{animation:blink .25s steps(1) infinite reverse}
-.bird{animation:bird 40s steps(40) infinite}@keyframes bird{0%{transform:translate(0,-30px)}1%{transform:translate(0,0)}5%{transform:translate(0,-3px)}6%{transform:translate(0,0)}9%{transform:translate(6px,-2px)}10%{transform:translate(6px,0)}12%{transform:translate(20px,-40px)}15%,100%{transform:translate(60px,-120px)}}
+.bird{animation:bird 40s linear infinite}@keyframes bird{0%{transform:translate(110px,-80px)}2.5%{transform:translate(0,0)}4%{transform:translate(0,-4px)}5%,7%{transform:translate(0,0)}8%{transform:translate(9px,-4px)}9%,12%{transform:translate(9px,0)}15%,100%{transform:translate(120px,-90px)}}
 .meteor{animation:met 40s linear infinite}@keyframes met{0%{transform:translate(0,0);opacity:1}3%{transform:translate(120px,40px);opacity:0}100%{opacity:0}}
 .shoot{animation:shoot 12s linear infinite}@keyframes shoot{0%{transform:translate(0,0);opacity:0}2%{opacity:1}8%{transform:translate(150px,50px);opacity:0}100%{opacity:0}}
 .wobble{animation:wob 40s linear infinite}@keyframes wob{0%,6%,100%{transform:rotate(0)}1%{transform:rotate(-12deg)}2%{transform:rotate(10deg)}3%{transform:rotate(-8deg)}4%{transform:rotate(5deg)}5%{transform:rotate(-2deg)}}
@@ -558,12 +574,13 @@ export function renderScene(s: SceneInput): string {
 .typeA{animation:blink .4s steps(1) infinite}.typeB{animation:blink .4s steps(1) infinite reverse}
 .scroll{animation:scr 4s steps(4) infinite}@keyframes scr{to{transform:translateY(-${2 * P}px)}}
 .zz{animation:zz 3s linear infinite}@keyframes zz{0%{transform:translate(0,0);opacity:0}20%{opacity:1}100%{transform:translate(9px,-18px);opacity:0}}
-.conf{animation:conf 3s linear infinite}@keyframes conf{0%{transform:translateY(0);opacity:1}100%{transform:translateY(${40 * P}px);opacity:0}}
+.conf{animation:conf 3s linear infinite}@keyframes conf{0%{transform:translateY(0);opacity:0}10%{opacity:1}100%{transform:translateY(${40 * P}px);opacity:0}}
 .bob{animation:bob 1.2s steps(2) infinite}@keyframes bob{50%{transform:translateY(-3px)}}
 .tail-a{animation:ta 1.6s steps(1) infinite}.tail-b{animation:tb 1.6s steps(1) infinite}@keyframes ta{50%{opacity:0}}@keyframes tb{0%{opacity:0}50%{opacity:1}}
 .hh{animation:hh 86400s steps(24) infinite}@keyframes hh{to{transform:translateY(-${24 * CLOCK_LINE}px)}}
 .mm{animation:mm 3600s steps(60) infinite}@keyframes mm{to{transform:translateY(-${60 * CLOCK_LINE}px)}}
-@media (prefers-reduced-motion:reduce){.rain0,.rain1,.sn0,.sn1,.tw,.cur,.bulb,.glow,.drip,.dust,.flash,.tail-a,.tail-b,.clouds,.clouds-fast,.run,.legA,.legB,.bird,.meteor,.shoot,.wobble,.typeA,.typeB,.scroll,.zz,.conf,.bob{animation:none}.tail-b,.legB,.typeB,.ev{opacity:0}.ev-hide{opacity:1;animation:none}}
+${catKeyframes}
+@media (prefers-reduced-motion:reduce){.rain0,.rain1,.sn0,.sn1,.tw,.cur,.bulb,.glow,.drip,.dust,.flash,.tail-a,.tail-b,.clouds,.clouds-fast,.catrun,.evA,.evB,.legA,.legB,.bird,.meteor,.shoot,.wobble,.typeA,.typeB,.scroll,.zz,.conf,.bob{animation:none}.tail-b,.legB,.typeB,.ev,.evA,.evB{opacity:0}.ev-hide{opacity:1;animation:none}}
 </style>`;
   const frame = `<polygon points="4,0 836,0 836,4 840,4 840,${H * P - 4} 836,${H * P - 4} 836,${H * P} 4,${H * P} 4,${H * P - 4} 0,${H * P - 4} 0,4 4,4" fill="${line}"/>`;
   const aria = `서울 ${s.label}${s.tempC !== null ? ` ${Math.round(s.tempC)}도` : ""}, ${PHASE_KO[s.phase]}의 공부방 픽셀 그림. 지금 ${sit.label}`;
