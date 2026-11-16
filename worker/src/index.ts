@@ -5,21 +5,38 @@ import { deletePost, getPost, listPosts, postStatus, publishPost, updatePost } f
 import { deleteNote, getNote, publishNote, updateNote } from "./notes";
 import { deleteSeries, deleteTag, getTaxonomy, saveSeries, saveTag } from "./taxonomy";
 import { getConditions, phaseOf, weatherLabel } from "./weather";
-import { renderScene } from "./scene";
+import { pickRandomEvent, renderScene, situation, type SceneEvents } from "./scene";
+import { activityAt } from "./schedule";
+import { getSignals } from "./activity";
 
 /** 프로필 README 그림: 서울의 시간대와 날씨대로 그때그때 그려요. 누구나 볼 수 있어요. */
-export async function sceneResponse(url: URL, now = Date.now(), fetcher: typeof fetch = fetch): Promise<Response> {
+export async function sceneResponse(url: URL, now = Date.now(), fetcher: typeof fetch = fetch, env?: Env, roll: () => number = Math.random): Promise<Response> {
   const theme = url.searchParams.get("theme") === "dark" ? "dark" : "light";
-  const c = await getConditions(now, fetcher);
+  const [c, g] = await Promise.all([getConditions(now, fetcher), env ? getSignals(env, now, fetcher) : Promise.resolve(null)]);
   const month = new Date(now + 9 * 3600 * 1000).getUTCMonth() + 1;
+  const phase = phaseOf(now, c?.sunrise ?? null, c?.sunset ?? null);
+  const weather = c?.weather ?? "clear";
+  const within = (t: number | null | undefined, min: number) => !!t && now - t >= -60000 && now - t < min * 60000;
+  const events: SceneEvents = {
+    commit: within(g?.commitAt, 30),
+    post: within(g?.postAt, 60),
+    merged: within(g?.mergedAt, 120),
+    star: within(g?.starAt, 24 * 60),
+    streak: g?.streak ?? 0,
+  };
+  const activity = activityAt(now);
+  const shown = situation(activity, events).shown;
   const svg = renderScene({
     theme,
-    phase: phaseOf(now, c?.sunrise ?? null, c?.sunset ?? null),
-    weather: c?.weather ?? "clear",
+    phase,
+    weather,
     label: c ? weatherLabel(c.code) : "날씨 모름",
     tempC: c?.tempC ?? null,
     now,
     month,
+    activity,
+    events,
+    random: { kind: pickRandomEvent(shown, phase, weather, roll), offset: roll() * 40 },
   });
   return new Response(svg, {
     headers: {
@@ -38,7 +55,7 @@ async function route(req: Request, env: Env, url: URL): Promise<Response> {
   const m = req.method;
 
   if (p === "/api/health") return json({ ok: true });
-  if (p === "/scene.svg" && m === "GET") return sceneResponse(url);
+  if (p === "/scene.svg" && m === "GET") return sceneResponse(url, Date.now(), fetch, env);
 
   // 로그인: 누구나
   if (p === "/auth/login" && m === "GET") return handleLogin(env, url);

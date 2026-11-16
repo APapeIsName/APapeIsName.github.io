@@ -95,3 +95,86 @@ describe("그림", () => {
     expect(svg).toContain("#eef3ff");
   });
 });
+
+import { activityAt } from "../src/schedule";
+import { signalsFrom, streakOf } from "../src/activity";
+import { pickRandomEvent, situation, NO_EVENTS } from "../src/scene";
+
+describe("생활 시간표", () => {
+  it("평일 하루", () => {
+    // 2026-11-16은 월요일
+    expect(activityAt(at("2026-11-16T03:00:00"))).toBe("sleep");
+    expect(activityAt(at("2026-11-16T04:40:00"))).toBe("wash");
+    expect(activityAt(at("2026-11-16T06:00:00"))).toBe("study");
+    expect(activityAt(at("2026-11-16T08:20:00"))).toBe("ready");
+    expect(activityAt(at("2026-11-16T15:58:00"))).toBe("work");
+    expect(activityAt(at("2026-11-16T19:40:00"))).toBe("wash");
+    expect(activityAt(at("2026-11-16T20:10:00"))).toBe("rest");
+    expect(activityAt(at("2026-11-16T21:00:00"))).toBe("sleep");
+  });
+  it("주말엔 출근 대신 공부와 쉬기", () => {
+    expect(activityAt(at("2026-11-21T10:00:00"))).toBe("study");
+    expect(activityAt(at("2026-11-21T12:30:00"))).toBe("rest");
+    expect(activityAt(at("2026-11-21T15:00:00"))).toBe("study");
+  });
+  it("방금 커밋했으면 쉬다가도 책상에 앉아요. 회사에 있으면 그대로", () => {
+    expect(situation("rest", { ...NO_EVENTS, commit: true })).toMatchObject({ atDesk: true, label: "작업 중" });
+    expect(situation("work", { ...NO_EVENTS, commit: true })).toMatchObject({ atDesk: false, label: "출근 중" });
+    expect(situation("study", NO_EVENTS)).toMatchObject({ atDesk: true, label: "공부 중" });
+  });
+});
+
+describe("GitHub 활동", () => {
+  const now = at("2026-11-16T16:00:00");
+  const iso = (s: string) => new Date(at(s)).toISOString();
+  it("커밋, 글, 머지, 스타, 연속 기록을 찾아요", () => {
+    const g = signalsFrom([
+      { type: "PushEvent", created_at: iso("2026-11-16T15:50:00"), payload: { commits: [{ message: "fix: 버그" }] } },
+      { type: "PushEvent", created_at: iso("2026-11-16T15:40:00"), payload: { commits: [{ message: "노트: 토비의 스프링 1장" }] } },
+      { type: "PushEvent", created_at: iso("2026-11-15T21:00:00"), payload: { commits: [{ message: "x" }] } },
+      { type: "PushEvent", created_at: iso("2026-11-14T08:00:00"), payload: { commits: [{ message: "x" }] } },
+      { type: "PullRequestEvent", created_at: iso("2026-11-16T14:00:00"), payload: { action: "closed", pull_request: { merged: true } } },
+      { type: "PullRequestEvent", created_at: iso("2026-11-16T15:00:00"), payload: { action: "closed", pull_request: { merged: false } } },
+    ], [{ starred_at: iso("2026-11-16T09:00:00") }], now);
+    expect(g.commitAt).toBe(at("2026-11-16T15:50:00"));
+    expect(g.postAt).toBe(at("2026-11-16T15:40:00"));
+    expect(g.mergedAt).toBe(at("2026-11-16T14:00:00"));
+    expect(g.starAt).toBe(at("2026-11-16T09:00:00"));
+    expect(g.streak).toBe(3);
+  });
+  it("오늘 아직 안 했으면 어제부터 세요", () => {
+    expect(streakOf(new Set(["2026-11-15", "2026-11-14"]), now)).toBe(2);
+    expect(streakOf(new Set(["2026-11-13"]), now)).toBe(0);
+  });
+});
+
+describe("이벤트가 그림에 들어가요", () => {
+  const base = { theme: "light" as const, label: "맑음", tempC: 10, now: at("2026-11-16T16:00:00"), month: 11, phase: "day" as const, weather: "clear" as const };
+  it("랜덤 사건은 상황에 맞는 것만 골라요", () => {
+    const seq = (vals: number[]) => { let i = 0; return () => vals[i++ % vals.length]; };
+    expect(pickRandomEvent("sleep", "night", "rain", seq([0.5, 0.99]))).toBe("turn");
+    expect(pickRandomEvent("work", "night", "rain", seq([0.5, 0.1]))).toBe("catRun");
+    expect(pickRandomEvent("study", "day", "clear", seq([0.1]))).toBe(null);
+    for (let k = 0; k < 50; k++) expect(["catRun", "turn", null]).toContain(pickRandomEvent("sleep", "night", "rain", Math.random));
+  });
+  it("자는 중이면 Zzz, 모니터 꺼짐, 상태 상자", () => {
+    const svg = renderScene({ ...base, phase: "night", activity: "sleep", random: { kind: "turn", offset: 12 } });
+    expect(svg).toContain('class="zz px"');
+    expect(svg).toContain("자는 중");
+    expect(svg).toContain("animation-delay:-12.0s");
+    expect(svg).not.toContain('class="scroll"');
+  });
+  it("커밋하면 말풍선과 한 줄 소식", () => {
+    const svg = renderScene({ ...base, activity: "study", events: { ...NO_EVENTS, commit: true, streak: 5 } });
+    expect(svg).toContain("커밋!");
+    expect(svg).toContain("방금 커밋했어요");
+    expect(svg).toContain(">5</text>");
+    expect(svg).toContain("일째");
+  });
+  it("출근 중이면 방이 비고 의자에 고양이", () => {
+    const svg = renderScene({ ...base, activity: "work", random: { kind: "bird", offset: 3 } });
+    expect(svg).toContain("출근 중");
+    expect(svg).toContain('class="bird"');
+    expect(svg).not.toContain('class="typeA"');
+  });
+});

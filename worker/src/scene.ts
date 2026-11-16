@@ -4,6 +4,19 @@
  */
 import { SCENE_FONT } from "./sceneFont";
 import type { Phase, Weather } from "./weather";
+import { ACTIVITY_KO, type Activity } from "./schedule";
+
+export type RandomEvent = "catRun" | "bird" | "mug" | "stretch" | "turn" | "meteor" | "pageFlip";
+
+export interface SceneEvents {
+  commit: boolean; // 방금 커밋 (30분)
+  post: boolean; // 블로그에 글 (1시간)
+  merged: boolean; // PR 머지 (2시간)
+  star: boolean; // 스타 (24시간)
+  streak: number; // 연속 활동 일수
+}
+
+export const NO_EVENTS: SceneEvents = { commit: false, post: false, merged: false, star: false, streak: 0 };
 
 export interface SceneInput {
   theme: "light" | "dark";
@@ -13,6 +26,35 @@ export interface SceneInput {
   tempC: number | null;
   now: number; // epoch ms
   month: number; // 1~12 (서울)
+  activity?: Activity; // 생활 시간표에서 지금 하는 일
+  events?: SceneEvents;
+  random?: { kind: RandomEvent | null; offset: number }; // 랜덤 사건과 40초 고리 안에서 시작 위치(초)
+}
+
+/** 지금 상황에서 일어날 수 있는 랜덤 사건 중 하나를 골라요. 15%는 아무 일도 없어요. */
+export function pickRandomEvent(activity: Activity, phase: Phase, weather: Weather, roll: () => number): RandomEvent | null {
+  const clear = weather === "clear" || weather === "partly";
+  const desk = activity === "study";
+  const pool: [RandomEvent, number][] = [["catRun", 3]];
+  if (phase === "day" && clear) pool.push(["bird", 3]);
+  if (phase === "night" && clear) pool.push(["meteor", 2]);
+  if (desk) pool.push(["mug", 2], ["stretch", 3]);
+  if (activity === "sleep") pool.push(["turn", 3]);
+  if (activity === "rest") pool.push(["pageFlip", 3]);
+  if (roll() < 0.15) return null;
+  const total = pool.reduce((a, [, w]) => a + w, 0);
+  let x = roll() * total;
+  for (const [k, w] of pool) { if ((x -= w) < 0) return k; }
+  return pool[0][0];
+}
+
+/** 시간표, GitHub 활동을 합쳐 화면에 보일 상황을 정해요. */
+export function situation(activity: Activity, ev: SceneEvents) {
+  const busy = ev.commit || ev.post;
+  const atDesk = activity === "study" || (busy && (activity === "sleep" || activity === "wash" || activity === "rest" || activity === "ready"));
+  const label = activity === "study" ? ACTIVITY_KO.study : atDesk ? "작업 중" : ACTIVITY_KO[activity];
+  const shown: Activity = atDesk ? "study" : activity;
+  return { atDesk, label, shown, home: shown !== "work", awake: shown !== "sleep" };
 }
 
 const P = 3;
@@ -75,6 +117,14 @@ function lookOf(phase: Phase, weather: Weather): Look {
 export function renderScene(s: SceneInput): string {
   const line = s.theme === "light" ? "#33415c" : "#5a77b0";
   const look = lookOf(s.phase, s.weather);
+  const ev = s.events ?? NO_EVENTS;
+  const sit = situation(s.activity ?? "study", ev);
+  const rand = s.random ?? { kind: null, offset: 0 };
+  const evStyle = `animation-delay:-${rand.offset.toFixed(1)}s`;
+  // 집에 있고 깨어 있을 때만 스탠드와 줄 전구를 켜요. 나가 있거나 자면 모니터도 꺼요.
+  look.lamp = look.lamp && sit.home && sit.awake;
+  look.bulbs = look.bulbs && sit.home && sit.awake;
+  const screenOn = sit.atDesk || ev.commit || ev.post;
   const rnd = rng(7);
   const o: string[] = [];
   const r = (x: number, y: number, w = 1, h = 1, c = "#000", op?: number, cls = "", style = "") =>
@@ -124,10 +174,11 @@ export function renderScene(s: SceneInput): string {
   const clouds: [number, number, number][] = clearish && s.weather === "clear"
     ? [[6, 24, 14], [44, 27, 12]]
     : [[2, 6, 22], [24, 10, 26], [48, 5, 20], [4, 22, 18], [14, 24, 14], [30, 27, 22], [46, 23, 16], [58, 26, 12]];
-  for (const [cx, cy, cw] of clouds) {
-    r(wx + cx, wy + cy, cw, 2, cloudCol, cloudOp);
-    r(wx + cx + 2, wy + cy - 1, cw - 4, 1, cloudCol, cloudOp * 0.8);
-  }
+  // 구름은 천천히 옆으로 흘러가요 (같은 구름 두 벌을 이어 붙여 끊김 없이)
+  const cloudSet = (shift: number) => clouds.map(([cx, cy, cw]) =>
+    `<rect x="${(wx + cx + shift) * P}" y="${(wy + cy) * P}" width="${cw * P}" height="${2 * P}" fill="${cloudCol}" fill-opacity="${cloudOp}"/>` +
+    `<rect x="${(wx + cx + 2 + shift) * P}" y="${(wy + cy - 1) * P}" width="${(cw - 4) * P}" height="${P}" fill="${cloudCol}" fill-opacity="${(cloudOp * 0.8).toFixed(2)}"/>`).join("");
+  raw(`<g class="${s.weather === "thunder" || s.weather === "rain" ? "clouds-fast" : "clouds"}">${cloudSet(0)}${cloudSet(-ww)}</g>`);
   // 먼 건물 (멀어서 흐리게)
   raw(`<g filter="url(#far)">`);
   const bcol = s.phase === "day" ? (clearish ? "#7d9bc4" : "#8592a8") : s.phase === "night" ? "#0f1f4d" : "#3a2f5a";
@@ -140,6 +191,8 @@ export function renderScene(s: SceneInput): string {
     }
   }
   raw(`</g>`);
+  if (ev.star) raw(`<g class="shoot" style="animation-delay:-2s"><rect x="${(wx + 8) * P}" y="${(wy + 4) * P}" width="${10 * P}" height="2" fill="#fff6c9" transform="rotate(18 ${(wx + 8) * P} ${(wy + 4) * P})"/></g>`);
+  if (rand.kind === "meteor") raw(`<g class="ev" style="${evStyle}"><g class="meteor" style="${evStyle}"><rect x="${(wx + 20) * P}" y="${(wy + 2) * P}" width="${8 * P}" height="2" fill="#ffffff" transform="rotate(20 ${(wx + 20) * P} ${(wy + 2) * P})"/></g></g>`);
   if (s.weather === "fog") raw(`<rect x="${wx * P}" y="${wy * P}" width="${ww * P}" height="${wh * P}" fill="#cfd6e4" fill-opacity="0.45"/>`);
   if (s.weather === "thunder") raw(`<rect class="flash" x="${wx * P}" y="${wy * P}" width="${ww * P}" height="${wh * P}" fill="#e6eeff" fill-opacity="0"/>`);
   // 비
@@ -210,7 +263,7 @@ export function renderScene(s: SceneInput): string {
   for (let x = 20; x < 88; x += 9) r(x, 64, 1, 7, "#33427a");
   r(14, 57, 20, 6, "#a9b8e8");
   r(16, 58, 16, 1, "#c9d4f5");
-  r(60, 59, 26, 4, "#46589a");
+  if (sit.shown !== "sleep" && sit.shown !== "rest") r(60, 59, 26, 4, "#46589a");
   r(12, 72, 78, 3, "#1e2440");
   r(14, 75, 3, 4, "#1e2440");
   r(85, 75, 3, 4, "#1e2440");
@@ -227,11 +280,46 @@ export function renderScene(s: SceneInput): string {
       if (x > 66) break;
     }
   }
-  r(78, 18, 18, 24, "#1f2a52");
-  r(80, 20, 14, 14, "#2f4c9a");
-  r(84, 24, 6, 6, "#ffd27a", 0.7);
-  r(80, 36, 14, 1, "#6c7fb8");
-  r(80, 38, 9, 1, "#6c7fb8");
+  if (ev.streak >= 2) {
+    // 벽 달력: 며칠째 연속으로 활동했는지
+    r(78, 18, 18, 22, "#e7edf8");
+    r(78, 18, 18, 5, "#e0483e");
+    raw(`<text x="${87 * P}" y="${22 * P}" font-size="11" text-anchor="middle" fill="#ffffff" class="px">연속</text>`);
+    raw(`<text x="${87 * P}" y="${33 * P}" font-size="${ev.streak >= 100 ? 18 : 24}" text-anchor="middle" fill="#26324a" class="px">${ev.streak}</text>`);
+    raw(`<text x="${87 * P}" y="${38.5 * P}" font-size="11" text-anchor="middle" fill="#4f5e78" class="px">일째</text>`);
+  } else {
+    r(78, 18, 18, 24, "#1f2a52");
+    r(80, 20, 14, 14, "#2f4c9a");
+    r(84, 24, 6, 6, "#ffd27a", 0.7);
+    r(80, 36, 14, 1, "#6c7fb8");
+    r(80, 38, 9, 1, "#6c7fb8");
+  }
+  // 침대 위 사람
+  if (sit.shown === "sleep") {
+    r(17, 54, 8, 6, "#2a1f2e"); // 머리 (베개 위)
+    r(21, 56, 4, 3, "#e8b892"); // 옆얼굴
+    r(23, 57, 1, 1, "#5a3a2a"); // 감은 눈
+    const quilt = (hx: number) => {
+      r(24, 58, 56, 5, "#8a9be0");
+      r(hx, 56, 24, 2, "#8a9be0");
+      r(24, 58, 56, 1, "#b3c0f0");
+      r(hx, 56, 24, 1, "#b3c0f0");
+      for (let x = 30; x < 80; x += 8) r(x, 59, 1, 4, "#7486cc");
+    };
+    raw(`<g class="${rand.kind === "turn" ? "ev-hide" : ""}" style="${evStyle}">`);
+    quilt(32);
+    raw(`</g>`);
+    if (rand.kind === "turn") { raw(`<g class="ev" style="${evStyle}">`); quilt(46); r(16, 53, 4, 2, "#2a1f2e"); raw(`</g>`); }
+    raw(`<text class="zz px" x="${27 * P}" y="${52 * P}" font-size="12" fill="#c9d4f5">z</text><text class="zz px" style="animation-delay:-1.5s" x="${30 * P}" y="${49 * P}" font-size="16" fill="#c9d4f5">Z</text>`);
+  } else if (sit.shown === "rest") {
+    r(16, 44, 7, 3, "#2a1f2e"); // 머리카락
+    r(16, 47, 7, 5, "#e8b892"); // 얼굴
+    r(16, 47, 1, 3, "#2a1f2e"); r(22, 47, 1, 3, "#2a1f2e");
+    r(15, 52, 10, 8, "#4fb3d9"); // 몸
+    r(24, 59, 40, 4, "#5468a8"); r(24, 59, 40, 1, "#6f84c4"); r(56, 57, 6, 2, "#5468a8"); // 다리 위 이불
+    r(21, 53, 7, 5, "#e0483e"); r(24, 53, 1, 5, "#8a2a24"); // 책
+    if (rand.kind === "pageFlip") raw(`<rect class="ev flip" style="${evStyle}" x="${24 * P}" y="${53 * P}" width="${3 * P}" height="${5 * P}" fill="#f5f0e1"/>`);
+  }
 
   // ── 책상 ──
   const dx = 108, dy = 60, dw = 94;
@@ -250,15 +338,22 @@ export function renderScene(s: SceneInput): string {
   r(114, 55, 2, 1, "#7ff0ff");
   const mx = 124, my = 38;
   r(mx, my, 24, 18, "#2f3756");
-  r(mx + 2, my + 2, 20, 13, "#8ff6ff");
-  r(mx + 2, my + 2, 20, 13, "#3fd0e8", 0.35);
-  ([[0, 9, "#1c6a80"], [2, 12, "#1c6a80"], [2, 7, "#c0476a"], [4, 10, "#1c6a80"], [0, 5, "#1c6a80"]] as const).forEach(([ind, ln, col], i) => r(mx + 4 + ind, my + 4 + i * 2, ln, 1, col));
-  r(mx + 10, my + 12, 2, 1, "#0b2a33", undefined, "cur");
+  r(mx + 2, my + 2, 20, 13, screenOn ? "#8ff6ff" : "#0b1220");
+  if (screenOn) r(mx + 2, my + 2, 20, 13, "#3fd0e8", 0.35);
+  if (screenOn) {
+    raw(`<g class="${sit.atDesk ? "scroll" : ""}">`);
+    ([[0, 9, "#1c6a80"], [2, 12, "#1c6a80"], [2, 7, "#c0476a"], [4, 10, "#1c6a80"], [0, 5, "#1c6a80"]] as const).forEach(([ind, ln, col], i) => r(mx + 4 + ind, my + 4 + i * 2, ln, 1, col));
+    raw(`</g>`);
+    r(mx + 10, my + 12, 2, 1, "#0b2a33", undefined, "cur");
+    if (ev.post) { r(mx + 15, my + 4, 5, 5, "#48b058"); r(mx + 16, my + 7, 1, 1, "#ffffff"); r(mx + 17, my + 8, 1, 1, "#ffffff"); r(mx + 18, my + 5, 1, 3, "#ffffff"); }
+  } else {
+    r(mx + 20, my + 15, 1, 1, "#ffb35c"); // 대기 표시등
+  }
   r(mx + 10, my + 18, 4, 2, "#2f3756");
   r(mx + 6, my + 20, 12, 1, "#2f3756");
   r(mx - 2, dy - 2, 26, 2, "#3d4770");
   for (let k = 0; k < 12; k++) r(mx - 1 + k * 2, dy - 2, 1, 1, "#5a6699");
-  raw(`<ellipse cx="${(mx + 12) * P}" cy="${(my + 9) * P}" rx="${34 * P}" ry="${24 * P}" fill="url(#screen)" class="glow" opacity="${look.lamp ? 1 : 0.4}"/>`);
+  raw(`<ellipse cx="${(mx + 12) * P}" cy="${(my + 9) * P}" rx="${34 * P}" ry="${24 * P}" fill="url(#screen)" class="glow" opacity="${screenOn ? (look.lamp ? 1 : 0.4) : 0}"/>`);
   // 스탠드
   const lx = 176;
   r(lx, dy - 2, 8, 2, "#c9a25a");
@@ -268,9 +363,11 @@ export function renderScene(s: SceneInput): string {
   r(lx - 8, 46, 5, 1, look.lamp ? "#fff2c2" : "#8a7a58");
   if (look.lamp) raw(`<ellipse cx="${(lx - 5) * P}" cy="${(dy + 2) * P}" rx="${40 * P}" ry="${22 * P}" fill="url(#lamp)"/>`);
   // 소품
+  raw(`<g class="${rand.kind === "mug" ? "wobble" : ""}" style="${evStyle};transform-origin:${158 * P}px ${60 * P}px">`);
   r(156, 55, 4, 5, "#e0483e");
   r(160, 56, 1, 3, "#e0483e");
   r(156, 55, 4, 1, "#6a2424");
+  raw(`</g>`);
   r(186, 54, 12, 2, "#3f8fe0");
   r(187, 52, 11, 2, "#e2a52c");
   r(186, 50, 10, 2, "#48b058");
@@ -279,7 +376,7 @@ export function renderScene(s: SceneInput): string {
   r(152, 52, 1, 5, "#48b058");
   r(154, 54, 1, 3, "#48b058");
   r(164, 58, 9, 2, "#e7edf8", 0.8);
-  // 의자와 고양이
+  // 의자
   const ch = 132;
   r(ch, 62, 22, 3, "#1c2240");
   r(ch + 2, 50, 18, 13, "#232a4c");
@@ -288,20 +385,42 @@ export function renderScene(s: SceneInput): string {
   r(ch + 4, 73, 14, 1, "#1c2240");
   r(ch + 3, 74, 2, 1, "#1c2240");
   r(ch + 17, 74, 2, 1, "#1c2240");
-  const cat = "#d99a2b";
-  r(ch + 5, 59, 12, 4, cat);
-  r(ch + 14, 56, 5, 4, cat);
-  r(ch + 14, 55, 1, 1, cat);
-  r(ch + 18, 55, 1, 1, cat);
-  r(ch + 16, 58, 2, 1, "#5a3a10");
-  r(ch + 7, 60, 3, 1, "#b07a1c");
-  raw(`<g class="tail-a">`);
-  r(ch + 2, 61, 3, 1, cat);
-  r(ch + 1, 59, 1, 2, cat);
-  raw(`</g><g class="tail-b">`);
-  r(ch + 2, 62, 4, 1, cat);
-  r(ch, 62, 2, 1, cat);
+  // 고양이: 책상에 사람이 있거나 자고 있으면 침대 끝, 아니면 의자 위
+  const onBed = sit.atDesk || sit.shown === "sleep";
+  const [cx0, cy0] = onBed ? [72, 57] : [ch + 5, 59];
+  raw(`<g class="${rand.kind === "catRun" ? "ev-hide" : ""}" style="${evStyle}">`);
+  drawCat(r, raw, cx0, cy0);
   raw(`</g>`);
+  // 책상에 앉은 사람 (뒷모습)
+  if (sit.atDesk) {
+    r(136, 48, 14, 11, "#4fb3d9"); // 몸
+    r(135, 49, 16, 2, "#4fb3d9");
+    raw(`<g class="${rand.kind === "stretch" ? "ev-hide" : ""}" style="${evStyle}">`);
+    r(133, 50, 3, 7, "#4fb3d9"); r(150, 50, 3, 7, "#4fb3d9"); // 팔
+    raw(`<g class="typeA">`); r(129, 57, 3, 1, "#e8b892"); raw(`</g><g class="typeB">`); r(130, 56, 3, 1, "#e8b892"); raw(`</g>`);
+    raw(`</g>`);
+    if (rand.kind === "stretch") { raw(`<g class="ev" style="${evStyle}">`); r(135, 33, 2, 16, "#4fb3d9"); r(149, 33, 2, 16, "#4fb3d9"); r(135, 31, 2, 2, "#e8b892"); r(149, 31, 2, 2, "#e8b892"); raw(`</g>`); }
+    r(141, 46, 4, 2, "#e8b892"); // 목
+    r(139, 38, 8, 9, "#2a1f2e"); // 머리
+    r(138, 40, 10, 6, "#2a1f2e");
+    r(138, 38, 10, 1, "#454a66"); r(137, 40, 2, 4, "#454a66"); r(147, 40, 2, 4, "#454a66"); // 헤드폰
+  }
+  // 랜덤: 고양이가 바닥을 가로질러 뛰어가요
+  if (rand.kind === "catRun") {
+    raw(`<g class="ev" style="${evStyle}"><g class="run" style="${evStyle}">`);
+    const cy = 84, cx = -16;
+    const c2 = "#d99a2b";
+    r(cx, cy, 10, 3, c2); r(cx + 9, cy - 2, 4, 3, c2); r(cx + 9, cy - 3, 1, 1, c2); r(cx + 12, cy - 3, 1, 1, c2); r(cx - 3, cy - 1, 3, 1, c2);
+    raw(`<g class="legA">`); r(cx + 1, cy + 3, 1, 2, c2); r(cx + 8, cy + 3, 1, 2, c2); raw(`</g><g class="legB">`); r(cx + 3, cy + 3, 1, 2, c2); r(cx + 6, cy + 3, 1, 2, c2); raw(`</g>`);
+    raw(`</g></g>`);
+  }
+  // 랜덤: 창턱에 새가 내려앉았다 날아가요
+  if (rand.kind === "bird") {
+    raw(`<g class="ev" style="${evStyle}"><g class="bird" style="${evStyle}">`);
+    const bx3 = wx + 49, by3 = wy + wh - 3; // 창밖 난간에 앉아요
+    r(bx3, by3, 4, 3, "#5a4a3a"); r(bx3 + 3, by3 - 1, 2, 2, "#5a4a3a"); r(bx3 + 5, by3, 1, 1, "#e2a52c"); r(bx3 + 1, by3 + 1, 2, 1, "#c86b4a"); r(bx3 + 1, by3 + 3, 1, 1, "#3a2e22"); r(bx3 + 3, by3 + 3, 1, 1, "#3a2e22");
+    raw(`</g></g>`);
+  }
 
   // ── 오른쪽: 책장 ──
   const bx = 214, by = 23, bw = 52, bh = 51;
@@ -367,6 +486,32 @@ export function renderScene(s: SceneInput): string {
   raw(`<rect x="0" y="0" width="${W * P}" height="${H * P}" fill="url(#fog)"/>`);
   raw(`<rect x="0" y="0" width="${W * P}" height="${H * P}" fill="url(#vig)"/>`);
 
+  // ── GitHub 활동 ──
+  if (ev.merged) {
+    const bits: string[] = [];
+    const cols = ["#ffd27a", "#ff8f8f", "#9fe0ff", "#b8f29a", "#d6a8ff"];
+    for (let i = 0; i < 24; i++) {
+      const x = 112 + Math.floor(rnd() * 90);
+      bits.push(`<rect class="conf" style="animation-delay:-${(rnd() * 3).toFixed(2)}s" x="${x * P}" y="${(20 + Math.floor(rnd() * 10)) * P}" width="4" height="4" fill="${cols[i % 5]}"/>`);
+    }
+    raw(bits.join(""));
+  }
+  if (ev.commit || ev.post) {
+    const text = ev.post ? "글을 올렸어요!" : "커밋!";
+    const bw2 = ev.post ? 96 : 52;
+    const bx2 = sit.atDesk ? 143 * P - bw2 / 2 : (mx + 12) * P - bw2 / 2;
+    const by2 = sit.atDesk ? 26 * P : 30 * P;
+    raw(`<g class="bob px"><rect x="${bx2}" y="${by2}" width="${bw2}" height="22" fill="#ffffff"/><rect x="${bx2 + 2}" y="${by2 + 2}" width="${bw2 - 4}" height="18" fill="#ffffff" stroke="#26324a" stroke-width="2"/>` +
+      `<polygon points="${bx2 + bw2 / 2 - 4},${by2 + 21} ${bx2 + bw2 / 2 + 4},${by2 + 21} ${bx2 + bw2 / 2},${by2 + 27}" fill="#26324a"/>` +
+      `<text x="${bx2 + bw2 / 2}" y="${by2 + 15}" font-size="11" text-anchor="middle" fill="#26324a">${text}</text></g>`);
+  }
+  // 상태 상자 (왼쪽 아래)
+  const note = ev.post ? "방금 글을 올렸어요" : ev.commit ? "방금 커밋했어요" : ev.merged ? "PR 머지했어요" : ev.star ? "스타를 받았어요" : "";
+  const sy0 = H * P - (note ? 50 : 34);
+  raw(`<g class="px"><rect x="12" y="${sy0}" width="150" height="${note ? 40 : 24}" fill="#33415c"/><rect x="15" y="${sy0 + 3}" width="144" height="${note ? 34 : 18}" fill="#0d1120" fill-opacity="0.92"/>` +
+    `<text x="24" y="${sy0 + 16}" font-size="12" fill="#e7edf8"><tspan fill="#ff6a5c">▶</tspan> ${sit.label}</text>` +
+    (note ? `<text x="24" y="${sy0 + 31}" font-size="11" fill="#a5b2c9">${note}</text>` : "") + `</g>`);
+
   // ── 책장 위 시계 (어둠 위에 그려서 또렷하게) ──
   o.push(clock(s, bx + 4, 2));
   // 출처
@@ -400,13 +545,28 @@ export function renderScene(s: SceneInput): string {
 .drip{animation:dr 7s linear infinite}@keyframes dr{0%{transform:translateY(0)}100%{transform:translateY(${38 * P}px)}}
 .dust{animation:du 6s ease-in-out infinite}@keyframes du{0%,100%{transform:translate(0,0);opacity:.2}50%{transform:translate(6px,-9px);opacity:.8}}
 .flash{animation:fl 13s linear infinite}@keyframes fl{0%,90%,94%,100%{fill-opacity:0}91%{fill-opacity:.35}92%{fill-opacity:.05}93%{fill-opacity:.25}}
+.clouds{animation:cl 140s linear infinite}.clouds-fast{animation:cl 60s linear infinite}@keyframes cl{to{transform:translateX(${70 * P}px)}}
+.ev{opacity:0;animation:evshow 40s linear infinite}@keyframes evshow{0%,15%{opacity:1}15.01%,100%{opacity:0}}
+.ev-hide{animation:evhide 40s linear infinite}@keyframes evhide{0%,15%{opacity:0}15.01%,100%{opacity:1}}
+.run{animation:run 40s linear infinite}@keyframes run{0%{transform:translateX(0)}12%{transform:translateX(900px)}100%{transform:translateX(900px)}}
+.legA{animation:blink .25s steps(1) infinite}.legB{animation:blink .25s steps(1) infinite reverse}
+.bird{animation:bird 40s steps(40) infinite}@keyframes bird{0%{transform:translate(0,-30px)}1%{transform:translate(0,0)}5%{transform:translate(0,-3px)}6%{transform:translate(0,0)}9%{transform:translate(6px,-2px)}10%{transform:translate(6px,0)}12%{transform:translate(20px,-40px)}15%,100%{transform:translate(60px,-120px)}}
+.meteor{animation:met 40s linear infinite}@keyframes met{0%{transform:translate(0,0);opacity:1}3%{transform:translate(120px,40px);opacity:0}100%{opacity:0}}
+.shoot{animation:shoot 12s linear infinite}@keyframes shoot{0%{transform:translate(0,0);opacity:0}2%{opacity:1}8%{transform:translate(150px,50px);opacity:0}100%{opacity:0}}
+.wobble{animation:wob 40s linear infinite}@keyframes wob{0%,6%,100%{transform:rotate(0)}1%{transform:rotate(-12deg)}2%{transform:rotate(10deg)}3%{transform:rotate(-8deg)}4%{transform:rotate(5deg)}5%{transform:rotate(-2deg)}}
+.flip{animation:evshow 40s steps(1) infinite}
+.typeA{animation:blink .4s steps(1) infinite}.typeB{animation:blink .4s steps(1) infinite reverse}
+.scroll{animation:scr 4s steps(4) infinite}@keyframes scr{to{transform:translateY(-${2 * P}px)}}
+.zz{animation:zz 3s linear infinite}@keyframes zz{0%{transform:translate(0,0);opacity:0}20%{opacity:1}100%{transform:translate(9px,-18px);opacity:0}}
+.conf{animation:conf 3s linear infinite}@keyframes conf{0%{transform:translateY(0);opacity:1}100%{transform:translateY(${40 * P}px);opacity:0}}
+.bob{animation:bob 1.2s steps(2) infinite}@keyframes bob{50%{transform:translateY(-3px)}}
 .tail-a{animation:ta 1.6s steps(1) infinite}.tail-b{animation:tb 1.6s steps(1) infinite}@keyframes ta{50%{opacity:0}}@keyframes tb{0%{opacity:0}50%{opacity:1}}
 .hh{animation:hh 86400s steps(24) infinite}@keyframes hh{to{transform:translateY(-${24 * CLOCK_LINE}px)}}
 .mm{animation:mm 3600s steps(60) infinite}@keyframes mm{to{transform:translateY(-${60 * CLOCK_LINE}px)}}
-@media (prefers-reduced-motion:reduce){.rain0,.rain1,.sn0,.sn1,.tw,.cur,.bulb,.glow,.drip,.dust,.flash,.tail-a,.tail-b{animation:none}.tail-b{opacity:0}}
+@media (prefers-reduced-motion:reduce){.rain0,.rain1,.sn0,.sn1,.tw,.cur,.bulb,.glow,.drip,.dust,.flash,.tail-a,.tail-b,.clouds,.clouds-fast,.run,.legA,.legB,.bird,.meteor,.shoot,.wobble,.typeA,.typeB,.scroll,.zz,.conf,.bob{animation:none}.tail-b,.legB,.typeB,.ev{opacity:0}.ev-hide{opacity:1;animation:none}}
 </style>`;
   const frame = `<polygon points="4,0 836,0 836,4 840,4 840,${H * P - 4} 836,${H * P - 4} 836,${H * P} 4,${H * P} 4,${H * P - 4} 0,${H * P - 4} 0,4 4,4" fill="${line}"/>`;
-  const aria = `서울 ${s.label}${s.tempC !== null ? ` ${Math.round(s.tempC)}도` : ""}, ${PHASE_KO[s.phase]}의 공부방 픽셀 그림`;
+  const aria = `서울 ${s.label}${s.tempC !== null ? ` ${Math.round(s.tempC)}도` : ""}, ${PHASE_KO[s.phase]}의 공부방 픽셀 그림. 지금 ${sit.label}`;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${W * P}" height="${H * P}" viewBox="0 0 ${W * P} ${H * P}" role="img" aria-label="${aria}">` +
     `<!-- 픽셀 폰트: Galmuri (c) Lee Minseo (quiple), SIL OFL 1.1. 날씨: Open-Meteo.com (CC BY 4.0) -->` +
     defs + style + frame +
@@ -446,4 +606,22 @@ function clock(s: SceneInput, gx: number, gy: number): string {
     `<text x="${x + w / 2}" y="${y + h - 8}" font-size="11" text-anchor="middle" fill="#c9d2e6">${s.label}${temp}</text>` +
     `<rect x="${x + 3}" y="${y + 3}" width="${w - 6}" height="${h - 6}" fill="${led}" fill-opacity="0.04"/>` +
     `</g>`;
+}
+
+type Rect = (x: number, y: number, w?: number, h?: number, c?: string, op?: number, cls?: string, style?: string) => void;
+function drawCat(r: Rect, raw: (x: string) => void, x: number, y: number) {
+  const cat = "#d99a2b";
+  r(x, y, 12, 4, cat);
+  r(x + 9, y - 3, 5, 4, cat);
+  r(x + 9, y - 4, 1, 1, cat);
+  r(x + 13, y - 4, 1, 1, cat);
+  r(x + 11, y - 1, 2, 1, "#5a3a10");
+  r(x + 2, y + 1, 3, 1, "#b07a1c");
+  raw(`<g class="tail-a">`);
+  r(x - 3, y + 2, 3, 1, cat);
+  r(x - 4, y, 1, 2, cat);
+  raw(`</g><g class="tail-b">`);
+  r(x - 3, y + 3, 4, 1, cat);
+  r(x - 5, y + 3, 2, 1, cat);
+  raw(`</g>`);
 }
