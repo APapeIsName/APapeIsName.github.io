@@ -16,7 +16,7 @@
   var SECTION = 16; // 마디
   var SWING = 0.62;
   // 오프라인 렌더로 맞춘 음량 (피아노 대비: 베이스 0.45, 드럼 0.6, 빗소리 0.27 정도)
-  var LEVEL = { keys: 1, bass: 0.81, drums: 1.21, rain: 0.069, drops: 2.2, wind: 0.09, rumble: 0.3, crackle: 1.0, hiss: 0.013, master: 0.62 };
+  var LEVEL = { keys: 1, bass: 0.81, drums: 1.21, rain: 0.16, drops: 1.0, wind: 0.09, rumble: 0.3, crackle: 0.3, hiss: 0, master: 0.62 };
 
   function midi(n) { return 440 * Math.pow(2, (n - 69) / 12); }
 
@@ -49,6 +49,8 @@
     }
     return {
       white: buf(2, function (d) { for (var i = 0; i < d.length; i++) d[i] = rnd() * 2 - 1; }),
+      // 빗소리용: 흰 잡음보다 거칠지 않은 갈색 잡음 (지지직거리지 않게)
+      soft: buf(4, function (d) { var last = 0; for (var i = 0; i < d.length; i++) { last = (last + 0.02 * (rnd() * 2 - 1)) / 1.02; d[i] = last * 3.5; } }),
       drops: buf(6, function (d, sr) {
         for (var k = 0; k < 150; k++) {
           var at = Math.floor(rnd() * (d.length - 300)), amp = 0.02 + rnd() * 0.06;
@@ -121,10 +123,10 @@
     }
     function filt(type, f, q) { var n = ctx.createBiquadFilter(); n.type = type; n.frequency.value = f; if (q) n.Q.value = q; return n; }
     var amb = {
-      crackle: loop(B.crackle, [filt("lowpass", 4000)], LEVEL.crackle),
+      crackle: loop(B.crackle, [filt("lowpass", 1600)], LEVEL.crackle), // 날카롭지 않게 "톡톡" 정도로
       hiss: loop(B.white, [filt("highpass", 3000)], LEVEL.hiss),
-      rain: loop(B.white, [filt("highpass", 400), filt("lowpass", 5000)], 0),
-      drops: loop(B.drops, [filt("highpass", 3000)], 0),
+      rain: loop(B.soft, [filt("highpass", 250), filt("lowpass", 2200)], 0),
+      drops: loop(B.drops, [filt("bandpass", 2500, 0.8)], 0),
       wind: loop(B.white, [filt("bandpass", 500, 0.7), filt("lowpass", 900)], 0),
       rumble: loop(B.white, [filt("lowpass", 110)], 0),
     };
