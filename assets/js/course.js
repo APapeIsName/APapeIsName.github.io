@@ -107,6 +107,7 @@
   function codeOf(seasonId) { return String(seasonId || "").split(" ")[0]; }
 
   /* ── 데이터 정리 ───────────────────────────────── */
+  function reportComplete(r) { return r.complete && !(r.missing || []).filter(Boolean).length; }
   var reportsByQuest = {};
   (C.reports || []).forEach(function (r) {
     (reportsByQuest[r.quest] = reportsByQuest[r.quest] || []).push(r);
@@ -114,12 +115,13 @@
 
   var quests = (C.quests || []).map(function (q) {
     var rs = reportsByQuest[q.id] || [];
-    var doneByReport = rs.filter(function (r) { return r.complete; }).map(function (r) { return r.date; }).sort()[0];
+    // 리포트는 "과제 클리어"를 찍고 필수 칸(백지 인출 결과 등)까지 채워야 완성으로 쳐요.
+    var doneByReport = rs.filter(reportComplete).map(function (r) { return r.date; }).sort()[0];
     return {
       id: q.id, season: q.season, type: q.type, quest: q.quest, recall: q.recall,
       hours: parseFloat(q.hours) || 0,
       done: bool(q.done) || !!doneByReport,
-      recalled: bool(q.recalled) || rs.some(function (r) { return r.recalled; }),
+      recalled: bool(q.recalled) || rs.some(function (r) { return r.recalled && r.recallFilled !== false; }),
       doneDate: ymd(q.date) || doneByReport || "",
       main: q.type !== "사이드"
     };

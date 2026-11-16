@@ -5,7 +5,7 @@ import { signSession } from "../src/auth";
 import { base64ToUtf8, utf8ToBase64 } from "../src/github";
 import { buildNote, notePath, noteUrl, parseNote, validateNote } from "../src/notes";
 import { cleanSeries } from "../src/taxonomy";
-import { postStatus } from "../src/posts";
+import { isFilled, postStatus } from "../src/posts";
 
 const SECRET = "x".repeat(40);
 const env: Env = {
@@ -132,5 +132,38 @@ describe("노트 API", () => {
   it("노트 경로가 아니면 거절해요", async () => {
     expect((await api("/api/notes/item?path=_config.yml")).status).toBe(400);
     expect((await api("/api/notes/item?path=" + encodeURIComponent("_notes/../_config.md"))).status).toBe(400);
+  });
+});
+
+describe("리포트 완성 기준", () => {
+  const report = { title: "개강 리포트", date: "2026-11-16", quest: "S0-69fab2", kind: "과제 리포트", complete: true, recalled: true, recall_note: "- 게으른 날 15분", gaps: "- 이틀 규칙을 빠뜨림", body: "" };
+  const tpl = "sections:\n  - key: recall_note\n    title: 백지 인출 결과\n    required: true\n  - key: gaps\n    title: 못 떠올린 것과 틀린 것\n    required: true\n  - key: goal\n    title: 학습 목표\n";
+  it("옛 안내 문구는 빈 칸으로 쳐요", () => {
+    expect(isFilled("(책을 덮고 떠올린 게임 규칙 5개를 여기에 그대로 적어보세요.)")).toBe(false);
+    expect(isFilled("  ")).toBe(false);
+    expect(isFilled("(괄호로 시작하지만) 내용이 있어요")).toBe(true);
+  });
+  it("필수 칸을 다 채우면 과제 클리어로 낼 수 있어요", async () => {
+    repo.set("_data/report_template.yml", { text: tpl, sha: "t" });
+    expect((await api("/api/posts", "POST", report)).status).toBe(201);
+  });
+  it("필수 칸이 비면 과제 클리어를 막아요", async () => {
+    repo.set("_data/report_template.yml", { text: tpl, sha: "t" });
+    const r = await api("/api/posts", "POST", { ...report, gaps: "(게임 규칙 탭과 대조해서 빠뜨린 규칙을 적어보세요.)" });
+    expect(r.status).toBe(400);
+    expect((await r.json()).error).toContain("못 떠올린 것과 틀린 것");
+  });
+  it("과제 클리어를 안 찍으면 진행 중 리포트로 낼 수 있어요", async () => {
+    repo.set("_data/report_template.yml", { text: tpl, sha: "t" });
+    expect((await api("/api/posts", "POST", { ...report, complete: false, recalled: false, gaps: "" })).status).toBe(201);
+  });
+  it("인출 OK는 백지 인출 결과가 있어야 해요", async () => {
+    const r = await api("/api/posts", "POST", { ...report, complete: false, recall_note: "" });
+    expect(r.status).toBe(400);
+    expect((await r.json()).error).toContain("인출 OK");
+  });
+  it("양식이 없으면 기본 필수 칸을 써요", async () => {
+    const r = await api("/api/posts", "POST", { ...report, gaps: "" });
+    expect(r.status).toBe(400);
   });
 });

@@ -4,6 +4,19 @@ layout: default
 {% assign q = site.data.quests | where: "id", page.quest | first %}
 {% assign s = site.data.seasons | where: "id", q.season | first %}
 {% assign body = content | strip %}
+{% assign tpl = site.data.report_template %}
+{% assign overrides = tpl.quest_placeholders[page.quest] %}
+{% comment %} 필수 칸이 비었는지 봐요. 칸 전체가 (괄호)로 감싸진 글은 옛 안내 문구라서 빈 칸으로 쳐요. {% endcomment %}
+{% assign missing = "" %}
+{% assign recall_ok = false %}
+{% for sec in tpl.sections %}
+  {% if sec.key == "body" %}{% assign v = body %}{% else %}{% assign v = page[sec.key] | strip %}{% endif %}
+  {% assign ok = false %}
+  {% if v and v != "" %}{% assign f = v | slice: 0 %}{% assign l = v | slice: -1 %}{% assign ok = true %}{% if f == "(" and l == ")" %}{% assign ok = false %}{% endif %}{% endif %}
+  {% if sec.key == "recall_note" %}{% assign recall_ok = ok %}{% endif %}
+  {% if sec.required and ok == false %}{% assign missing = missing | append: sec.title | append: "|" %}{% endif %}
+{% endfor %}
+{% assign missing_list = missing | split: "|" %}
 <article class="report">
   <header class="window report-cover">
     <div class="cover-top">
@@ -24,18 +37,24 @@ layout: default
       </tbody>
     </table>
     <p class="stamps" aria-label="과제 상태">
-      {% if page.complete %}<span class="stamp stamp-clear">과제 클리어</span>{% else %}<span class="stamp stamp-wip">진행 중</span>{% endif %}
-      {% if page.recalled %}<span class="stamp stamp-recall">인출 OK</span>{% endif %}
+      {% if page.complete and missing == "" %}<span class="stamp stamp-clear">과제 클리어</span>{% elsif page.complete %}<span class="stamp stamp-missing">미완성</span>{% else %}<span class="stamp stamp-wip">진행 중</span>{% endif %}
+      {% if page.recalled and recall_ok %}<span class="stamp stamp-recall">인출 OK</span>{% endif %}
     </p>
+    {% if missing != "" %}<p class="missing-note">리포트를 완성하려면 {{ missing_list | join: ", " }} 칸을 채워야 해요.</p>{% endif %}
   </header>
 
   <div class="report-body">
-    {% if page.goal %}<section><h2>학습 목표</h2><div class="prose-text">{{ page.goal | markdownify }}</div></section>{% endif %}
-    {% if page.recall_note %}<section class="recall"><h2>백지 인출 결과</h2><div class="prose-text">{{ page.recall_note | markdownify }}</div></section>{% endif %}
-    {% if body != "" %}<section><h2>정리</h2><div class="prose-text">{{ content }}</div></section>{% endif %}
-    {% if page.gaps %}<section class="gaps"><h2>못 떠올린 것과 틀린 것</h2><div class="prose-text">{{ page.gaps | markdownify }}</div></section>{% endif %}
-    {% if page.stuck %}<section><h2>막힌 점과 해결</h2><div class="prose-text">{{ page.stuck | markdownify }}</div></section>{% endif %}
-    {% if page.next_steps %}<section><h2>다음에 할 일</h2><div class="prose-text">{{ page.next_steps | markdownify }}</div></section>{% endif %}
+    {% for sec in tpl.sections %}
+    {% if sec.key == "body" %}{% assign v = body %}{% else %}{% assign v = page[sec.key] | strip %}{% endif %}
+    {% assign ok = false %}
+    {% if v and v != "" %}{% assign f = v | slice: 0 %}{% assign l = v | slice: -1 %}{% assign ok = true %}{% if f == "(" and l == ")" %}{% assign ok = false %}{% endif %}{% endif %}
+    {% if ok %}
+    <section class="sec-{{ sec.key }}"><h2>{{ sec.title }}</h2><div class="prose-text">{% if sec.key == "body" %}{{ content }}{% else %}{{ v | markdownify }}{% endif %}</div></section>
+    {% elsif sec.required %}
+    {% assign hint = overrides[sec.key] | default: sec.placeholder | replace: "{recall}", q.recall | replace: "{resource}", q.resource %}
+    <section class="sec-{{ sec.key }} is-missing"><h2>{{ sec.title }}</h2><p class="missing-box"><span class="missing-tag">아직 비어 있어요</span> {{ hint }}</p></section>
+    {% endif %}
+    {% endfor %}
   </div>
 
   <nav class="report-nav" aria-label="다른 리포트">

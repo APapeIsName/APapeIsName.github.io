@@ -137,8 +137,38 @@ export function postUrl(env: Env, path: string): string {
   return `${env.BLOG_ORIGIN}/reports/${m[1]}/${m[2]}/${m[3]}/${m[4]}/`;
 }
 
+/** 리포트 양식(_data/report_template.yml)에서 "과제 클리어"에 꼭 필요한 칸을 읽어요. */
+export const DEFAULT_REQUIRED = [{ key: "recall_note", title: "백지 인출 결과" }, { key: "gaps", title: "못 떠올린 것과 틀린 것" }];
+export async function requiredSections(env: Env): Promise<{ key: string; title: string }[]> {
+  try {
+    const f = await getFile(env, "_data/report_template.yml");
+    const tpl = parseYaml(f.text) as { sections?: { key: string; title: string; required?: boolean }[] };
+    const req = (tpl?.sections || []).filter((s) => s && s.required).map((s) => ({ key: String(s.key), title: String(s.title || s.key) }));
+    return req;
+  } catch (e) {
+    if (e instanceof HttpError && e.status === 404) return DEFAULT_REQUIRED;
+    throw e;
+  }
+}
+
+/** 비었거나 옛 안내 문구((괄호)로 감싼 글)만 있으면 빈 칸이에요. */
+export function isFilled(v: string | undefined): boolean {
+  const t = (v || "").trim();
+  return !!t && !(t.startsWith("(") && t.endsWith(")"));
+}
+
+/** "과제 클리어"는 필수 칸을, "인출 OK"는 백지 인출 결과를 채워야 찍을 수 있어요. */
+export function checkCompleteness(f: PostFields, required: { key: string; title: string }[]) {
+  if (f.complete) {
+    const miss = required.filter((r) => !isFilled((f as unknown as Record<string, string | undefined>)[r.key]));
+    if (miss.length) throw new HttpError(400, `과제 클리어를 찍으려면 ${miss.map((m) => m.title).join(", ")} 칸을 채워 주세요.`);
+  }
+  if (f.recalled && !isFilled(f.recall_note)) throw new HttpError(400, "인출 OK를 찍으려면 백지 인출 결과 칸을 채워 주세요.");
+}
+
 export async function publishPost(env: Env, input: Record<string, unknown>, now = new Date()) {
   const f = validateFields(input);
+  checkCompleteness(f, await requiredSections(env));
   let path = postPath(f, now);
   const text = buildMarkdown(f);
   try {
@@ -163,6 +193,7 @@ export async function updatePost(env: Env, path: string, input: Record<string, u
   const sha = typeof input.sha === "string" ? input.sha : "";
   if (!sha) throw new HttpError(400, "수정하려면 파일 버전(sha)이 필요해요.");
   const f = validateFields(input);
+  checkCompleteness(f, await requiredSections(env));
   await putFile(env, path, buildMarkdown(f), `리포트 수정: ${f.title}`, sha);
   return { path, url: postUrl(env, path) };
 }

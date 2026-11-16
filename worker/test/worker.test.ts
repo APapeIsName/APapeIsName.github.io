@@ -30,6 +30,7 @@ const sample = {
   recalled: false,
   goal: "명시적 가용 리스트를 설명할 수 있다",
   recall_note: "- 헤더/푸터\n- 경계 태그",
+  gaps: "병합 조건을 빠뜨렸다",
   body: "## 정리\n\n```c\nprintf(\"{{ not liquid }}\");\n```",
 };
 
@@ -132,7 +133,8 @@ describe("API 권한", () => {
   });
   it("주인은 발행할 수 있고, 저장소에 마크다운 파일을 커밋해요", async () => {
     const calls: { url: string; init: RequestInit }[] = [];
-    vi.stubGlobal("fetch", async (url: string, init: RequestInit) => {
+    vi.stubGlobal("fetch", async (url: string, init: RequestInit = {}) => {
+      if (!init.method || init.method === "GET") return new Response("{}", { status: 404 }); // 양식 파일 없음 → 기본 필수 칸
       calls.push({ url, init });
       return new Response(JSON.stringify({ content: { sha: "s1" }, commit: { sha: "c1" } }), { status: 201 });
     });
@@ -140,7 +142,7 @@ describe("API 권한", () => {
     expect(res.status).toBe(201);
     const out = await res.json();
     expect(out.path).toMatch(/^_posts\/2026-11-20-s2-a1b2c3-\d{4}\.md$/);
-    expect(calls).toHaveLength(1);
+    expect(calls).toHaveLength(1); // 양식 읽기(GET)는 빼고 쓰기만 세요
     expect(calls[0].url).toContain("/repos/APapeIsName/APapeIsName.github.io/contents/_posts/2026-11-20-s2-a1b2c3-");
     expect(calls[0].init.method).toBe("PUT");
     const sent = JSON.parse(calls[0].init.body as string);

@@ -52,39 +52,17 @@ scripts:
       <label class="stamp-toggle is-clear"><input type="checkbox" id="w-complete"><span>과제 클리어</span></label>
       <label class="stamp-toggle is-recall"><input type="checkbox" id="w-recalled"><span>인출 OK</span></label>
     </p>
+    <p class="missing-note" id="w-missing" hidden></p>
   </header>
 
   <div class="report-body">
-    <section>
-      <h2><label for="w-goal">학습 목표</label></h2>
-      <textarea id="w-goal" class="field" rows="2" maxlength="20000" placeholder="이 과제를 마치면 무엇을 할 수 있게 되나요?"></textarea>
-      <div class="preview prose-text" data-for="w-goal" hidden></div>
+    {% for sec in site.data.report_template.sections %}
+    <section class="sec-{{ sec.key }}">
+      <h2><label for="w-{{ sec.key }}">{{ sec.title }}</label>{% if sec.required %} <span class="req-tag" title="채워야 과제 클리어로 인정돼요">필수</span>{% endif %}</h2>
+      <textarea id="w-{{ sec.key }}" class="field{% if sec.key == 'body' %} field-body{% endif %}" rows="{{ sec.rows | default: 3 }}" maxlength="{% if sec.key == 'body' %}100000{% else %}20000{% endif %}" data-section="{{ sec.key }}" data-title="{{ sec.title | escape }}" data-placeholder="{{ sec.placeholder | escape }}"{% if sec.required %} data-required{% endif %}></textarea>
+      <div class="preview prose-text" data-for="w-{{ sec.key }}" hidden></div>
     </section>
-    <section class="recall">
-      <h2><label for="w-recall_note">백지 인출 결과</label></h2>
-      <textarea id="w-recall_note" class="field" rows="5" maxlength="20000" placeholder="자료를 덮고 떠올린 것을 그대로 적어요. 틀려도 괜찮아요."></textarea>
-      <div class="preview prose-text" data-for="w-recall_note" hidden></div>
-    </section>
-    <section>
-      <h2><label for="w-body">정리</label></h2>
-      <textarea id="w-body" class="field field-body" rows="12" maxlength="100000" placeholder="배운 내용을 내 말로 정리해요. 마크다운을 쓸 수 있어요. (## 소제목, **굵게**, `코드`, ``` 코드 블록)"></textarea>
-      <div class="preview prose-text" data-for="w-body" hidden></div>
-    </section>
-    <section class="gaps">
-      <h2><label for="w-gaps">못 떠올린 것과 틀린 것</label></h2>
-      <textarea id="w-gaps" class="field" rows="3" maxlength="20000" placeholder="자료와 대조해서 빠뜨렸거나 틀린 것을 적어요. 다음 복습 때 이것부터 봐요."></textarea>
-      <div class="preview prose-text" data-for="w-gaps" hidden></div>
-    </section>
-    <section>
-      <h2><label for="w-stuck">막힌 점과 해결</label></h2>
-      <textarea id="w-stuck" class="field" rows="3" maxlength="20000" placeholder="어디서 막혔고 어떻게 풀었나요?"></textarea>
-      <div class="preview prose-text" data-for="w-stuck" hidden></div>
-    </section>
-    <section>
-      <h2><label for="w-next_steps">다음에 할 일</label></h2>
-      <textarea id="w-next_steps" class="field" rows="2" maxlength="20000" placeholder="- 다음 과제 읽기"></textarea>
-      <div class="preview prose-text" data-for="w-next_steps" hidden></div>
-    </section>
+    {% endfor %}
   </div>
 
   <div class="dialog write-dialog" id="w-dialog" role="status" aria-live="polite" hidden>

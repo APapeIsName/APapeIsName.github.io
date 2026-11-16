@@ -18,8 +18,9 @@ window.COURSE = {
   },
   seasons: {{ site.data.seasons | jsonify }},
   quests: {{ site.data.quests | jsonify }},
-  reports: [{% for p in site.posts %}
-    {"date": {{ p.date | date: "%Y-%m-%d" | jsonify }}, "quest": {{ p.quest | jsonify }}, "complete": {% if p.complete %}true{% else %}false{% endif %}, "recalled": {% if p.recalled %}true{% else %}false{% endif %}, "hours": {{ p.hours | default: 0 }}, "title": {{ p.title | jsonify }}, "url": {{ p.url | relative_url | jsonify }}, "path": {{ p.path | jsonify }}}{% unless forloop.last %},{% endunless %}{% endfor %}
+  reportTemplate: {{ site.data.report_template | jsonify }},
+  reports: [{% for p in site.posts %}{% assign missing = "" %}{% assign recall_ok = false %}{% assign pbody = p.content | strip %}{% for sec in site.data.report_template.sections %}{% if sec.key == "body" %}{% assign v = pbody %}{% else %}{% assign v = p[sec.key] | strip %}{% endif %}{% assign ok = false %}{% if v and v != "" %}{% assign f = v | slice: 0 %}{% assign l = v | slice: -1 %}{% assign ok = true %}{% if f == "(" and l == ")" %}{% assign ok = false %}{% endif %}{% endif %}{% if sec.key == "recall_note" %}{% assign recall_ok = ok %}{% endif %}{% if sec.required and ok == false %}{% assign missing = missing | append: sec.key | append: "|" %}{% endif %}{% endfor %}
+    {"date": {{ p.date | date: "%Y-%m-%d" | jsonify }}, "quest": {{ p.quest | jsonify }}, "complete": {% if p.complete %}true{% else %}false{% endif %}, "recalled": {% if p.recalled %}true{% else %}false{% endif %}, "hours": {{ p.hours | default: 0 }}, "title": {{ p.title | jsonify }}, "url": {{ p.url | relative_url | jsonify }}, "path": {{ p.path | jsonify }}, "missing": {{ missing | split: "|" | jsonify }}, "recallFilled": {{ recall_ok }}}{% unless forloop.last %},{% endunless %}{% endfor %}
   ],
   notes: [{% assign notes_sorted = site.notes | sort: "date" | reverse %}{% for n in notes_sorted %}
     {"date": {{ n.date | date: "%Y-%m-%d" | jsonify }}, "title": {{ n.title | jsonify }}, "url": {{ n.url | relative_url | jsonify }}, "path": {{ n.path | jsonify }}, "series": {{ n.series | default: "" | jsonify }}, "tags": {% if n.tags %}{{ n.tags | jsonify }}{% else %}[]{% endif %}, "hours": {{ n.hours | default: 0 }}, "summary": {{ n.summary | default: "" | jsonify }}}{% unless forloop.last %},{% endunless %}{% endfor %}
