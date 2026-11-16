@@ -565,3 +565,189 @@ tr.is-done .c-quest { color: var(--hp-dark); }
   .loop { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .loop li:nth-child(2)::after { display: none; }
 }
+
+/* ── 공통: 주인만 보이는 것 ────────────────────── */
+.owner-only[hidden] { display: none !important; }
+.more-links { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 16px 0 0; font-size: 14px; }
+
+/* ── CS 과정 하위 메뉴 ─────────────────────────── */
+.course-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 4px; margin: -12px 0 28px; padding: 6px 8px; background: var(--sky-1); box-shadow: inset 0 calc(var(--b) * -1) 0 0 var(--edge); font-size: 14px; }
+.course-nav-title { color: var(--muted); font-size: 13px; margin-right: 10px; padding-left: 6px; }
+.course-nav a { text-decoration: none; padding: 2px 10px; }
+.course-nav a:hover { background: var(--panel); }
+.course-nav a[aria-current="page"] { background: var(--line); color: #fff; }
+
+/* ── 홈 ───────────────────────────────────────── */
+.home-hero { margin: 4px 0 30px; }
+.home-hero h1 { font-size: 30px; }
+.home-hero > p { margin: 10px 0 0; max-width: 46em; color: var(--muted); font-family: var(--sans); font-size: 15px; -webkit-font-smoothing: auto; }
+.home-stats { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+.home-stats div { display: flex; align-items: baseline; gap: 8px; padding: 4px 12px; background: var(--panel); box-shadow: inset 0 0 0 2px var(--line); }
+.home-stats dt { color: var(--muted); font-size: 13px; }
+.home-stats dd { margin: 0; font-size: 18px; font-variant-numeric: tabular-nums; }
+.home-grid { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 22px 26px; align-items: start; }
+.home-side { display: grid; gap: 22px; }
+.home-heat { grid-column: 1 / -1; }
+
+.feed { list-style: none; margin: 0; padding: 0; }
+.feed-item { display: grid; grid-template-columns: 5.2em minmax(0, 1fr); gap: 2px 14px; padding: 12px 0; border-bottom: 2px dotted var(--faint); align-items: baseline; }
+.feed-item:last-child { border-bottom: 0; }
+.feed-item time, .note-list time { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+.feed-item > div > a, .note-title { font-size: 16px; }
+.feed-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin-top: 4px; color: var(--muted); font-size: 13px; }
+.feed-summary { display: block; margin-top: 3px; color: var(--muted); font-family: var(--sans); font-size: 14px; line-height: 1.6; -webkit-font-smoothing: auto; }
+.feed-series { color: var(--text); text-decoration: none; }
+a.feed-series:hover { text-decoration: underline; }
+.kind-pill { font-size: 11px; line-height: 1; padding: 3px 6px; color: #fff; }
+.kind-pill.is-note { background: var(--xp); }
+.kind-pill.is-report { background: var(--red); }
+
+.tag-chip { display: inline-flex; align-items: baseline; gap: 4px; font-size: 13px; color: var(--muted); text-decoration: none; padding: 0 6px; box-shadow: inset 0 0 0 2px var(--faint); }
+a.tag-chip:hover { color: var(--text); box-shadow: inset 0 0 0 2px var(--edge); }
+.tag-chip[aria-pressed="true"] { color: #fff; background: var(--xp); box-shadow: none; }
+.tag-count { font-size: 11px; color: var(--muted); }
+.tag-chip[aria-pressed="true"] .tag-count { color: inherit; }
+.tag-cloud { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; }
+
+.home-course-top { display: flex; gap: 14px; align-items: center; margin-bottom: 10px; }
+.home-course-top .season-badge svg { width: 48px; height: 48px; }
+.home-course-line { margin: 0; font-size: 15px; }
+.home-course-todo { margin: 0; color: var(--muted); font-size: 13px; }
+.home-course-next { margin: 12px 0 0; font-size: 14px; }
+.home-course-next span { color: var(--muted); font-size: 12px; margin-right: 6px; }
+
+.series-shelf { list-style: none; margin: 0; padding: 0; }
+.series-shelf a { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; text-decoration: none; border-bottom: 2px dotted var(--faint); }
+.series-shelf li:last-child a { border-bottom: 0; }
+.series-shelf a:hover .series-name { text-decoration: underline; text-decoration-color: var(--red); }
+.series-name::before { content: "▤ "; color: var(--xp); }
+.series-count { color: var(--muted); font-size: 13px; white-space: nowrap; }
+
+/* ── 공부 노트 목록 ─────────────────────────────── */
+.note-filters { margin-bottom: 22px; }
+.note-filters .filters { margin-bottom: 12px; }
+a.chip { text-decoration: none; display: inline-block; }
+.filter-state { margin: 0 0 8px; color: var(--muted); font-size: 13px; }
+.note-list { list-style: none; margin: 0; padding: 0; }
+.note-list li { display: grid; grid-template-columns: 7.5em minmax(0, 1fr); gap: 2px 16px; padding: 12px 0; border-bottom: 2px dotted var(--faint); align-items: baseline; }
+.note-list li:last-of-type { border-bottom: 0; }
+.note-list li[hidden] { display: none; }
+.note-no { display: inline-block; color: #fff; background: var(--xp); font-size: 11px; padding: 0 5px; margin-right: 6px; }
+.tag-chip.is-static { box-shadow: none; padding: 0; }
+.series-link { margin-top: 8px !important; }
+
+/* ── 공부 노트 글 ───────────────────────────────── */
+.note { max-width: 780px; margin: 0 auto; }
+.note-head { margin: 0 var(--b) 22px; }
+.note-series { margin: 0 0 6px; font-size: 14px; }
+.note-series a { color: var(--xp); text-decoration: none; }
+.note-series a::before { content: "▤ "; }
+.note-series a:hover { text-decoration: underline; }
+.note-head h1 { font-size: 28px; }
+.note-summary { margin: 10px 0 0; color: var(--muted); font-family: var(--sans); font-size: 16px; -webkit-font-smoothing: auto; }
+.note-meta { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 12px 0 0; color: var(--muted); font-size: 13px; }
+.note-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 0; }
+.note-body { padding: 28px 32px; margin-bottom: 26px; }
+.note-body.prose-text { font-size: 17px; line-height: 1.85; }
+.note-body p, .note-body ul, .note-body ol { margin: 0 0 1.1em; }
+.note-body h2 { font-size: 18px; margin: 34px 0 10px; }
+.note-body h3 { font-size: 16px; margin: 26px 0 8px; }
+.series-box { margin-bottom: 26px; }
+.series-toc { margin: 0; padding-left: 1.6em; font-size: 14px; }
+.series-toc li { padding: 3px 0; }
+.series-toc li.is-here a { text-decoration: none; color: var(--red); }
+.series-toc li.is-here a::after { content: " (지금 글)"; color: var(--muted); font-size: 12px; }
+.series-pager { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 18px; margin: 14px 0 0; padding-top: 12px; border-top: 2px dotted var(--faint); font-size: 14px; }
+.series-pager .is-next { margin-left: auto; text-align: right; }
+
+@media (max-width: 860px) {
+  .home-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 560px) {
+  .home-hero h1, .note-head h1 { font-size: 24px; }
+  .feed-item, .note-list li { grid-template-columns: minmax(0, 1fr); }
+  .note-body { padding: 20px 18px; }
+  .note-body.prose-text { font-size: 16px; }
+  .course-nav-title { flex-basis: 100%; margin-bottom: 2px; }
+}
+
+/* ── 글쓰기 탭 ───────────────────────────────── */
+.write-tabs { display: flex; gap: 4px; max-width: 780px; margin: -8px auto 22px; font-size: 14px; }
+.page-write .write-tabs { max-width: none; }
+.write-tabs a { text-decoration: none; padding: 4px 14px; box-shadow: inset 0 0 0 2px var(--faint); color: var(--muted); }
+.write-tabs a:hover { color: var(--text); box-shadow: inset 0 0 0 2px var(--edge); }
+.write-tabs a[aria-current="page"] { color: #fff; background: var(--line); box-shadow: none; }
+.page-write-note .colophon, .page-manage .colophon { display: none; }
+.page-write-note .write-gate, .page-manage .write-gate { max-width: 780px; }
+
+/* ── 노트 쓰기 ───────────────────────────────── */
+.note-form .note-head { display: grid; gap: 10px; }
+.series-pick { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--muted); }
+.series-select { font: inherit; font-size: 14px; color: var(--xp); background: var(--panel); border: 0; padding: 3px 8px; box-shadow: inset 0 0 0 2px var(--faint); max-width: 100%; }
+.series-select:focus { outline: none; box-shadow: inset 0 0 0 2px var(--red); }
+.summary-input {
+  font-family: var(--sans); font-size: 16px; color: var(--text); background: transparent; border: 0; padding: 4px 0; width: 100%;
+  box-shadow: inset 0 -2px 0 0 var(--faint); -webkit-font-smoothing: auto;
+}
+.summary-input::placeholder { color: var(--muted); opacity: 0.7; }
+.summary-input:focus { outline: none; box-shadow: inset 0 calc(var(--b) * -1) 0 0 var(--red); }
+.note-meta-edit { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 13px; color: var(--muted); }
+.note-meta-edit label { display: inline-flex; align-items: center; gap: 8px; }
+
+.tag-input { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; padding: 6px 8px; background: var(--panel); box-shadow: inset 0 0 0 2px var(--faint); cursor: text; }
+.tag-input:focus-within { box-shadow: inset 0 0 0 2px var(--red); }
+.tag-input-label { color: var(--muted); font-size: 13px; margin-right: 2px; }
+.tag-chips { display: contents; }
+.tag-edit { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; padding: 0 2px 0 8px; background: var(--sky-1); }
+.tag-edit.is-new { background: transparent; box-shadow: inset 0 0 0 2px var(--xp); }
+.tag-new-mark { font-size: 10px; color: #fff; background: var(--xp); padding: 0 4px; }
+.tag-remove { font: inherit; font-size: 14px; line-height: 1; border: 0; background: none; color: var(--muted); cursor: pointer; padding: 2px 5px; }
+.tag-remove:hover { color: var(--red); }
+#n-tag-text { flex: 1 1 10em; min-width: 8em; font: inherit; font-size: 14px; color: var(--text); background: transparent; border: 0; padding: 3px 2px; }
+#n-tag-text:focus { outline: none; }
+.field-help { margin: 0; color: var(--muted); font-size: 12px; }
+.field-help.is-error { color: var(--red); }
+.note-body-edit { padding: 0; }
+.field-plain { box-shadow: none; padding: 24px 28px; font-size: 17px; line-height: 1.85; min-height: 22em; background: transparent; }
+.field-plain:hover, .field-plain:focus { box-shadow: none; }
+.note-body-edit:focus-within { outline: var(--b) solid var(--red); outline-offset: 2px; }
+.note-body-edit .preview { padding: 28px 32px; font-size: 17px; line-height: 1.85; }
+.note-form .write-bar { margin-left: 0; margin-right: 0; }
+
+.mini-form { margin: 4px 0 0; padding: 14px 16px; background: var(--sky-1); box-shadow: inset 0 0 0 2px var(--edge); }
+.mini-form[hidden] { display: none; }
+.mini-title { margin: 0 0 10px; font-size: 14px; }
+.mini-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 14px; }
+.mini-grid label { display: grid; gap: 4px; font-size: 12px; color: var(--muted); }
+.mini-grid .cell-input { width: 100%; }
+.mini-wide { grid-column: 1 / -1; }
+.mini-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin: 12px 0 0; }
+.mini-msg { font-size: 13px; color: var(--muted); }
+
+/* ── 관리 ───────────────────────────────────── */
+.manage { display: grid; gap: 26px; max-width: 780px; margin: 0 auto; }
+.manage[hidden] { display: none; }
+.manage .field-help { margin-bottom: 12px; font-size: 13px; }
+.manage-list { list-style: none; margin: 0 0 16px; padding: 0; }
+.manage-item { padding: 12px 0; border-bottom: 2px dotted var(--faint); }
+.manage-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+.manage-sub { color: var(--muted); font-size: 12px; }
+.manage-desc { margin: 4px 0 0; color: var(--muted); font-family: var(--sans); font-size: 14px; -webkit-font-smoothing: auto; }
+.manage-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 0; }
+.manage-actions .px-btn, .manage-inline .px-btn { padding: 3px 12px; font-size: 13px; }
+.manage-edit { margin-top: 12px; padding: 12px; background: var(--sky-1); }
+.manage-edit[hidden] { display: none; }
+.manage-inline { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 8px; }
+.manage-inline .cell-input { flex: 1 1 14em; }
+
+.todo-write { display: inline-block; margin-top: 4px; font-size: 12px; }
+
+@media (max-width: 560px) {
+  .mini-grid { grid-template-columns: minmax(0, 1fr); }
+  .field-plain { padding: 18px 16px; font-size: 16px; }
+}
+.note-body > h2, .note-body > h3 { display: block; background: none; color: var(--text); padding: 0 0 4px; box-shadow: inset 0 -2px 0 0 var(--faint); }
+.note-body > h3 { box-shadow: none; }
+.note-body > h2::before { content: "■ "; color: var(--red); font-size: 0.8em; }
+.note-body > :first-child { margin-top: 0; }
+.page-manage .page-head { max-width: 780px; margin-left: auto; margin-right: auto; }

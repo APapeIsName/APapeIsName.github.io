@@ -1,0 +1,50 @@
+---
+layout: default
+---
+{% assign s = site.data.series | where: "id", page.series | first %}
+{% assign body = content | strip %}
+<article class="note">
+  <header class="note-head">
+    {% if s %}<p class="note-series"><a href="{{ '/notes/' | relative_url }}?series={{ s.id }}">{{ s.title }}</a></p>{% endif %}
+    <h1>{{ page.title }}</h1>
+    {% if page.summary %}<p class="note-summary">{{ page.summary }}</p>{% endif %}
+    <p class="note-meta">
+      <time datetime="{{ page.date | date: '%Y-%m-%d' }}">{{ page.date | date: "%Y년 %-m월 %-d일" }}</time>
+      {% if page.hours %}<span>{{ page.hours }}시간 공부</span>{% endif %}
+    </p>
+    {% if page.tags.size > 0 %}
+    <p class="note-tags">{% for t in page.tags %}<a class="tag-chip" href="{{ '/notes/' | relative_url }}?tag={{ t | url_encode }}">#{{ t }}</a>{% endfor %}</p>
+    {% endif %}
+  </header>
+
+  <div class="window note-body prose-text">
+    {% if body != "" %}{{ content }}{% else %}<p class="empty">본문이 비어 있어요.</p>{% endif %}
+  </div>
+
+  {% if s %}
+  {% assign in_series = site.notes | where: "series", s.id | sort: "date" %}
+  {% if in_series.size > 1 %}
+  <nav class="window series-box" aria-labelledby="series-box-title">
+    <h2 id="series-box-title">{{ s.title }} 시리즈</h2>
+    <ol class="series-toc">
+      {% for n in in_series %}
+      {% if n.url == page.url %}{% assign idx = forloop.index0 %}{% endif %}
+      <li{% if n.url == page.url %} class="is-here" aria-current="page"{% endif %}><a href="{{ n.url | relative_url }}">{{ n.title }}</a></li>
+      {% endfor %}
+    </ol>
+    <p class="series-pager">
+      {% if idx > 0 %}{% assign prev_i = idx | minus: 1 %}<a href="{{ in_series[prev_i].url | relative_url }}">이전 글: {{ in_series[prev_i].title }}</a>{% endif %}
+      {% assign next_i = idx | plus: 1 %}
+      {% if next_i < in_series.size %}<a class="is-next" href="{{ in_series[next_i].url | relative_url }}">다음 글: {{ in_series[next_i].title }}</a>{% endif %}
+    </p>
+  </nav>
+  {% endif %}
+  {% endif %}
+
+  <nav class="report-nav" aria-label="노트 이동">
+    <a href="{{ '/notes/' | relative_url }}">공부 노트 전체 보기</a>
+    <span class="report-nav-end">
+      <a class="owner-only" hidden href="{{ '/write/note/' | relative_url }}?path={{ page.path | url_encode }}">이 노트 고치기</a>
+    </span>
+  </nav>
+</article>

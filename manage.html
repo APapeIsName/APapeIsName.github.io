@@ -1,0 +1,51 @@
+---
+layout: default
+page_id: manage
+title: 시리즈와 태그 관리
+permalink: /manage/
+noindex: true
+scripts:
+  - /assets/js/manage.js
+---
+<header class="page-head">
+  <h1>시리즈와 태그 관리</h1>
+  <p>글을 쓰기 전에 시리즈와 태그를 미리 만들어 둘 수 있어요. 여기서 바꾼 내용은 블로그에 1~2분 뒤에 반영돼요.</p>
+</header>
+
+<div class="dialog write-gate" id="write-gate" role="status">
+  <p id="write-gate-text">로그인 상태를 확인하고 있어요.</p>
+  <p class="gate-actions" id="write-gate-actions"></p>
+  <span class="dialog-cursor" aria-hidden="true"></span>
+</div>
+
+<div class="manage" id="manage" hidden>
+  <section class="window" aria-labelledby="m-series-title">
+    <h2 id="m-series-title">시리즈</h2>
+    <p class="field-help">책이나 강의처럼 순서대로 이어 읽는 글 묶음이에요. 시리즈 글은 오래된 글부터 1편, 2편으로 보여요.</p>
+    <ul class="manage-list" id="m-series"></ul>
+    <form class="mini-form" id="m-series-form" novalidate>
+      <p class="mini-title">새 시리즈 만들기</p>
+      <div class="mini-grid">
+        <label>이름 <input type="text" name="title" class="cell-input" maxlength="80" placeholder="예: 토비의 스프링 3.1" required></label>
+        <label>주소 이름 (영어, 비워도 돼요) <input type="text" name="id" class="cell-input" maxlength="40" placeholder="예: toby-spring"></label>
+        <label class="mini-wide">설명 (선택) <input type="text" name="description" class="cell-input" maxlength="300"></label>
+        <label class="mini-wide">참고 링크 (선택) <input type="url" name="link" class="cell-input" maxlength="300" placeholder="https://"></label>
+      </div>
+      <p class="mini-actions"><button type="submit" class="px-btn is-primary">시리즈 만들기</button><span class="mini-msg" role="status"></span></p>
+    </form>
+  </section>
+
+  <section class="window" aria-labelledby="m-tags-title">
+    <h2 id="m-tags-title">태그</h2>
+    <p class="field-help">글에 자유롭게 다는 꼬리표예요. 글 쓸 때 새 태그를 달면 여기에도 자동으로 더해져요.</p>
+    <ul class="manage-list" id="m-tags"></ul>
+    <form class="mini-form" id="m-tag-form" novalidate>
+      <p class="mini-title">새 태그 만들기</p>
+      <div class="mini-grid">
+        <label>이름 <input type="text" name="name" class="cell-input" maxlength="30" placeholder="예: JUnit" required></label>
+        <label>설명 (선택) <input type="text" name="description" class="cell-input" maxlength="200"></label>
+      </div>
+      <p class="mini-actions"><button type="submit" class="px-btn is-primary">태그 만들기</button><span class="mini-msg" role="status"></span></p>
+    </form>
+  </section>
+</div>

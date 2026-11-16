@@ -1,7 +1,8 @@
 # ── 내 정보 ───────────────────────────────────────────────
-title: CS 기본기 독학 과정
+title: APapeIsName의 공부 기록
 student: APapeIsName        # 리포트의 '제출자'로 표시돼요. 원하는 이름으로 바꾸세요
-description: 현직 개발자의 1년짜리 CS 독학 기록. 계획서, 진도, 과제 리포트를 모두 공개해요.
+description: 현직 개발자가 공부하며 배운 것을 적는 기술 블로그. 1년짜리 CS 독학 과정의 계획서와 과제 리포트도 함께 올려요.
+course_title: CS 기본기 독학 과정
 
 # ── 과정 설정 ─────────────────────────────────────────────
 course_start: 2026-11-16     # 개강일 (월요일 추천)
@@ -28,12 +29,25 @@ kramdown:
   input: GFM
 permalink: /reports/:year/:month/:day/:title/
 
+# 공부 노트: 과제와 상관없이 배운 것을 적는 글 (_notes 폴더)
+collections:
+  notes:
+    output: true
+    permalink: /notes/:year/:month/:day/:title/
+
 defaults:
   - scope:
       path: ""
       type: posts
     values:
       layout: report
+      section: course
+  - scope:
+      path: ""
+      type: notes
+    values:
+      layout: note
+      section: notes
 
 exclude:
   - README.md

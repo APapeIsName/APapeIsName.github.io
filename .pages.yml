@@ -5,6 +5,47 @@ media:
   output: /assets/uploads   # baseurl을 쓰면 앞에 붙여요 (예: /cs-study/assets/uploads)
 
 content:
+  - name: notes
+    label: 공부 노트
+    type: collection
+    path: _notes
+    format: yaml-frontmatter
+    filename: "{year}-{month}-{day}-note-{hour}{minute}.md"
+    subfolders: false
+    view:
+      primary: title
+      fields: [title, date, series]
+      sort: date
+      order: desc
+    fields:
+      - name: title
+        label: 제목
+        type: string
+        required: true
+      - name: date
+        label: 날짜
+        type: date
+        required: true
+      - name: series
+        label: 시리즈
+        type: string
+        description: "_data/series.yml의 id (예: toby-spring). 비워도 돼요."
+      - name: tags
+        label: 태그
+        type: string
+        list: true
+      - name: summary
+        label: 한 줄 요약
+        type: string
+      - name: hours
+        label: 공부한 시간
+        type: number
+      - name: body
+        label: 본문
+        type: rich-text
+        options:
+          format: markdown
+
   - name: reports
     label: 과제 리포트
     type: collection

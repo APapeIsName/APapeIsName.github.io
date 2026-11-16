@@ -2,57 +2,89 @@
 layout: default
 page_id: home
 ---
-<div class="ds">
-  <section class="screen screen-top" aria-labelledby="intro-title">
-    <h1 id="intro-title">{{ site.title }}</h1>
-    <ol class="map" id="track" aria-label="시즌 지도"></ol>
-    <div class="dialog" aria-live="polite">
-      <p id="status-line">진도를 불러오는 중이에요.</p>
-      <p id="schedule-note"></p>
-      <span class="dialog-cursor" aria-hidden="true"></span>
-    </div>
+{% assign feed = site.posts | concat: site.notes | sort: "date" | reverse %}
+{% capture tag_str %}{% for t in site.data.tags %}{{ t.name }}|{% endfor %}{% for n in site.notes %}{% for t in n.tags %}{{ t }}|{% endfor %}{% endfor %}{% endcapture %}
+{% assign all_tags = tag_str | split: "|" | uniq | sort %}
+
+<section class="home-hero">
+  <h1>{{ site.title }}</h1>
+  <p>{{ site.description }}</p>
+  <dl class="home-stats">
+    <div><dt>공부 노트</dt><dd>{{ site.notes.size }}편</dd></div>
+    <div><dt>과제 리포트</dt><dd>{{ site.posts.size }}편</dd></div>
+    <div><dt>시리즈</dt><dd>{{ site.data.series.size | default: 0 }}개</dd></div>
+  </dl>
+</section>
+
+<div class="home-grid">
+  <section class="window home-feed" aria-labelledby="feed-title">
+    <h2 id="feed-title">최근 글</h2>
+    {% if feed.size > 0 %}
+    <ul class="feed">
+      {% for p in feed limit: 12 %}
+      <li class="feed-item {% if p.collection == 'notes' %}is-note{% else %}is-report{% endif %}">
+        <time datetime="{{ p.date | date: '%Y-%m-%d' }}">{{ p.date | date: "%-m월 %-d일" }}</time>
+        <div>
+          <a href="{{ p.url | relative_url }}">{{ p.title }}</a>
+          <span class="feed-meta">
+            {% if p.collection == 'notes' %}
+              <span class="kind-pill is-note">노트</span>
+              {% assign s = site.data.series | where: "id", p.series | first %}
+              {% if s %}<a class="feed-series" href="{{ '/notes/' | relative_url }}?series={{ s.id }}">{{ s.title }}</a>{% endif %}
+              {% for t in p.tags %}<a class="tag-chip" href="{{ '/notes/' | relative_url }}?tag={{ t | url_encode }}">#{{ t }}</a>{% endfor %}
+            {% else %}
+              {% assign q = site.data.quests | where: "id", p.quest | first %}
+              <span class="kind-pill is-report">리포트</span> {{ q.season }}
+            {% endif %}
+          </span>
+          {% if p.summary %}<span class="feed-summary">{{ p.summary }}</span>{% endif %}
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+    <p class="more-links"><a href="{{ '/notes/' | relative_url }}">공부 노트 전체 보기</a> <a href="{{ '/reports/' | relative_url }}">과제 리포트 전체 보기</a></p>
+    {% else %}
+    <p class="empty">아직 글이 없어요. 오늘 배운 것 하나를 적어 보세요.</p>
+    {% endif %}
   </section>
 
-  <div class="hinge" aria-hidden="true"><span></span><span></span></div>
+  <div class="home-side">
+    <section class="window" aria-labelledby="course-card-title">
+      <h2 id="course-card-title">{{ site.course_title }}</h2>
+      <div class="home-course" id="home-course"><p class="empty">진도를 불러오는 중이에요.</p></div>
+      <p class="more-links"><a href="{{ '/course/' | relative_url }}">과정 대시보드</a> <a href="{{ '/syllabus/' | relative_url }}">계획서</a></p>
+    </section>
 
-  <section class="screen screen-bottom" aria-label="오늘의 메뉴">
-    <div class="menu-grid">
-      <section class="window" aria-labelledby="todo-title">
-        <h2 id="todo-title">이번 주차 강의</h2>
-        <p class="week-dates" id="week-dates"></p>
-        <ol class="menu-list" id="next-quests"></ol>
-        <p class="hint">과제를 마치면 리포트를 내고 "이 과제를 끝냈어요"를 체크하세요. 지도가 바로 움직여요. 전체 주차는 <a href="{{ '/syllabus/' | relative_url }}">계획서</a>에 있어요.</p>
-      </section>
+    <section class="window" aria-labelledby="series-title">
+      <h2 id="series-title">시리즈</h2>
+      {% if site.data.series.size > 0 %}
+      <ul class="series-shelf">
+        {% for s in site.data.series %}
+        {% assign c = site.notes | where: "series", s.id | size %}
+        <li><a href="{{ '/notes/' | relative_url }}?series={{ s.id }}"><span class="series-name">{{ s.title }}</span><span class="series-count">{{ c }}편</span></a></li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="empty">아직 시리즈가 없어요.</p>
+      {% endif %}
+      <p class="more-links owner-only" hidden><a href="{{ '/manage/' | relative_url }}">시리즈와 태그 관리</a></p>
+    </section>
 
-      <section class="window" aria-labelledby="card-title">
-        <h2 id="card-title">학생증</h2>
-        <div id="student-card"></div>
-      </section>
+    {% if all_tags.size > 0 %}
+    <section class="window" aria-labelledby="tags-title">
+      <h2 id="tags-title">태그</h2>
+      <p class="tag-cloud">
+        {% for t in all_tags %}{% if t != "" %}
+        {% assign c = 0 %}{% for n in site.notes %}{% if n.tags contains t %}{% assign c = c | plus: 1 %}{% endif %}{% endfor %}
+        <a class="tag-chip" href="{{ '/notes/' | relative_url }}?tag={{ t | url_encode }}">#{{ t }}<span class="tag-count">{{ c }}</span></a>
+        {% endif %}{% endfor %}
+      </p>
+    </section>
+    {% endif %}
+  </div>
 
-      <section class="window window-wide" aria-labelledby="ledger-title">
-        <h2 id="ledger-title">출석부</h2>
-        <div class="heatmap" id="heatmap" role="img" aria-label="최근 26주 동안 리포트를 내거나 과제를 끝낸 날"></div>
-      </section>
-    </div>
+  <section class="window home-heat" aria-labelledby="heat-title">
+    <h2 id="heat-title">공부 잔디</h2>
+    <div class="heatmap" id="heatmap" role="img" aria-label="최근 26주 동안 노트나 리포트를 쓰거나 과제를 끝낸 날"></div>
   </section>
 </div>
-
-<section class="window recent" aria-labelledby="recent-title">
-  <h2 id="recent-title">최근 제출한 리포트</h2>
-  {% if site.posts.size > 0 %}
-  <ul class="report-list">
-    {% for p in site.posts limit: 5 %}
-    {% assign q = site.data.quests | where: "id", p.quest | first %}
-    <li>
-      <time datetime="{{ p.date | date: '%Y-%m-%d' }}">{{ p.date | date: "%-m월 %-d일" }}</time>
-      <div>
-        <a href="{{ p.url | relative_url }}">{{ p.title }}</a>
-        <span class="report-meta">{{ q.season }}{% if p.complete %}, 과제 완료{% endif %}</span>
-      </div>
-    </li>
-    {% endfor %}
-  </ul>
-  {% else %}
-  <p class="empty">아직 제출한 리포트가 없어요. 첫 과제를 끝내고 리포트를 올려보세요.</p>
-  {% endif %}
-</section>

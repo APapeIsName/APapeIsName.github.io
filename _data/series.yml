@@ -1,0 +1,8 @@
+# 시리즈 목록
+# 블로그 글쓰기 화면이나 관리 화면에서 바뀌어요. 직접 고쳐도 돼요.
+- id: toby-spring
+  title: 토비의 스프링 3.1
+  description: 스프링의 핵심 원리를 DAO 리팩터링부터 차근차근 따라가요.
+- id: testing
+  title: 테스트 공부
+  description: 좋은 테스트를 쓰는 법과 테스트 도구를 정리해요.

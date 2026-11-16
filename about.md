@@ -2,6 +2,7 @@
 layout: default
 page_id: about
 title: 과정 소개
+section: course
 permalink: /about/
 ---
 <div class="window prose" markdown="1">

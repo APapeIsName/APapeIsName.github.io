@@ -204,6 +204,7 @@
   var activity = {};
   (C.reports || []).forEach(function (r) { if (r.date) activity[r.date] = (activity[r.date] || 0) + 1; });
   quests.forEach(function (q) { if (q.doneDate) activity[q.doneDate] = (activity[q.doneDate] || 0) + 1; });
+  (C.notes || []).forEach(function (n) { if (n.date) activity[n.date] = (activity[n.date] || 0) + 1; });
 
   function mondayOf(d) { var x = new Date(d.getTime()); x.setDate(x.getDate() - (x.getDay() + 6) % 7); return x; }
   function weekHasActivity(monday) {
@@ -274,7 +275,8 @@
         (q.type !== "메인" ? '<span class="tag tag-' + esc(q.type) + '">' + esc(q.type) + "</span> " : "");
       return '<li class="' + (q.done ? "is-done" : "") + '"><span class="todo-title">' + tags + esc(q.quest) + "</span>" +
         '<span class="todo-meta">' + esc(weekLabel(q)) + ", " + esc(q.season) + ", 약 " + q.hours + "시간" + (q.done ? ", 끝냄" : "") + "</span>" +
-        (q.recall && !q.done ? '<span class="todo-recall">인출: ' + esc(q.recall) + "</span>" : "") + "</li>";
+        (q.recall && !q.done ? '<span class="todo-recall">인출: ' + esc(q.recall) + "</span>" : "") +
+        (!q.done ? '<a class="owner-only todo-write" hidden href="' + esc(cfg.writeUrl) + "?quest=" + encodeURIComponent(q.id) + '">리포트 쓰기</a>' : "") + "</li>";
     }
     var html = late.map(function (q) { return item(q, "밀림"); }).join("") + thisWeek.map(function (q) { return item(q); }).join("");
     var left = late.length + thisWeek.filter(function (q) { return !q.done; }).length;
@@ -310,6 +312,25 @@
       '<div class="bar-row"><span class="bar-label">XP</span><span class="bar bar-xp"><span style="width:' + Math.round(xpInLevel / cfg.xpPerLevel * 100) + '%"></span></span><span class="bar-num">' + xpInLevel + "/" + cfg.xpPerLevel + "</span></div>" +
       '<div class="badge-case" aria-label="배지 케이스, ' + seasons.filter(function (s) { return s.bossBeaten; }).length + '개 획득">' + badges + "</div>" +
       '<dl class="card-stats">' + stats.map(function (r) { return "<div><dt>" + esc(r[0]) + "</dt><dd>" + esc(r[1]) + "</dd></div>"; }).join("") + "</dl>";
+  }
+
+  /* ── 홈의 과정 카드 ─────────────────────────────── */
+  var homeEl = $("home-course");
+  if (homeEl) {
+    var hw = Math.max(1, currentWeek);
+    var weekLeft = quests.filter(function (q) { return !q.optional && !q.done && q.weekStart <= hw && q.weekEnd >= hw; });
+    var line;
+    if (start && today < start) line = "개강까지 " + Math.round((start - today) / DAY) + "일 남았어요.";
+    else if (allDone) line = "아홉 시즌을 모두 마쳤어요.";
+    else line = (currentWeek > totalWeeks ? totalWeeks + "주차가 지났어요. " : currentWeek + "주차, ") + current.meta.code + " " + current.meta.title + " 수강 중";
+    var todo = overdue.length ? "밀린 과제 " + overdue.length + "개" : weekLeft.length ? "이번 주 남은 과제 " + weekLeft.length + "개" : "이번 주 과제를 다 했어요";
+    var nextQ = overdue[0] || weekLeft[0];
+    homeEl.innerHTML =
+      '<div class="home-course-top"><span class="season-badge" data-badge="' + esc(current ? current.meta.code : "S9") + '" data-unlocked aria-hidden="true"></span>' +
+      '<div><p class="home-course-line">' + esc(line) + '</p><p class="home-course-todo">' + esc(todo) + "</p></div></div>" +
+      '<div class="bar-row"><span class="bar-label">진도</span><span class="bar bar-hp"><span style="width:' + overallPct + '%"></span></span><span class="bar-num">' + overallPct + "%</span></div>" +
+      '<div class="bar-row"><span class="bar-label">Lv.' + level + '</span><span class="bar bar-xp"><span style="width:' + Math.round(xpInLevel / cfg.xpPerLevel * 100) + '%"></span></span><span class="bar-num">' + xpInLevel + "/" + cfg.xpPerLevel + "</span></div>" +
+      (nextQ ? '<p class="home-course-next"><span>다음 과제</span> ' + esc(nextQ.quest) + "</p>" : "");
   }
 
   var heatEl = $("heatmap");

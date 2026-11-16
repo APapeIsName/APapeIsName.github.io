@@ -2,12 +2,13 @@ import { parse as parseYaml } from "yaml";
 import type { Env } from "./env";
 import { HttpError } from "./http";
 import { deleteFile, getFile, listDir, putFile } from "./github";
+import { assertNotePath, noteUrl } from "./notes";
 
 export const KINDS = ["과제 리포트", "강의 노트", "보스 회고", "시즌 결산"] as const;
 const TEXT_FIELDS = ["goal", "recall_note", "gaps", "stuck", "next_steps"] as const;
 const POST_PATH = /^_posts\/(\d{4})-(\d{2})-(\d{2})-([A-Za-z0-9-]+)\.md$/;
-const RAW_OPEN = "{% raw %}";
-const RAW_CLOSE = "{% endraw %}";
+export const RAW_OPEN = "{% raw %}";
+export const RAW_CLOSE = "{% endraw %}";
 
 export interface PostFields {
   title: string;
@@ -25,12 +26,49 @@ export interface PostFields {
   body: string;
 }
 
-function str(v: unknown, max: number, label: string): string | undefined {
+export function str(v: unknown, max: number, label: string): string | undefined {
   if (v === undefined || v === null || v === "") return undefined;
   if (typeof v !== "string") throw new HttpError(400, `${label} 형식이 맞지 않아요.`);
   const s = v.replace(/\r\n/g, "\n").trim();
   if (s.length > max) throw new HttpError(400, `${label}이(가) 너무 길어요 (${max}자까지).`);
   return s || undefined;
+}
+
+export function checkDate(v: unknown, label: string): string {
+  const date = typeof v === "string" ? v : "";
+  const d = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
+  if (!d || Number.isNaN(Date.UTC(+d[1], +d[2] - 1, +d[3])) || +d[2] < 1 || +d[2] > 12 || +d[3] < 1 || +d[3] > 31) {
+    throw new HttpError(400, `${label}이 올바른 날짜가 아니에요.`);
+  }
+  return date;
+}
+
+export function checkHours(v: unknown): number | undefined {
+  if (v === undefined || v === null || v === "") return undefined;
+  const hours = Number(v);
+  if (!Number.isFinite(hours) || hours < 0 || hours > 200) throw new HttpError(400, "쓴 시간은 0~200 사이 숫자로 적어 주세요.");
+  return Math.round(hours * 10) / 10;
+}
+
+/** 본문의 {{ }} 나 {% %} 가 Jekyll 템플릿으로 해석되지 않게 감싸요. */
+export function wrapBody(body: string): string {
+  return body ? `${RAW_OPEN}\n${body}\n${RAW_CLOSE}\n` : "";
+}
+export function unwrapBody(raw: string): string {
+  let body = raw.trim();
+  if (body.startsWith(RAW_OPEN) && body.endsWith(RAW_CLOSE)) body = body.slice(RAW_OPEN.length, -RAW_CLOSE.length).trim();
+  return body;
+}
+export function splitFrontMatter(text: string, what: string): { fm: Record<string, unknown>; body: string } {
+  const m = /^---\n([\s\S]*?)\n---\n?([\s\S]*)$/.exec(text.replace(/\r\n/g, "\n"));
+  if (!m) throw new HttpError(422, `${what} 파일의 머리말(front matter)을 읽지 못했어요.`);
+  return { fm: (parseYaml(m[1]) || {}) as Record<string, unknown>, body: unwrapBody(m[2]) };
+}
+export function fmDate(v: unknown): string {
+  return v instanceof Date ? v.toISOString().slice(0, 10) : String(v ?? "").slice(0, 10);
+}
+export function kstHHMM(now: Date): string {
+  return new Date(now.getTime() + 9 * 3600 * 1000).toISOString().slice(11, 16).replace(":", "");
 }
 
 /** 브라우저에서 온 값을 검사하고 정리해요. */
@@ -39,18 +77,9 @@ export function validateFields(input: Record<string, unknown>): PostFields {
   if (!title) throw new HttpError(400, "제목을 입력해 주세요.");
   const quest = typeof input.quest === "string" ? input.quest.trim() : "";
   if (!/^S\d-[0-9a-f]{6}$/.test(quest)) throw new HttpError(400, "과제를 골라 주세요.");
-  const date = typeof input.date === "string" ? input.date : "";
-  const d = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
-  if (!d || Number.isNaN(Date.UTC(+d[1], +d[2] - 1, +d[3])) || +d[2] < 1 || +d[2] > 12 || +d[3] < 1 || +d[3] > 31) {
-    throw new HttpError(400, "제출일이 올바른 날짜가 아니에요.");
-  }
+  const date = checkDate(input.date, "제출일");
   const kind = (KINDS as readonly string[]).includes(input.kind as string) ? (input.kind as PostFields["kind"]) : "과제 리포트";
-  let hours: number | undefined;
-  if (input.hours !== undefined && input.hours !== null && input.hours !== "") {
-    hours = Number(input.hours);
-    if (!Number.isFinite(hours) || hours < 0 || hours > 200) throw new HttpError(400, "쓴 시간은 0~200 사이 숫자로 적어 주세요.");
-    hours = Math.round(hours * 10) / 10;
-  }
+  const hours = checkHours(input.hours);
   const fields: PostFields = {
     title, date, quest, kind, hours,
     complete: input.complete === true,
@@ -69,18 +98,12 @@ export function buildMarkdown(f: PostFields): string {
   lines.push(`complete: ${f.complete}`, `recalled: ${f.recalled}`);
   for (const k of TEXT_FIELDS) if (f[k]) lines.push(`${k}: ${JSON.stringify(f[k])}`);
   lines.push("---", "");
-  // 본문의 {{ }} 나 {% %} 가 Jekyll 템플릿으로 해석되지 않게 감싸요.
-  const body = f.body ? `${RAW_OPEN}\n${f.body}\n${RAW_CLOSE}\n` : "";
-  return lines.join("\n") + "\n" + body;
+  return lines.join("\n") + "\n" + wrapBody(f.body);
 }
 
 export function parseMarkdown(text: string): PostFields {
-  const m = /^---\n([\s\S]*?)\n---\n?([\s\S]*)$/.exec(text.replace(/\r\n/g, "\n"));
-  if (!m) throw new HttpError(422, "리포트 파일의 머리말(front matter)을 읽지 못했어요.");
-  const fm = (parseYaml(m[1]) || {}) as Record<string, unknown>;
-  let body = m[2].trim();
-  if (body.startsWith(RAW_OPEN) && body.endsWith(RAW_CLOSE)) body = body.slice(RAW_OPEN.length, -RAW_CLOSE.length).trim();
-  const date = fm.date instanceof Date ? fm.date.toISOString().slice(0, 10) : String(fm.date ?? "").slice(0, 10);
+  const { fm, body } = splitFrontMatter(text, "리포트");
+  const date = fmDate(fm.date);
   return {
     title: String(fm.title ?? ""),
     date,
@@ -105,9 +128,7 @@ export function assertPostPath(path: string | null): string {
 
 /** 파일 이름: _posts/날짜-과제id-시분(한국 시간).md */
 export function postPath(f: PostFields, now = new Date()): string {
-  const kst = new Date(now.getTime() + 9 * 3600 * 1000);
-  const hhmm = kst.toISOString().slice(11, 16).replace(":", "");
-  return `_posts/${f.date}-${f.quest.toLowerCase()}-${hhmm}.md`;
+  return `_posts/${f.date}-${f.quest.toLowerCase()}-${kstHHMM(now)}.md`;
 }
 
 export function postUrl(env: Env, path: string): string {
@@ -163,7 +184,7 @@ export async function listPosts(env: Env) {
 
 /** 공개 주소가 열리면 발행된 거예요. GitHub Pages 빌드는 보통 1~2분 걸려요. */
 export async function postStatus(env: Env, path: string, fetcher: typeof fetch = fetch) {
-  const url = postUrl(env, assertPostPath(path));
+  const url = path.startsWith("_notes/") ? noteUrl(env, assertNotePath(path)) : postUrl(env, assertPostPath(path));
   const res = await fetcher(`${url}?check=${Date.now()}`, { method: "GET", redirect: "manual", headers: { "Cache-Control": "no-cache" } });
   return { path, url, state: res.status === 200 ? "published" : "building" };
 }

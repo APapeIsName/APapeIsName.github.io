@@ -96,8 +96,8 @@
       return;
     }
     if (u.role === "owner") {
-      var w = el("a", { "class": "auth-write", href: cfg.writeUrl || "/write/" }, "글쓰기");
-      if (document.body.classList.contains("page-write")) w.setAttribute("aria-current", "page");
+      var w = el("a", { "class": "auth-write", href: cfg.noteWriteUrl || "/write/note/" }, "글쓰기");
+      if (/\bpage-(write|write-note|manage)\b/.test(document.body.className)) w.setAttribute("aria-current", "page");
       slot.appendChild(w);
     }
     var who = el("span", { "class": "auth-who", title: u.role === "owner" ? "블로그 주인" : "구경 온 손님" });

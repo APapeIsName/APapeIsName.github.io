@@ -20,11 +20,9 @@
     <div class="wrap masthead-inner">
       <a class="brand" href="{{ '/' | relative_url }}"><span class="brand-badge" data-badge="S0" data-unlocked aria-hidden="true"></span>{{ site.title }}</a>
       <nav aria-label="주 메뉴">
-        <a href="{{ '/' | relative_url }}" {% if page.page_id == 'home' %}aria-current="page"{% endif %}>대시보드</a>
-        <a href="{{ '/syllabus/' | relative_url }}" {% if page.page_id == 'syllabus' %}aria-current="page"{% endif %}>계획서</a>
-        <a href="{{ '/rules/' | relative_url }}" {% if page.page_id == 'rules' %}aria-current="page"{% endif %}>게임 규칙</a>
-        <a href="{{ '/reports/' | relative_url }}" {% if page.page_id == 'reports' %}aria-current="page"{% endif %}>리포트</a>
-        <a href="{{ '/about/' | relative_url }}" {% if page.page_id == 'about' %}aria-current="page"{% endif %}>과정 소개</a>
+        <a href="{{ '/' | relative_url }}" {% if page.page_id == 'home' %}aria-current="page"{% endif %}>홈</a>
+        <a href="{{ '/notes/' | relative_url }}" {% if page.section == 'notes' %}aria-current="page"{% endif %}>공부 노트</a>
+        <a href="{{ '/course/' | relative_url }}" {% if page.section == 'course' %}aria-current="page"{% endif %}>CS 과정</a>
         <span class="auth-slot" id="auth-slot" hidden></span>
         <button type="button" class="theme-toggle" id="theme-toggle" aria-label="다크 모드로 바꾸기">
           <span class="theme-icon" aria-hidden="true"></span><span class="theme-label">다크 모드</span>
@@ -34,12 +32,13 @@
   </header>
 
   <main id="main" class="wrap">
+    {% if page.section == 'course' %}{% include course-nav.html %}{% endif %}
     {{ content }}
   </main>
 
   <footer class="colophon">
     <div class="wrap">
-      <p>{{ site.student }}의 학습 기록. {{ site.course_start | date: "%Y년 %-m월 %-d일" }} 개강. 픽셀 폰트는 갈무리(SIL OFL)를 썼어요.</p>
+      <p>{{ site.student }}의 공부 기록. {{ site.course_title }}는 {{ site.course_start | date: "%Y년 %-m월 %-d일" }}에 개강했어요. 픽셀 폰트는 갈무리(SIL OFL)를 썼어요.</p>
     </div>
   </footer>
 

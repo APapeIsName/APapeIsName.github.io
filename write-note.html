@@ -1,0 +1,82 @@
+---
+layout: default
+page_id: write-note
+title: 노트 쓰기
+permalink: /write/note/
+noindex: true
+scripts:
+  - /assets/lib/marked.umd.js
+  - /assets/lib/purify.min.js
+  - /assets/js/write-note.js
+---
+{% include write-tabs.html %}
+<div class="dialog write-gate" id="write-gate" role="status">
+  <p id="write-gate-text">로그인 상태를 확인하고 있어요.</p>
+  <p class="gate-actions" id="write-gate-actions"></p>
+  <span class="dialog-cursor" aria-hidden="true"></span>
+</div>
+
+<form class="note write-form note-form" id="note-form" hidden novalidate>
+  <p class="write-notice" id="n-notice" hidden>
+    <span id="n-notice-text"></span>
+    <button type="button" class="link-btn" id="n-notice-action"></button>
+  </p>
+
+  <header class="note-head">
+    <div class="series-pick">
+      <label for="n-series">시리즈</label>
+      <select id="n-series" class="series-select"></select>
+    </div>
+    <div class="mini-form" id="n-series-new" hidden>
+      <p class="mini-title">새 시리즈</p>
+      <div class="mini-grid">
+        <label>이름 <input type="text" id="ns-title" class="cell-input" maxlength="80" placeholder="예: 토비의 스프링 3.1"></label>
+        <label>주소 이름 (영어, 비워도 돼요) <input type="text" id="ns-id" class="cell-input" maxlength="40" placeholder="예: toby-spring" pattern="[a-z0-9][a-z0-9\-]*"></label>
+        <label class="mini-wide">설명 (선택) <input type="text" id="ns-desc" class="cell-input" maxlength="300" placeholder="이 시리즈에서 무엇을 공부하나요?"></label>
+      </div>
+      <p class="mini-actions">
+        <button type="button" class="px-btn is-primary" id="ns-create">시리즈 만들기</button>
+        <button type="button" class="px-btn is-ghost" id="ns-cancel">취소</button>
+        <span class="mini-msg" id="ns-msg" role="status"></span>
+      </p>
+    </div>
+
+    <label class="sr" for="n-title">제목</label>
+    <textarea id="n-title" class="title-input" rows="1" maxlength="200" placeholder="제목을 입력하세요" required></textarea>
+    <div class="preview title-preview" data-for="n-title" hidden></div>
+    <label class="sr" for="n-summary">한 줄 요약</label>
+    <input type="text" id="n-summary" class="summary-input" maxlength="300" placeholder="한 줄 요약 (선택). 목록에 제목과 같이 보여요.">
+
+    <div class="note-meta-edit">
+      <label>날짜 <input type="date" id="n-date" class="cell-input" required></label>
+      <label>공부한 시간 <input type="number" id="n-hours" class="cell-input hours-input" min="0" max="200" step="0.5" inputmode="decimal" placeholder="선택"> 시간</label>
+    </div>
+
+    <div class="tag-input" id="n-tag-box">
+      <span class="tag-input-label" id="n-tag-label">태그</span>
+      <span class="tag-chips" id="n-tags" aria-labelledby="n-tag-label"></span>
+      <input type="text" id="n-tag-text" list="n-tag-list" maxlength="30" placeholder="태그 입력 후 Enter" aria-labelledby="n-tag-label" autocomplete="off">
+      <datalist id="n-tag-list"></datalist>
+    </div>
+    <p class="field-help" id="n-tag-help">목록에 없는 태그는 발행할 때 새로 만들어져요. 10개까지 달 수 있어요.</p>
+  </header>
+
+  <div class="window note-body note-body-edit">
+    <label class="sr" for="n-body">본문</label>
+    <textarea id="n-body" class="field field-body field-plain" rows="18" maxlength="100000" placeholder="공부하며 배운 것을 적어요. 마크다운을 쓸 수 있어요. (## 소제목, **굵게**, `코드`, ``` 코드 블록)"></textarea>
+    <div class="preview prose-text" data-for="n-body" hidden></div>
+  </div>
+
+  <div class="dialog write-dialog" id="n-dialog" role="status" aria-live="polite" hidden>
+    <p id="n-dialog-text"></p>
+    <p class="gate-actions" id="n-dialog-actions"></p>
+    <span class="dialog-cursor" aria-hidden="true"></span>
+  </div>
+
+  <div class="write-bar">
+    <p class="saved" id="n-saved" aria-live="polite"></p>
+    <button type="button" class="px-btn is-ghost" id="n-delete" hidden>노트 지우기</button>
+    <button type="button" class="px-btn" id="n-preview-toggle" aria-pressed="false">미리보기</button>
+    <button type="submit" class="px-btn is-primary" id="n-submit">발행하기</button>
+  </div>
+</form>

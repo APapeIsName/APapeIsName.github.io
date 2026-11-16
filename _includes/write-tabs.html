@@ -1,0 +1,4 @@
+<nav class="write-tabs" aria-label="무엇을 쓸까요">
+  <a href="{{ '/write/note/' | relative_url }}" {% if page.page_id == 'write-note' %}aria-current="page"{% endif %}>공부 노트</a>
+  <a href="{{ '/write/' | relative_url }}" {% if page.page_id == 'write' %}aria-current="page"{% endif %}>과제 리포트</a>
+</nav>
