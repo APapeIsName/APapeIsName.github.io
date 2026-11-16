@@ -791,3 +791,37 @@ a.chip { text-decoration: none; display: inline-block; }
   .checkin-list li { grid-template-columns: minmax(0, 1fr) auto; }
   .checkin-time { grid-column: 1 / -1; }
 }
+
+/* ── 로파이 플레이어 ─────────────────────────────── */
+.lofi {
+  position: fixed; right: 16px; bottom: 16px; z-index: 30;
+  display: flex; align-items: center; gap: 8px; padding: 6px 12px 6px 6px;
+  color: #e7edf8; background: var(--line); font-size: 13px;
+  box-shadow: 0 0 0 var(--b) #8798b3, 4px 4px 0 0 rgba(0, 0, 0, 0.25);
+}
+.page-write .lofi, .page-write-note .lofi { bottom: 76px; }
+.lofi-btn {
+  width: 30px; height: 30px; flex: none; cursor: pointer; font: inherit; font-size: 12px; line-height: 1;
+  color: var(--line); background: var(--gold); border: 0; box-shadow: inset 0 -3px 0 0 rgba(0, 0, 0, 0.2);
+}
+.lofi-btn:hover { background: #fff; }
+.lofi-btn:focus-visible, .lofi-vol:focus-visible { outline: var(--b) solid var(--red); outline-offset: 2px; }
+.lofi-label { white-space: nowrap; max-width: 14em; overflow: hidden; text-overflow: ellipsis; }
+.lofi-eq { display: none; align-items: flex-end; gap: 2px; height: 14px; }
+.lofi-eq i { display: block; width: 3px; height: 4px; background: var(--hp); animation: eq 0.9s steps(3) infinite; }
+.lofi-eq i:nth-child(2) { animation-delay: -0.3s; }
+.lofi-eq i:nth-child(3) { animation-delay: -0.6s; }
+@keyframes eq { 0% { height: 4px; } 33% { height: 12px; } 66% { height: 7px; } 100% { height: 4px; } }
+.lofi.is-playing .lofi-eq { display: inline-flex; }
+.lofi-vol { width: 0; opacity: 0; transition: width 0.15s steps(3), opacity 0.15s; accent-color: var(--gold); }
+.lofi.is-playing .lofi-vol, .lofi:focus-within .lofi-vol { width: 80px; opacity: 1; }
+.lofi.is-waiting .lofi-btn { animation: lofi-wait 1s steps(1) infinite; }
+@keyframes lofi-wait { 50% { background: #fff; } }
+@media (prefers-reduced-motion: reduce) { .lofi-eq i, .lofi.is-waiting .lofi-btn { animation: none; } .lofi-vol { transition: none; } }
+@media (max-width: 560px) {
+  .lofi { right: 10px; bottom: 10px; padding-right: 8px; }
+  .lofi-label { max-width: 8em; }
+  .lofi.is-playing .lofi-vol { width: 56px; }
+}
+.colophon { padding-bottom: 72px; }
+.lofi-pause { display: inline-block; width: 9px; height: 10px; border-left: 3px solid currentColor; border-right: 3px solid currentColor; box-sizing: border-box; vertical-align: -1px; }

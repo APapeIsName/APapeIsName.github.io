@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { clockOffsets, renderScene } from "../src/scene";
 import { getConditions, phaseOf, resetWeatherMemo, weatherLabel, weatherOf } from "../src/weather";
 import { sceneResponse } from "../src/index";
@@ -176,5 +176,20 @@ describe("이벤트가 그림에 들어가요", () => {
     expect(svg).toContain("출근 중");
     expect(svg).toContain('class="bird"');
     expect(svg).not.toContain('class="typeA"');
+  });
+});
+
+import { nowState } from "../src/index";
+describe("로파이용 지금 상태", () => {
+  it("날씨와 시간표, 출석 여부를 돌려줘요", async () => {
+    const env = { GITHUB_REPO_TOKEN: "t", REPO_OWNER: "o", REPO_NAME: "r", REPO_BRANCH: "main" } as any;
+    const f = (async (u: string) => {
+      if (u.includes("open-meteo")) return new Response(JSON.stringify({ current: { temperature_2m: 3, weather_code: 71 }, daily: { sunrise: ["2026-11-16T07:10"], sunset: ["2026-11-16T17:20"] } }));
+      return new Response("{}", { status: 404 });
+    }) as unknown as typeof fetch;
+    vi.stubGlobal("fetch", f);
+    const s = await nowState(env, at("2026-11-16T06:00:00"), f);
+    vi.unstubAllGlobals();
+    expect(s).toMatchObject({ phase: "night", weather: "snow", activity: "study", checkin: false });
   });
 });

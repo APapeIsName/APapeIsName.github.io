@@ -10,6 +10,21 @@ import { activityAt } from "./schedule";
 import { getSignals } from "./activity";
 import { deleteCheckin, endCheckin, getStatus, startCheckin } from "./checkins";
 
+/** 블로그 로파이 플레이어용: 서울의 시간대와 날씨, 생활 시간표, 출석 상태 */
+export async function nowState(env: Env, now = Date.now(), fetcher: typeof fetch = fetch) {
+  const c = await getConditions(now, fetcher);
+  let checkin = false;
+  try { checkin = !!(await getStatus(env, now)).current; } catch { /* 출석 기록을 못 읽어도 음악은 나와요 */ }
+  return {
+    phase: phaseOf(now, c?.sunrise ?? null, c?.sunset ?? null),
+    weather: c?.weather ?? "clear",
+    label: c ? weatherLabel(c.code) : null,
+    tempC: c?.tempC ?? null,
+    activity: activityAt(now),
+    checkin,
+  };
+}
+
 /** 프로필 README 그림: 서울의 시간대와 날씨대로 그때그때 그려요. 누구나 볼 수 있어요. */
 export async function sceneResponse(url: URL, now = Date.now(), fetcher: typeof fetch = fetch, env?: Env, roll: () => number = Math.random): Promise<Response> {
   const theme = url.searchParams.get("theme") === "dark" ? "dark" : "light";
@@ -57,6 +72,7 @@ async function route(req: Request, env: Env, url: URL): Promise<Response> {
 
   if (p === "/api/health") return json({ ok: true });
   if (p === "/scene.svg" && m === "GET") return sceneResponse(url, Date.now(), fetch, env);
+  if (p === "/api/now" && m === "GET") return json(await nowState(env));
 
   // 로그인: 누구나
   if (p === "/auth/login" && m === "GET") return handleLogin(env, url);
