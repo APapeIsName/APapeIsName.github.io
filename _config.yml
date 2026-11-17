@@ -22,6 +22,12 @@ baseurl: ""
 # 예: https://cs-study-api.<내 계정>.workers.dev
 api_base: "https://cs-study-api.apapeisname.workers.dev"
 
+# ── 배경 음악 ─────────────────────────────────────────────
+# 오른쪽 아래 플레이어에서 '유튜브'로 바꾸면 이 영상을 유튜브 공식 플레이어로 띄워요.
+# 영상 주소 youtube.com/watch?v=여기 의 id만 적어요. 비우면 로파이만 나와요.
+bgm_youtube: mBV5PeyfTXo
+bgm_youtube_title: 젤다 BGM
+
 lang: ko
 timezone: Asia/Seoul
 markdown: kramdown

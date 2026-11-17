@@ -1,6 +1,11 @@
-<div class="lofi" id="lofi" role="region" aria-label="로파이 음악">
-  <button type="button" class="lofi-btn" aria-label="로파이 틀기">▶</button>
+<div class="lofi" id="lofi" role="region" aria-label="배경 음악">
+  <div class="lofi-yt" hidden>
+    <div class="lofi-yt-head"><span>유튜브에서 재생 중</span><button type="button" class="lofi-yt-close" aria-label="유튜브 음악 끄기">×</button></div>
+    <div class="lofi-yt-frame"></div>
+  </div>
+  <button type="button" class="lofi-btn" aria-label="음악 틀기">▶</button>
   <span class="lofi-eq" aria-hidden="true"><i></i><i></i><i></i></span>
   <span class="lofi-label">로파이 틀기</span>
   <input class="lofi-vol" type="range" min="0" max="100" step="1" aria-label="음량">
+  <button type="button" class="lofi-mode" aria-label="음악 바꾸기">로파이</button>
 </div>

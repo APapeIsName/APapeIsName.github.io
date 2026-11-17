@@ -349,19 +349,27 @@
 
   /* ── 화면의 작은 플레이어 ─────────────────────── */
   var box = document.getElementById("lofi");
-  if (!box || !(window.AudioContext || window.webkitAudioContext)) return;
+  if (!box) return;
   var C = window.COURSE || {};
-  var API = String((C.config || {}).apiBase || "").replace(/\/+$/, "");
+  var cfg = C.config || {};
+  var API = String(cfg.apiBase || "").replace(/\/+$/, "");
+  var YT_ID = cfg.bgmYoutube || "";
+  var YT_TITLE = cfg.bgmYoutubeTitle || "유튜브 음악";
+  var HAS_AUDIO = !!(window.AudioContext || window.webkitAudioContext);
   var KEY = "cs_lofi";
   var btn = box.querySelector(".lofi-btn"), label = box.querySelector(".lofi-label"), vol = box.querySelector(".lofi-vol");
+  var modeBtn = box.querySelector(".lofi-mode"), ytBox = box.querySelector(".lofi-yt");
   var saved = {};
   try { saved = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) {}
   var volume = typeof saved.volume === "number" ? saved.volume : 0.7;
+  var mode = saved.mode === "youtube" && YT_ID ? "youtube" : HAS_AUDIO ? "lofi" : YT_ID ? "youtube" : "";
+  if (!mode) { box.hidden = true; return; }
+  if (!YT_ID || !HAS_AUDIO) modeBtn.hidden = true;
   vol.value = String(Math.round(volume * 100));
-  var ctx = null, engine = null, timer = null, playing = false, state = null;
+  var playing = false, state = null;
 
   function save(extra) {
-    var o = { volume: volume, playing: playing, seed: saved.seed || Math.floor(Math.random() * 1e9), bar: engine ? engine.bar : saved.bar || 0, bpm: engine ? engine.bpm : saved.bpm || 72, at: Date.now() };
+    var o = { volume: volume, playing: playing, mode: mode, seed: saved.seed || Math.floor(Math.random() * 1e9), bar: lofi.bar(), bpm: lofi.bpm(), ytTime: yt.time(), at: Date.now() };
     Object.keys(extra || {}).forEach(function (k) { o[k] = extra[k]; });
     saved = o;
     try { localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {}
@@ -376,53 +384,126 @@
     return fetch(API + "/api/now").then(function (r) { return r.ok ? r.json() : localState(); }, function () { return localState(); });
   }
 
+  /* ── 소리 1: 직접 합성하는 로파이 ── */
+  var lofi = (function () {
+    var ctx = null, engine = null;
+    return {
+      bar: function () { return engine ? engine.bar : saved.bar || 0; },
+      bpm: function () { return engine ? engine.bpm : saved.bpm || 72; },
+      label: function () { return engine ? engine.mood.label + "의 로파이" : "로파이"; },
+      start: function (resume, done) {
+        if (!ctx) {
+          ctx = new (window.AudioContext || window.webkitAudioContext)();
+          // 페이지를 옮겨 왔으면, 떠난 뒤 흐른 시간만큼 마디를 넘겨서 이어지는 느낌을 줘요
+          var bar = 0;
+          if (resume && saved.at) bar = (saved.bar || 0) + Math.floor((Date.now() - saved.at) / 1000 / (240 / (saved.bpm || 72)));
+          engine = createEngine(ctx, ctx.destination, { state: state || localState(), seed: saved.seed || Math.floor(Math.random() * 1e9), bar: bar, introBars: resume ? 0 : 1 });
+          setInterval(function () {
+            if (!playing || mode !== "lofi") return;
+            engine.scheduleUntil(ctx.currentTime + 0.6);
+            if (Math.random() < 0.02) save();
+          }, 120);
+          setInterval(function () { fetchState().then(function (s) { state = s; if (engine) engine.setMood(s); show(); }); }, 10 * 60 * 1000);
+        }
+        ctx.resume().then(function () {
+          engine.realign(ctx.currentTime + 0.1);
+          engine.scheduleUntil(ctx.currentTime + 0.6);
+          engine.fade(LEVEL.master * volume, resume ? 2.5 : 1.5); // 서서히 들어와요
+          done();
+        });
+      },
+      stop: function () {
+        if (!ctx) return;
+        engine.fade(0, 1.2); // 서서히 줄이고 멈춰요
+        setTimeout(function () { if (!playing || mode !== "lofi") ctx.suspend(); }, 1500);
+      },
+      volume: function () { if (engine) engine.fade(LEVEL.master * volume, 0.2); },
+    };
+  })();
+
+  /* ── 소리 2: 유튜브 영상 (유튜브 공식 플레이어를 그대로 띄워요) ── */
+  var yt = (function () {
+    var frame = null, time = saved.ytTime || 0, ready = false, queue = [];
+    function cmd(func, args) {
+      var msg = JSON.stringify({ event: "command", func: func, args: args || [] });
+      if (frame && ready) frame.contentWindow.postMessage(msg, "*");
+      else queue.push(msg);
+    }
+    window.addEventListener("message", function (e) {
+      if (!frame || e.source !== frame.contentWindow) return;
+      var d;
+      try { d = typeof e.data === "string" ? JSON.parse(e.data) : e.data; } catch (err) { return; }
+      if (d && d.event === "onReady") { ready = true; queue.splice(0).forEach(function (m) { frame.contentWindow.postMessage(m, "*"); }); }
+      if (d && d.info && typeof d.info.currentTime === "number") time = d.info.currentTime;
+    });
+    return {
+      time: function () { return Math.floor(time); },
+      label: function () { return YT_TITLE; },
+      start: function (resume, done) {
+        ytBox.hidden = false;
+        if (!frame) {
+          frame = document.createElement("iframe");
+          frame.title = YT_TITLE + " (유튜브)";
+          frame.allow = "autoplay; encrypted-media; picture-in-picture";
+          frame.src = "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(YT_ID) +
+            "?enablejsapi=1&autoplay=1&playsinline=1&rel=0&start=" + Math.floor(time) + "&origin=" + encodeURIComponent(location.origin);
+          frame.addEventListener("load", function () {
+            // 유튜브가 재생 위치를 알려주도록 해요 (페이지를 옮겨도 그 자리부터 이어 듣게)
+            frame.contentWindow.postMessage(JSON.stringify({ event: "listening", id: 1 }), "*");
+            setTimeout(function () { ready = true; queue.splice(0).forEach(function (m) { frame.contentWindow.postMessage(m, "*"); }); }, 800);
+          });
+          ytBox.querySelector(".lofi-yt-frame").appendChild(frame);
+        }
+        cmd("setVolume", [Math.round(volume * 100)]);
+        cmd("playVideo");
+        done();
+      },
+      stop: function () { cmd("pauseVideo"); ytBox.hidden = true; },
+      volume: function () { cmd("setVolume", [Math.round(volume * 100)]); },
+    };
+  })();
+
+  function src() { return mode === "youtube" ? yt : lofi; }
+
   function show() {
     btn.innerHTML = playing ? '<span class="lofi-pause"></span>' : "▶";
-    btn.setAttribute("aria-label", playing ? "로파이 멈추기" : "로파이 틀기");
+    btn.setAttribute("aria-label", playing ? "음악 멈추기" : "음악 틀기");
     box.classList.toggle("is-playing", playing);
-    label.textContent = engine && playing ? engine.mood.label + "의 로파이" : saved.playing && !playing ? "이어 듣기" : "로파이 틀기";
+    box.classList.toggle("is-youtube", mode === "youtube");
+    modeBtn.textContent = mode === "youtube" ? "유튜브" : "로파이";
+    modeBtn.setAttribute("aria-label", "음악 바꾸기: 지금 " + modeBtn.textContent);
+    label.textContent = playing ? src().label() : saved.playing && !playing ? "이어 듣기" : mode === "youtube" ? YT_TITLE + " 틀기" : "로파이 틀기";
   }
 
   function start(resume) {
-    if (!ctx) {
-      ctx = new (window.AudioContext || window.webkitAudioContext)();
-      // 페이지를 옮겨 왔으면, 떠난 뒤 흐른 시간만큼 마디를 넘겨서 이어지는 느낌을 줘요
-      var bar = 0;
-      if (resume && saved.at) bar = (saved.bar || 0) + Math.floor((Date.now() - saved.at) / 1000 / (240 / (saved.bpm || 72)));
-      engine = createEngine(ctx, ctx.destination, { state: state || localState(), seed: saved.seed || Math.floor(Math.random() * 1e9), bar: bar, introBars: resume ? 0 : 1 });
-      timer = setInterval(function () {
-        if (!playing) return;
-        engine.scheduleUntil(ctx.currentTime + 0.6);
-        if (Math.random() < 0.02) save();
-      }, 120);
-      setInterval(function () { fetchState().then(function (s) { state = s; if (engine) engine.setMood(s); show(); }); }, 10 * 60 * 1000);
-    }
-    ctx.resume().then(function () {
-      playing = true;
-      engine.realign(ctx.currentTime + 0.1);
-      engine.scheduleUntil(ctx.currentTime + 0.6);
-      engine.fade(LEVEL.master * volume, resume ? 2.5 : 1.5); // 서서히 들어와요
-      save();
-      show();
-    });
+    src().start(resume, function () { playing = true; save(); show(); });
   }
   function stop() {
-    if (!ctx) return;
     playing = false;
-    engine.fade(0, 1.2); // 서서히 줄이고 멈춰요
-    setTimeout(function () { if (!playing) ctx.suspend(); }, 1500);
+    src().stop();
     save();
     show();
   }
 
   btn.addEventListener("click", function (e) { e.stopPropagation(); playing ? stop() : start(false); });
+  modeBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    var was = playing;
+    if (was) stop();
+    mode = mode === "youtube" ? "lofi" : "youtube";
+    save();
+    show();
+    if (was) start(false);
+  });
+  ytBox.querySelector(".lofi-yt-close").addEventListener("click", function (e) { e.stopPropagation(); stop(); });
   vol.addEventListener("input", function () {
     volume = Number(vol.value) / 100;
-    if (engine && playing) engine.fade(LEVEL.master * volume, 0.2);
+    if (playing) src().volume();
     save();
   });
   // 페이지를 옮기기 전에 위치를 저장해요
-  window.addEventListener("pagehide", function () { if (engine) save(); });
+  window.addEventListener("pagehide", function () { save(); });
+  setInterval(function () { if (playing && mode === "youtube") save(); }, 5000);
 
   fetchState().then(function (s) { state = s; show(); });
   // 이전 페이지에서 듣고 있었다면, 이 페이지에서 처음 누르거나 키를 칠 때 이어서 틀어요 (브라우저 규칙상 한 번의 동작이 필요해요)
