@@ -843,7 +843,3 @@ a.chip { text-decoration: none; display: inline-block; }
   .lofi-yt { width: calc(100vw - 20px); }
   .lofi-yt-frame iframe { width: 100%; height: calc((100vw - 20px) * 0.5625); min-height: 200px; }
 }
-.rule.is-dig dd > p { margin: 0 0 8px; }
-.dig { margin: 4px 0 10px; padding-left: 1.6em; }
-.dig li { padding: 3px 0; }
-.dig li b { font-family: var(--px); font-weight: 400; margin-right: 6px; color: var(--text); }

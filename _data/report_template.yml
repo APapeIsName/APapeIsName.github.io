@@ -39,7 +39,7 @@ sections:
     title: 막힌 점과 해결
     required: false
     rows: 3
-    placeholder: "어디서 막혔나요? 어떤 질문을 세우고, 무엇을 실험해서 뚫었나요?"
+    placeholder: "어디서 막혔고, 어떻게 뚫었나요?"
   - key: next_steps
     title: 다음에 할 일
     required: false
