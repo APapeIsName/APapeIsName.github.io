@@ -1,0 +1,22 @@
+{% comment %}
+  프로젝트 카드 하나. 쓰기 전에 pj(= _data/series.yml 의 항목)를 정해 두세요.
+  pj_full 이 true면 가치관과 남은 할 일까지 보여줘요(메인 프로젝트 자리).
+{% endcomment %}{% assign pc_total = 0 %}{% assign pc_done = 0 %}{% assign pc_next = "" %}{% for t in pj.todos %}{% assign pc_total = pc_total | plus: 1 %}{% if t.done %}{% assign pc_done = pc_done | plus: 1 %}{% endif %}{% endfor %}{% if pc_total > 0 %}{% assign pc_pct = pc_done | times: 100 | divided_by: pc_total %}{% else %}{% assign pc_pct = 0 %}{% endif %}{% assign pc_notes = site.notes | where: "series", pj.id | sort: "date" %}{% assign pc_status = pj.status | default: "진행 중" %}
+<article class="project-card{% if pj_full %} is-full{% endif %}" data-project="{{ pj.id }}">
+  <header class="project-card-head">
+    <a class="project-name" href="{{ '/project/' | relative_url }}?id={{ pj.id }}">{{ pj.title }}</a>
+    <span class="status-pill is-{% case pc_status %}{% when '잠시 쉼' %}pause{% when '끝남' %}done{% else %}go{% endcase %}">{{ pc_status }}</span>
+  </header>
+  {% if pj.goal %}<p class="project-goal"><span class="project-goal-label">목표</span> {{ pj.goal }}</p>{% elsif pj.description %}<p class="project-goal is-desc">{{ pj.description }}</p>{% endif %}
+  {% if pj_full and pj.values %}
+  <ul class="value-list is-compact">{% for v in pj.values %}<li>{{ v }}</li>{% endfor %}</ul>
+  {% endif %}
+  {% if pc_total > 0 %}
+  <div class="bar-row"><span class="bar-label">할 일</span><span class="bar bar-hp"><span style="width:{{ pc_pct }}%"></span></span><span class="bar-num">{{ pc_done }}/{{ pc_total }}</span></div>
+  {% if pj_full %}{% assign pc_shown = 0 %}<ul class="todo-peek">{% for t in pj.todos %}{% unless t.done %}{% if pc_shown < 3 %}<li>{{ t.text }}</li>{% assign pc_shown = pc_shown | plus: 1 %}{% endif %}{% endunless %}{% endfor %}</ul>{% endif %}
+  {% else %}
+  <p class="project-empty">아직 할 일을 적지 않았어요.</p>
+  {% endif %}
+  <p class="project-meta">노트 {{ pc_notes.size }}편{% if pc_notes.size > 0 %}{% assign pc_last = pc_notes | last %}, 최근 글 {{ pc_last.date | date: "%-m월 %-d일" }}{% endif %}</p>
+  <p class="project-actions owner-only" hidden><button type="button" class="px-btn is-ghost" data-make-main="{{ pj.id }}">메인으로 정하기</button></p>
+</article>

@@ -5,7 +5,7 @@ layout: default
 {% assign body = content | strip %}
 <article class="note">
   <header class="note-head">
-    {% if s %}<p class="note-series"><a href="{{ '/notes/' | relative_url }}?series={{ s.id }}">{{ s.title }}</a></p>{% endif %}
+    {% if s %}<p class="note-series"><a href="{{ '/project/' | relative_url }}?id={{ s.id }}">{{ s.title }}</a></p>{% endif %}
     <h1>{{ page.title }}</h1>
     {% if page.summary %}<p class="note-summary">{{ page.summary }}</p>{% endif %}
     <p class="note-meta">
@@ -25,7 +25,7 @@ layout: default
   {% assign in_series = site.notes | where: "series", s.id | sort: "date" %}
   {% if in_series.size > 1 %}
   <nav class="window series-box" aria-labelledby="series-box-title">
-    <h2 id="series-box-title">{{ s.title }} 시리즈</h2>
+    <h2 id="series-box-title"><a href="{{ '/project/' | relative_url }}?id={{ s.id }}">{{ s.title }}</a>의 글</h2>
     <ol class="series-toc">
       {% for n in in_series %}
       {% if n.url == page.url %}{% assign idx = forloop.index0 %}{% endif %}

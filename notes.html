@@ -13,12 +13,13 @@ scripts:
 
 <header class="page-head" id="notes-head">
   <h1 id="notes-title">공부 노트</h1>
-  <p id="notes-desc">과제와 상관없이 공부하며 배운 것을 적어요. 시리즈나 태그를 골라서 볼 수 있어요.</p>
+  <p id="notes-desc">과제와 상관없이 공부하며 배운 것을 적어요. 프로젝트나 태그를 골라서 볼 수 있어요.</p>
+  <p class="series-link" id="notes-project" data-base="{{ '/project/' | relative_url }}" hidden><a href="#">프로젝트 화면에서 가치관과 할 일 보기</a></p>
   <p class="series-link" id="notes-link" hidden><a href="#" rel="noopener"></a></p>
 </header>
 
 <div class="note-filters">
-  <div class="filters" role="group" aria-label="시리즈로 거르기">
+  <div class="filters" role="group" aria-label="프로젝트로 거르기">
     <a class="chip" href="{{ '/notes/' | relative_url }}" data-series="" aria-pressed="true">전체</a>
     {% for s in site.data.series %}
     <a class="chip" href="{{ '/notes/' | relative_url }}?series={{ s.id }}" data-series="{{ s.id }}" data-title="{{ s.title | escape }}" data-desc="{{ s.description | escape }}" data-link="{{ s.link | escape }}" aria-pressed="false">{{ s.title }}</a>
@@ -54,5 +55,5 @@ scripts:
   {% else %}
   <p class="empty">아직 공부 노트가 없어요. 오늘 배운 것 하나를 적어 보세요.</p>
   {% endif %}
-  <p class="more-links owner-only" hidden><a href="{{ '/write/note/' | relative_url }}" id="notes-write">새 노트 쓰기</a> <a href="{{ '/manage/' | relative_url }}">시리즈와 태그 관리</a></p>
+  <p class="more-links owner-only" hidden><a href="{{ '/write/note/' | relative_url }}" id="notes-write">새 노트 쓰기</a> <a href="{{ '/manage/' | relative_url }}">프로젝트와 태그 관리</a></p>
 </section>

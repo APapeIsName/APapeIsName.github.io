@@ -1,4 +1,4 @@
-/* 시리즈와 태그를 따로 만들고, 고치고, 지우는 화면이에요. 블로그 주인만 쓸 수 있어요. */
+/* 프로젝트와 태그를 따로 만들고, 고치고, 지우는 화면이에요. 블로그 주인만 쓸 수 있어요. */
 (function () {
   "use strict";
   var C = window.COURSE || {};
@@ -50,12 +50,14 @@
   function renderSeries() {
     var ul = $("m-series");
     ul.textContent = "";
-    if (!data.series.length) ul.appendChild(node("li", { "class": "empty" }, "아직 시리즈가 없어요."));
+    if (!data.series.length) ul.appendChild(node("li", { "class": "empty" }, "아직 프로젝트가 없어요."));
     data.series.forEach(function (s) {
       var li = node("li", { "class": "manage-item" });
       var head = node("div", { "class": "manage-head" });
-      head.appendChild(node("span", { "class": "series-name" }, s.title));
-      head.appendChild(node("span", { "class": "manage-sub" }, s.id + ", 글 " + seriesCount(s.id) + "편"));
+      var nameLink = node("a", { "class": "series-name", href: (C.config && C.config.projectUrl || "/project/") + "?id=" + encodeURIComponent(s.id) }, s.title);
+      head.appendChild(nameLink);
+      var todos = s.todos || [];
+      head.appendChild(node("span", { "class": "manage-sub" }, s.id + ", " + (s.status || "진행 중") + ", 글 " + seriesCount(s.id) + "편" + (todos.length ? ", 할 일 " + todos.filter(function (t) { return t.done; }).length + "/" + todos.length : "")));
       li.appendChild(head);
       if (s.description) li.appendChild(node("p", { "class": "manage-desc" }, s.description));
       var form = node("form", { "class": "mini-grid manage-edit", hidden: "" });
@@ -78,7 +80,7 @@
       edit.addEventListener("click", function () { form.hidden = !form.hidden; edit.textContent = form.hidden ? "고치기" : "접기"; if (!form.hidden) form.elements.namedItem("title").focus(); });
       row.appendChild(edit);
       var n = seriesCount(s.id);
-      row.appendChild(deleteButton("지우기", n ? "글 " + n + "편은 시리즈 없이 남아요. 한 번 더 누르면 지워져요" : "한 번 더 누르면 지워져요", function (b) {
+      row.appendChild(deleteButton("지우기", n ? "글 " + n + "편은 프로젝트 없이 남아요. 한 번 더 누르면 지워져요" : "한 번 더 누르면 지워져요", function (b) {
         A.api("/api/series?id=" + encodeURIComponent(s.id), { method: "DELETE" }).then(function (r) { data.series = r.all; renderSeries(); }, function (err) { b.disabled = false; msg.textContent = err.message; form.hidden = false; });
       }));
       li.appendChild(row);
@@ -125,11 +127,11 @@
       e.preventDefault();
       var msg = sf.querySelector(".mini-msg");
       var title = sf.elements.namedItem("title").value.trim(), id = sf.elements.namedItem("id").value.trim().toLowerCase();
-      if (!title) { msg.textContent = "시리즈 이름을 입력해 주세요."; sf.elements.namedItem("title").focus(); return; }
+      if (!title) { msg.textContent = "프로젝트 이름을 입력해 주세요."; sf.elements.namedItem("title").focus(); return; }
       if (id && !/^[a-z0-9][a-z0-9-]{0,39}$/.test(id)) { msg.textContent = "주소 이름은 영어 소문자, 숫자, -만 쓸 수 있어요."; sf.elements.namedItem("id").focus(); return; }
       msg.textContent = "만들고 있어요.";
-      A.api("/api/series", { method: "POST", body: { create: true, title: title, id: id, description: sf.elements.namedItem("description").value.trim(), link: sf.elements.namedItem("link").value.trim() } })
-        .then(function (r) { data.series = r.all; renderSeries(); sf.reset(); msg.textContent = "'" + r.series.title + "' 시리즈를 만들었어요."; }, function (err) { msg.textContent = err.message; });
+      A.api("/api/series", { method: "POST", body: { create: true, title: title, id: id, description: sf.elements.namedItem("description").value.trim(), goal: sf.elements.namedItem("goal").value.trim(), link: sf.elements.namedItem("link").value.trim() } })
+        .then(function (r) { data.series = r.all; renderSeries(); sf.reset(); msg.textContent = "'" + r.series.title + "' 프로젝트를 만들었어요."; }, function (err) { msg.textContent = err.message; });
     });
     var tf = $("m-tag-form");
     tf.addEventListener("submit", function (e) {
@@ -165,6 +167,6 @@
     if (user && user.role === "owner") { open(); return; }
     if (opened) return;
     if (!user) gate("관리하려면 먼저 GitHub으로 로그인해 주세요.", [node("a", { href: A.loginUrl(), "class": "px-btn" }, "GitHub으로 로그인")]);
-    else gate("시리즈와 태그는 블로그 주인만 관리할 수 있어요.");
+    else gate("프로젝트와 태그는 블로그 주인만 관리할 수 있어요.");
   });
 })();

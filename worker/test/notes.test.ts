@@ -55,7 +55,7 @@ describe("노트 형식", () => {
   });
   it("잘못된 값을 막아요", () => {
     expect(() => validateNote({ ...note, title: "" })).toThrow("제목");
-    expect(() => validateNote({ ...note, series: "토비" })).toThrow("시리즈");
+    expect(() => validateNote({ ...note, series: "토비" })).toThrow("프로젝트");
     expect(() => validateNote({ ...note, tags: ["a,b"] })).toThrow("쉼표");
     expect(() => validateNote({ ...note, tags: Array.from({ length: 11 }, (_, i) => `t${i}`) })).toThrow("10개");
     expect(() => validateNote({ ...note, body: "x {% endraw %}" })).toThrow();
@@ -71,18 +71,18 @@ describe("노트 형식", () => {
     expect(r.state).toBe("published");
     expect(r.url).toContain("/notes/2026/11/16/note-1430/");
   });
-  it("한글 시리즈 이름은 시간으로 주소 이름을 만들어요", () => {
+  it("한글 프로젝트 이름은 시간으로 주소 이름을 만들어요", () => {
     expect(cleanSeries({ title: "토비의 스프링 3.1" }, [], 1e12).id).toMatch(/^[a-z0-9-]+$/);
     expect(cleanSeries({ title: "Clean Code" }, ["clean-code"]).id).toBe("clean-code-2");
     expect(() => cleanSeries({ title: "x", id: "Bad Id" }, [])).toThrow("영어 소문자");
   });
 });
 
-describe("시리즈와 태그 API", () => {
+describe("프로젝트와 태그 API", () => {
   it("손님은 못 만들어요", async () => {
     expect((await api("/api/series", "POST", { title: "x" }, guest)).status).toBe(403);
   });
-  it("시리즈를 만들고, 고치고, 지워요", async () => {
+  it("프로젝트를 만들고, 고치고, 지워요", async () => {
     let r = await api("/api/series", "POST", { create: true, title: "토비의 스프링", id: "toby-spring", description: "3.1" });
     expect(r.status).toBe(200);
     expect(parseYaml(repo.get("_data/series.yml")!.text)).toEqual([{ id: "toby-spring", title: "토비의 스프링", description: "3.1" }]);
@@ -95,6 +95,37 @@ describe("시리즈와 태그 API", () => {
     expect((await api("/api/series?id=toby-spring", "DELETE")).status).toBe(200);
     expect(parseYaml(repo.get("_data/series.yml")!.text)).toEqual([]);
   });
+  it("프로젝트 칸(목표, 가치관, 할 일, 상태)을 저장하고, 일부만 고치면 나머지는 남아요", async () => {
+    await api("/api/series", "POST", {
+      create: true, id: "side-a", title: "사이드 A", goal: "  끝까지 만든다 ",
+      values: "작게 자주\n\n직접 부딪혀 본다", status: "진행 중",
+      todos: [{ text: "설계", done: true }, "구현", { text: "  " }],
+    });
+    let saved = parseYaml(repo.get("_data/series.yml")!.text)[0];
+    expect(saved).toEqual({ id: "side-a", title: "사이드 A", status: "진행 중", goal: "끝까지 만든다", values: ["작게 자주", "직접 부딪혀 본다"], todos: [{ text: "설계", done: true }, { text: "구현" }] });
+    await api("/api/series", "POST", { id: "side-a", todos: [{ text: "설계", done: true }, { text: "구현", done: true }] });
+    saved = parseYaml(repo.get("_data/series.yml")!.text)[0];
+    expect(saved.goal).toBe("끝까지 만든다");
+    expect(saved.todos[1].done).toBe(true);
+    await api("/api/series", "POST", { id: "side-a", goal: "", values: [] });
+    saved = parseYaml(repo.get("_data/series.yml")!.text)[0];
+    expect(saved.goal).toBeUndefined();
+    expect(saved.values).toBeUndefined();
+    expect((await api("/api/series", "POST", { id: "side-a", status: "대충" })).status).toBe(400);
+    expect((await api("/api/series", "POST", { create: true, id: "cs", title: "x" })).status).toBe(400);
+  });
+  it("메인 프로젝트를 바꾸고, 메인을 지우면 CS 과정으로 돌아가요", async () => {
+    expect((await (await api("/api/taxonomy")).json()).main).toBe("cs");
+    expect((await api("/api/main", "POST", { id: "side-a" }, guest)).status).toBe(403);
+    expect((await api("/api/main", "POST", { id: "nope" })).status).toBe(404);
+    await api("/api/series", "POST", { create: true, id: "side-a", title: "사이드 A" });
+    expect((await api("/api/main", "POST", { id: "side-a" })).status).toBe(200);
+    expect(parseYaml(repo.get("_data/settings.yml")!.text)).toEqual({ main_project: "side-a" });
+    expect((await (await api("/api/taxonomy")).json()).main).toBe("side-a");
+    const r = await api("/api/series?id=side-a", "DELETE");
+    expect((await r.json()).main).toBe("cs");
+    expect(parseYaml(repo.get("_data/settings.yml")!.text).main_project).toBe("cs");
+  });
   it("태그를 만들고 설명을 고치고 지워요", async () => {
     await api("/api/tags", "POST", { create: true, name: "JUnit" });
     expect((await api("/api/tags", "POST", { create: true, name: "junit" })).status).toBe(409);
@@ -105,10 +136,10 @@ describe("시리즈와 태그 API", () => {
 });
 
 describe("노트 API", () => {
-  it("없는 시리즈로는 못 써요", async () => {
+  it("없는 프로젝트로는 못 써요", async () => {
     const r = await api("/api/notes", "POST", note);
     expect(r.status).toBe(400);
-    expect((await r.json()).error).toContain("시리즈를 먼저");
+    expect((await r.json()).error).toContain("프로젝트를 먼저");
   });
   it("쓰면 새 태그가 목록에 더해지고, 고치고 지울 수 있어요", async () => {
     await api("/api/series", "POST", { create: true, id: "toby-spring", title: "토비의 스프링" });

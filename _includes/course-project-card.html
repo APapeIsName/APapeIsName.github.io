@@ -1,0 +1,10 @@
+{% comment %} CS 기본기 독학 과정 카드. 내용은 course.js가 data-course-card 안에 채워요. {% endcomment %}
+<article class="project-card is-course{% if pj_full %} is-full{% endif %}" data-project="cs">
+  <header class="project-card-head">
+    <a class="project-name" href="{{ '/course/' | relative_url }}">{{ site.course_title }}</a>
+    <span class="status-pill is-go">진행 중</span>
+  </header>
+  <div class="home-course" data-course-card><p class="empty">진도를 불러오는 중이에요.</p></div>
+  <p class="project-meta">과제 리포트 {{ site.posts.size }}편{% if pj_full %}, <a href="{{ '/course/' | relative_url }}">과정 대시보드</a> <a href="{{ '/syllabus/' | relative_url }}">계획서</a>{% endif %}</p>
+  <p class="project-actions owner-only" hidden><button type="button" class="px-btn is-ghost" data-make-main="cs">메인으로 정하기</button></p>
+</article>

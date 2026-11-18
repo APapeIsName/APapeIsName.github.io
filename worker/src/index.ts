@@ -3,7 +3,7 @@ import { handleCallback, handleLogin, requireOwner, requireUser } from "./auth";
 import { HttpError, json, readJson, withCors } from "./http";
 import { deletePost, getPost, listPosts, postStatus, publishPost, updatePost } from "./posts";
 import { deleteNote, getNote, publishNote, updateNote } from "./notes";
-import { deleteSeries, deleteTag, getTaxonomy, saveSeries, saveTag } from "./taxonomy";
+import { deleteSeries, deleteTag, getTaxonomy, saveSeries, saveTag, setMain } from "./taxonomy";
 import { getConditions, phaseOf, weatherLabel } from "./weather";
 import { pickRandomEvent, renderScene, situation, type SceneEvents } from "./scene";
 import { activityAt } from "./schedule";
@@ -139,6 +139,10 @@ async function route(req: Request, env: Env, url: URL): Promise<Response> {
     await requireOwner(req, env);
     if (m === "POST") return json(await saveSeries(env, await readJson(req)));
     if (m === "DELETE") return json(await deleteSeries(env, url.searchParams.get("id") || ""));
+  }
+  if (p === "/api/main" && m === "POST") {
+    await requireOwner(req, env);
+    return json(await setMain(env, await readJson(req)));
   }
   if (p === "/api/tags") {
     await requireOwner(req, env);

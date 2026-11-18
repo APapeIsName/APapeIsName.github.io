@@ -7,6 +7,8 @@ scripts:
 {% assign feed = site.posts | concat: site.notes | sort: "date" | reverse %}
 {% capture tag_str %}{% for t in site.data.tags %}{{ t.name }}|{% endfor %}{% for n in site.notes %}{% for t in n.tags %}{{ t }}|{% endfor %}{% endfor %}{% endcapture %}
 {% assign all_tags = tag_str | split: "|" | uniq | sort %}
+{% include main-project.html %}
+{% assign project_n = site.data.series.size | default: 0 | plus: 1 %}
 
 <section class="home-hero">
   <h1>{{ site.title }}</h1>
@@ -14,7 +16,7 @@ scripts:
   <dl class="home-stats">
     <div><dt>공부 노트</dt><dd>{{ site.notes.size }}편</dd></div>
     <div><dt>과제 리포트</dt><dd>{{ site.posts.size }}편</dd></div>
-    <div><dt>시리즈</dt><dd>{{ site.data.series.size | default: 0 }}개</dd></div>
+    <div><dt>프로젝트</dt><dd>{{ project_n }}개</dd></div>
   </dl>
 </section>
 
@@ -34,7 +36,7 @@ scripts:
             {% if p.collection == 'notes' %}
               <span class="kind-pill is-note">노트</span>
               {% assign s = site.data.series | where: "id", p.series | first %}
-              {% if s %}<a class="feed-series" href="{{ '/notes/' | relative_url }}?series={{ s.id }}">{{ s.title }}</a>{% endif %}
+              {% if s %}<a class="feed-series" href="{{ '/project/' | relative_url }}?id={{ s.id }}">{{ s.title }}</a>{% endif %}
               {% for t in p.tags %}<a class="tag-chip" href="{{ '/notes/' | relative_url }}?tag={{ t | url_encode }}">#{{ t }}</a>{% endfor %}
             {% else %}
               {% assign q = site.data.quests | where: "id", p.quest | first %}
@@ -53,25 +55,28 @@ scripts:
   </section>
 
   <div class="home-side">
-    <section class="window" aria-labelledby="course-card-title">
-      <h2 id="course-card-title">{{ site.course_title }}</h2>
-      <div class="home-course" id="home-course"><p class="empty">진도를 불러오는 중이에요.</p></div>
-      <p class="more-links"><a href="{{ '/course/' | relative_url }}">과정 대시보드</a> <a href="{{ '/syllabus/' | relative_url }}">계획서</a></p>
+    <section class="window home-main" aria-labelledby="main-card-title">
+      <h2 id="main-card-title">메인 프로젝트</h2>
+      {% assign pj_full = false %}
+      {% if main_id == "cs" %}{% include course-project-card.html %}{% else %}{% assign pj = main_p %}{% include project-card.html %}{% endif %}
     </section>
 
-    <section class="window" aria-labelledby="series-title">
-      <h2 id="series-title">시리즈</h2>
-      {% if site.data.series.size > 0 %}
-      <ul class="series-shelf">
-        {% for s in site.data.series %}
+    <section class="window" aria-labelledby="side-title">
+      <h2 id="side-title">사이드 프로젝트</h2>
+      {% assign side_n = 0 %}
+      <ul class="side-shelf">
+        {% if main_id != "cs" %}{% assign side_n = 1 %}
+        <li><a href="{{ '/course/' | relative_url }}"><span class="series-name">{{ site.course_title }}</span><span class="side-bar" data-course-pct><span></span></span><span class="series-count">과정</span></a></li>
+        {% endif %}
+        {% for s in site.data.series %}{% if s.id != main_id %}{% assign side_n = side_n | plus: 1 %}
+        {% assign t_total = 0 %}{% assign t_done = 0 %}{% for t in s.todos %}{% assign t_total = t_total | plus: 1 %}{% if t.done %}{% assign t_done = t_done | plus: 1 %}{% endif %}{% endfor %}
+        {% if t_total > 0 %}{% assign t_pct = t_done | times: 100 | divided_by: t_total %}{% else %}{% assign t_pct = 0 %}{% endif %}
         {% assign c = site.notes | where: "series", s.id | size %}
-        <li><a href="{{ '/notes/' | relative_url }}?series={{ s.id }}"><span class="series-name">{{ s.title }}</span><span class="series-count">{{ c }}편</span></a></li>
-        {% endfor %}
+        <li{% if s.status == "끝남" or s.status == "잠시 쉼" %} class="is-quiet"{% endif %}><a href="{{ '/project/' | relative_url }}?id={{ s.id }}"><span class="series-name">{{ s.title }}</span>{% if t_total > 0 %}<span class="side-bar" title="할 일 {{ t_done }}/{{ t_total }}"><span style="width:{{ t_pct }}%"></span></span>{% else %}<span aria-hidden="true"></span>{% endif %}<span class="series-count">{% if s.status == "끝남" or s.status == "잠시 쉼" %}{{ s.status }}{% else %}{{ c }}편{% endif %}</span></a></li>
+        {% endif %}{% endfor %}
       </ul>
-      {% else %}
-      <p class="empty">아직 시리즈가 없어요.</p>
-      {% endif %}
-      <p class="more-links owner-only" hidden><a href="{{ '/manage/' | relative_url }}">시리즈와 태그 관리</a></p>
+      {% if side_n == 0 %}<p class="empty">아직 사이드 프로젝트가 없어요.</p>{% endif %}
+      <p class="more-links"><a href="{{ '/projects/' | relative_url }}">프로젝트 전체 보기</a><a class="owner-only" hidden href="{{ '/manage/' | relative_url }}">새 프로젝트 만들기</a></p>
     </section>
 
     {% if all_tags.size > 0 %}

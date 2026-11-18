@@ -1,0 +1,1 @@
+{% comment %} main_id(메인 프로젝트 id)와 main_p(그 프로젝트, CS 과정이면 비어 있음)를 정해요. {% endcomment %}{% assign main_id = site.data.settings.main_project | default: "cs" %}{% assign main_p = site.data.series | where: "id", main_id | first %}{% unless main_p %}{% assign main_id = "cs" %}{% endunless %}

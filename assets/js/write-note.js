@@ -1,4 +1,4 @@
-/* 공부 노트 쓰기. 시리즈는 여기서 바로 만들 수 있고, 새 태그는 발행할 때 목록에 더해져요. */
+/* 공부 노트 쓰기. 프로젝트는 여기서 바로 만들 수 있고, 새 태그는 발행할 때 목록에 더해져요. */
 (function () {
   "use strict";
 
@@ -43,17 +43,17 @@
   }
   function hush() { dialog.hidden = true; }
 
-  /* ── 시리즈 ─────────────────────────────────── */
+  /* ── 프로젝트 ─────────────────────────────────── */
   var NEW = "__new__";
   function buildSeriesOptions(selected) {
     var sel = f.series;
     sel.textContent = "";
-    sel.appendChild(node("option", { value: "" }, "시리즈 없음"));
+    sel.appendChild(node("option", { value: "" }, "프로젝트 없음"));
     seriesList.forEach(function (s) { sel.appendChild(node("option", { value: s.id }, s.title)); });
     if (selected && !seriesList.some(function (s) { return s.id === selected; })) {
-      sel.appendChild(node("option", { value: selected }, selected + " (목록에 없는 시리즈)"));
+      sel.appendChild(node("option", { value: selected }, selected + " (목록에 없는 프로젝트)"));
     }
-    sel.appendChild(node("option", { value: NEW }, "+ 새 시리즈 만들기"));
+    sel.appendChild(node("option", { value: NEW }, "+ 새 프로젝트 만들기"));
     sel.value = selected || "";
     sel.setAttribute("data-last", sel.value);
   }
@@ -71,7 +71,7 @@
   function createSeries() {
     var title = $("ns-title").value.trim();
     var id = $("ns-id").value.trim().toLowerCase();
-    if (!title) { $("ns-msg").textContent = "시리즈 이름을 입력해 주세요."; $("ns-title").focus(); return; }
+    if (!title) { $("ns-msg").textContent = "프로젝트 이름을 입력해 주세요."; $("ns-title").focus(); return; }
     if (id && !/^[a-z0-9][a-z0-9-]{0,39}$/.test(id)) { $("ns-msg").textContent = "주소 이름은 영어 소문자, 숫자, -만 쓸 수 있어요."; $("ns-id").focus(); return; }
     var btn = $("ns-create");
     btn.disabled = true;
@@ -82,7 +82,7 @@
       buildSeriesOptions(r.series.id);
       closeNewSeries(true);
       scheduleSave();
-      notice("'" + r.series.title + "' 시리즈를 만들었어요. 블로그 목록에는 1~2분 뒤에 보여요.");
+      notice("'" + r.series.title + "' 프로젝트를 만들었어요. 블로그 목록에는 1~2분 뒤에 보여요.");
     }, function (e) {
       btn.disabled = false;
       $("ns-msg").textContent = e.message;
@@ -359,7 +359,7 @@
   }
 
   function refreshTaxonomy() {
-    // 블로그 빌드 전에 만든 시리즈와 태그도 보이게, 서버에서 최신 목록을 받아 와요.
+    // 블로그 빌드 전에 만든 프로젝트와 태그도 보이게, 서버에서 최신 목록을 받아 와요.
     return A.api("/api/taxonomy").then(function (t) {
       var cur = f.series.value === NEW ? f.series.getAttribute("data-last") : f.series.value;
       seriesList = t.series || seriesList;

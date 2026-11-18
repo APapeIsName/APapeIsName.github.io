@@ -1,4 +1,4 @@
-/* 공부 노트 목록: ?series= 나 ?tag= 로 거르고, 시리즈를 고르면 읽는 순서(오래된 글부터)로 보여줘요. */
+/* 공부 노트 목록: ?series= 나 ?tag= 로 거르고, 프로젝트를 고르면 읽는 순서(오래된 글부터)로 보여줘요. */
 (function () {
   "use strict";
   var list = document.getElementById("note-list");
@@ -20,7 +20,7 @@
 
   if (chip) {
     document.getElementById("notes-title").textContent = chip.getAttribute("data-title");
-    document.getElementById("notes-desc").textContent = chip.getAttribute("data-desc") || "시리즈 글을 읽는 순서대로 모았어요.";
+    document.getElementById("notes-desc").textContent = chip.getAttribute("data-desc") || "프로젝트 글을 읽는 순서대로 모았어요.";
     var link = chip.getAttribute("data-link");
     if (link) {
       var box = document.getElementById("notes-link");
@@ -30,6 +30,11 @@
       box.hidden = false;
     }
     document.title = chip.getAttribute("data-title") + " | " + document.title.split(" | ").slice(-1)[0];
+    var pbox = document.getElementById("notes-project");
+    if (pbox) {
+      pbox.querySelector("a").href = pbox.getAttribute("data-base") + "?id=" + encodeURIComponent(series);
+      pbox.hidden = false;
+    }
     var w = document.getElementById("notes-write");
     if (w) w.href += "?series=" + encodeURIComponent(series);
   }
@@ -43,7 +48,7 @@
     return ok;
   });
   if (series) {
-    // 시리즈는 1편부터 읽게 오래된 순으로
+    // 프로젝트는 1편부터 읽게 오래된 순으로
     shown.sort(function (a, b) { return a.getAttribute("data-date") < b.getAttribute("data-date") ? -1 : 1; });
     shown.forEach(function (li, i) {
       list.appendChild(li);

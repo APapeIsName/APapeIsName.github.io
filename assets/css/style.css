@@ -843,3 +843,78 @@ a.chip { text-decoration: none; display: inline-block; }
   .lofi-yt { width: calc(100vw - 20px); }
   .lofi-yt-frame iframe { width: 100%; height: calc((100vw - 20px) * 0.5625); min-height: 200px; }
 }
+
+/* ── 프로젝트 ───────────────────────────────────── */
+.project-card { display: flex; flex-direction: column; gap: 8px; padding: 14px 16px; background: var(--panel); box-shadow: inset 0 0 0 2px var(--line); min-width: 0; }
+.project-card.is-main { box-shadow: inset 0 0 0 2px var(--line), inset 0 0 0 5px var(--edge-hot); }
+.project-main .project-card, .home-main .project-card { box-shadow: none; padding: 0; background: transparent; }
+.project-card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.project-name { font-size: 17px; font-weight: 700; text-decoration: none; color: var(--text); overflow-wrap: anywhere; }
+.project-name:hover { text-decoration: underline; text-decoration-color: var(--red); }
+.project-card.is-full .project-name { font-size: 20px; }
+.status-pill { flex: none; font-size: 11px; line-height: 1; padding: 4px 7px; color: #fff; background: var(--hp-dark); }
+.status-pill.is-pause { background: var(--gold); color: var(--line); }
+.status-pill.is-done { background: var(--muted); }
+.project-goal { margin: 0; font-size: 14px; line-height: 1.6; }
+.project-goal.is-desc { color: var(--muted); }
+.project-goal-label { display: inline-block; font-size: 11px; line-height: 1.5; padding: 0 5px; margin-right: 4px; color: var(--gold); background: var(--line); vertical-align: 1px; }
+.project-goal.is-big { font-size: 17px; margin-bottom: 12px; }
+.project-empty, .project-meta { margin: 0; color: var(--muted); font-size: 13px; }
+.project-meta a { margin-left: 6px; }
+.project-actions { margin: 2px 0 0; }
+.project-card .bar-row { margin: 2px 0; }
+.project-card .home-course { margin: 0; }
+.project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+.project-main { margin-bottom: 22px; }
+.project-main .project-card.is-full { gap: 10px; }
+
+.value-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.value-list li { position: relative; padding: 6px 10px 6px 26px; background: var(--sky-1); font-size: 15px; line-height: 1.5; }
+.value-list li::before { content: ""; position: absolute; left: 10px; top: 13px; width: 6px; height: 6px; background: var(--red); box-shadow: 2px 2px 0 0 var(--line); }
+.value-list.is-compact li { font-size: 13px; padding: 3px 8px 3px 22px; }
+.value-list.is-compact li::before { left: 8px; top: 10px; width: 5px; height: 5px; }
+.todo-peek { margin: 0; padding-left: 18px; font-size: 13px; color: var(--muted); }
+.todo-peek li::marker { content: "□ "; color: var(--line); }
+
+.side-shelf { list-style: none; margin: 0; padding: 0; }
+.side-shelf a { display: grid; grid-template-columns: minmax(0, 1fr) 64px auto; align-items: center; gap: 10px; padding: 8px 0; text-decoration: none; border-bottom: 2px dotted var(--faint); }
+.side-shelf li:last-child a { border-bottom: 0; }
+.side-shelf .series-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.side-shelf a:hover .series-name { text-decoration: underline; text-decoration-color: var(--red); }
+.side-shelf li.is-quiet .series-name { color: var(--muted); }
+.side-bar { position: relative; height: 8px; background: var(--faint); box-shadow: 0 0 0 2px var(--line); overflow: hidden; }
+.side-bar > span { position: absolute; inset: 0 auto 0 0; width: 0; background: var(--hp); }
+.more-links a + a { margin-left: 12px; }
+
+.project-head h1 { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.project-crumb { margin: 0 0 6px !important; font-size: 13px; }
+.project-crumb a { color: var(--muted); }
+.project-crumb a::before { content: "◀ "; font-size: 10px; }
+.main-badge { font-size: 12px; line-height: 1; padding: 5px 8px; background: var(--edge-hot); color: var(--line); }
+.project-head-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; font-size: 13px; color: var(--muted); }
+.project-tools { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px !important; }
+.project-edit { margin-bottom: 22px; }
+.project-edit textarea { width: 100%; resize: vertical; font-family: var(--sans); line-height: 1.6; }
+.project-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 22px 26px; align-items: start; }
+.project-notes { grid-column: 1 / -1; }
+
+.todo-list { list-style: none; margin: 10px 0 0; padding: 0; }
+.todo-list li { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 2px dotted var(--faint); }
+.todo-list li:last-child { border-bottom: 0; }
+.todo-list label { flex: 1; display: flex; align-items: baseline; gap: 10px; cursor: pointer; font-size: 15px; line-height: 1.5; min-width: 0; overflow-wrap: anywhere; }
+.todo-list input[type="checkbox"] { appearance: none; -webkit-appearance: none; flex: none; width: 18px; height: 18px; margin: 0; background: var(--panel); box-shadow: inset 0 0 0 2px var(--line); position: relative; top: 3px; cursor: pointer; }
+.todo-list input[type="checkbox"]:checked { background: var(--hp); }
+.todo-list input[type="checkbox"]:checked::after { content: ""; position: absolute; left: 6px; top: 2px; width: 4px; height: 8px; border: solid var(--line); border-width: 0 3px 3px 0; transform: rotate(45deg); }
+.todo-list input[type="checkbox"]:disabled { cursor: default; }
+.todo-list input[type="checkbox"]:focus-visible { outline: 3px solid var(--edge-hot); outline-offset: 2px; }
+.todo-list li.is-done label span { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--red); }
+.todo-del { flex: none; font: inherit; font-size: 12px; color: var(--muted); background: none; border: 0; padding: 2px 6px; cursor: pointer; opacity: 0; }
+.todo-list li:hover .todo-del, .todo-del:focus-visible { opacity: 1; }
+.todo-del:hover { color: var(--red); }
+@media (hover: none) { .todo-del { opacity: 1; } }
+.todo-add { display: flex; gap: 8px; margin-top: 12px; }
+.todo-add .cell-input { flex: 1; min-width: 0; }
+
+@media (max-width: 760px) {
+  .project-layout { grid-template-columns: minmax(0, 1fr); }
+}

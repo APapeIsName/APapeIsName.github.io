@@ -318,8 +318,11 @@
   }
 
   /* ── 홈의 과정 카드 ─────────────────────────────── */
-  var homeEl = $("home-course");
-  if (homeEl) {
+  // 홈과 프로젝트 목록의 CS 과정 카드(data-course-card)를 같은 내용으로 채워요.
+  var courseCards = document.querySelectorAll("[data-course-card]");
+  C.courseSummary = { pct: overallPct, level: level, done: mainDoneCount, total: mainCount };
+  document.querySelectorAll("[data-course-pct] > span").forEach(function (el) { el.style.width = overallPct + "%"; });
+  if (courseCards.length) {
     var hw = Math.max(1, currentWeek);
     var weekLeft = quests.filter(function (q) { return !q.optional && !q.done && q.weekStart <= hw && q.weekEnd >= hw; });
     var line;
@@ -328,12 +331,15 @@
     else line = (currentWeek > totalWeeks ? totalWeeks + "주차가 지났어요. " : currentWeek + "주차, ") + current.meta.code + " " + current.meta.title + " 수강 중";
     var todo = overdue.length ? "밀린 과제 " + overdue.length + "개" : weekLeft.length ? "이번 주 남은 과제 " + weekLeft.length + "개" : "이번 주 과제를 다 했어요";
     var nextQ = overdue[0] || weekLeft[0];
-    homeEl.innerHTML =
+    C.courseSummary.line = line;
+    var html =
       '<div class="home-course-top"><span class="season-badge" data-badge="' + esc(current ? current.meta.code : "S9") + '" data-unlocked aria-hidden="true"></span>' +
       '<div><p class="home-course-line">' + esc(line) + '</p><p class="home-course-todo">' + esc(todo) + "</p></div></div>" +
       '<div class="bar-row"><span class="bar-label">진도</span><span class="bar bar-hp"><span style="width:' + overallPct + '%"></span></span><span class="bar-num">' + overallPct + "%</span></div>" +
       '<div class="bar-row"><span class="bar-label">Lv.' + level + '</span><span class="bar bar-xp"><span style="width:' + Math.round(xpInLevel / cfg.xpPerLevel * 100) + '%"></span></span><span class="bar-num">' + xpInLevel + "/" + cfg.xpPerLevel + "</span></div>" +
       (nextQ ? '<p class="home-course-next"><span>다음 과제</span> ' + esc(nextQ.quest) + "</p>" : "");
+    courseCards.forEach(function (el) { el.innerHTML = html; });
+    drawBadges();
   }
 
   var heatEl = $("heatmap");

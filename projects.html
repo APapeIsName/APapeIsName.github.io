@@ -1,0 +1,33 @@
+---
+layout: default
+page_id: projects
+section: projects
+title: 프로젝트
+permalink: /projects/
+scripts:
+  - /assets/js/projects.js
+---
+{% include main-project.html %}
+{% assign statuses = "진행 중,잠시 쉼,끝남" | split: "," %}
+<header class="page-head">
+  <h1>프로젝트</h1>
+  <p>메인 프로젝트 하나에 가장 힘을 싣고, 나머지는 사이드 프로젝트로 함께 굴려요. 프로젝트마다 가치관과 목표, 할 일, 글을 모아 둬요.</p>
+</header>
+
+<section class="window project-main" aria-labelledby="pm-title">
+  <h2 id="pm-title">메인 프로젝트</h2>
+  {% assign pj_full = true %}
+  {% if main_id == "cs" %}{% include course-project-card.html %}{% else %}{% assign pj = main_p %}{% include project-card.html %}{% endif %}
+  {% assign pj_full = false %}
+</section>
+
+<section class="window" aria-labelledby="ps-title">
+  <h2 id="ps-title">사이드 프로젝트</h2>
+  <div class="project-grid">
+    {% if main_id != "cs" %}{% include course-project-card.html %}{% endif %}
+    {% for st in statuses %}{% for s in site.data.series %}{% assign s_st = s.status | default: "진행 중" %}{% if s.id != main_id and s_st == st %}{% assign pj = s %}{% include project-card.html %}{% endif %}{% endfor %}{% endfor %}
+  </div>
+  {% if main_id == "cs" and site.data.series.size == 0 %}<p class="empty">아직 사이드 프로젝트가 없어요.</p>{% endif %}
+  <p class="more-links owner-only" hidden><a href="{{ '/manage/' | relative_url }}">새 프로젝트 만들기</a></p>
+  <p class="mini-msg" id="main-msg" role="status"></p>
+</section>

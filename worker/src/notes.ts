@@ -25,7 +25,7 @@ export function validateNote(input: Record<string, unknown>): NoteFields {
   let series: string | undefined;
   if (typeof input.series === "string" && input.series.trim()) {
     series = input.series.trim();
-    if (!SERIES_ID.test(series)) throw new HttpError(400, "시리즈가 올바르지 않아요.");
+    if (!SERIES_ID.test(series)) throw new HttpError(400, "프로젝트가 올바르지 않아요.");
   }
   const raw = Array.isArray(input.tags) ? input.tags : [];
   const tags: string[] = [];
@@ -67,7 +67,7 @@ export function assertNotePath(path: string | null): string {
   return path;
 }
 
-/** 파일 이름: _notes/날짜-시리즈(없으면 note)-시분(한국 시간).md */
+/** 파일 이름: _notes/날짜-프로젝트(없으면 note)-시분(한국 시간).md */
 export function notePath(f: NoteFields, now = new Date()): string {
   return `_notes/${f.date}-${f.series || "note"}-${kstHHMM(now)}.md`;
 }
