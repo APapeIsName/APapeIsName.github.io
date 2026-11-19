@@ -94,6 +94,7 @@
       h.push('<button type="button" class="px-btn" id="pv-edit">' + (editing ? "고치기 닫기" : "고치기") + "</button>");
       if (!isMain) h.push('<button type="button" class="px-btn is-ghost" data-make-main="' + esc(p.id) + '">메인으로 정하기</button>');
       h.push('<a class="px-btn is-ghost" href="' + esc(cfg.noteWriteUrl) + "?series=" + encodeURIComponent(p.id) + '">이 프로젝트에 노트 쓰기</a>');
+      h.push('<button type="button" class="px-btn is-ghost pv-delete" id="pv-delete">프로젝트 지우기</button>');
       h.push("</p>");
     }
     h.push('<p class="mini-msg" id="pv-msg" role="status"></p>');
@@ -187,6 +188,37 @@
 
   function wire() {
     if (!owner) return;
+    var del = $("pv-delete");
+    if (del) {
+      var armed = null;
+      del.addEventListener("click", function () {
+        var p = project();
+        var n = notesOf(p.id).length;
+        if (!armed) {
+          // 실수로 지우지 않게 한 번 더 눌러야 지워져요.
+          del.textContent = (n ? "글 " + n + "편은 프로젝트 없이 남아요. " : "") + "한 번 더 누르면 지워져요";
+          del.classList.add("is-armed");
+          armed = setTimeout(function () { armed = null; del.textContent = "프로젝트 지우기"; del.classList.remove("is-armed"); }, 4000);
+          return;
+        }
+        clearTimeout(armed); armed = null;
+        del.disabled = true;
+        msg("지우고 있어요.");
+        saving = saving.then(function () {
+          return A.api("/api/series?id=" + encodeURIComponent(p.id), { method: "DELETE" }).then(function (r) {
+            if (r.main) data.main = r.main;
+            view.innerHTML = '<header class="page-head"><h1>\'' + esc(p.title) + '\' 프로젝트를 지웠어요</h1>' +
+              "<p>" + (n ? "이 프로젝트에 쓴 노트 " + n + "편은 프로젝트 없는 노트로 남아요. " : "") + LAG + "</p>" +
+              '<p><a class="px-btn" href="' + esc(cfg.projectsUrl) + '">프로젝트 목록으로</a></p></header>';
+          }, function (err) {
+            del.disabled = false;
+            del.textContent = "프로젝트 지우기";
+            del.classList.remove("is-armed");
+            msg(err.message);
+          });
+        });
+      });
+    }
     var edit = $("pv-edit");
     if (edit) edit.addEventListener("click", function () { editing = !editing; render(); if (editing) $("pv-form").elements.namedItem("title").focus(); });
     var form = $("pv-form");
