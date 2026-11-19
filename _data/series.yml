@@ -1,4 +1,4 @@
-# 시리즈 목록
+# 프로젝트 목록
 # 블로그 글쓰기 화면이나 관리 화면에서 바뀌어요. 직접 고쳐도 돼요.
 - id: toby-spring
   title: 토비의 스프링 6
@@ -7,16 +7,6 @@
 - id: testing
   title: 테스트 공부
   description: 좋은 테스트를 쓰는 법과 테스트 도구를 정리해요.
-- id: spring-internals
-  title: 스프링 구조 파기
-  description: 질문 하나를 정하고 스프링 소스를 따라가며 확인해요. 토비의 스프링에서 생긴 궁금증을 여기서 풀어요.
-  status: 진행 중
-  goal: 스프링이 내 코드를 어떻게 실행하는지 소스로 확인하고, 작은 DI 컨테이너를 직접 만들어 보기
-  todos:
-    - text: "빈은 언제, 어떤 순서로 만들어지나? (ApplicationContext의 refresh 따라가기)"
-    - text: "@Transactional을 붙이면 실제로 무슨 일이 일어나나? (프록시와 AOP)"
-    - text: 요청 하나가 DispatcherServlet을 지나 컨트롤러까지 가는 길
-    - text: 작은 DI 컨테이너 직접 만들기
 - id: handmade-shell
   title: 맨손으로 쉘 만들기
   description: C로 시스템 콜을 직접 불러 가며 나만의 쉘을 만들어요.
