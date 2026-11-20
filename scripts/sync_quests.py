@@ -25,11 +25,11 @@ PAGES = ROOT / ".pages.yml"
 
 HEADER_MAP = {
     "완료": "done", "인출": "recalled", "시즌": "season", "종류": "type",
-    "퀘스트": "quest", "인출 방법": "recall", "자료": "resource",
+    "퀘스트": "quest", "실습 거리": "practice", "인출 방법": "practice", "자료": "resource",
     "예상(h)": "hours", "완료일": "date",
 }
 COLUMNS = ["id", "done", "recalled", "season", "type", "quest",
-           "recall", "resource", "hours", "date"]
+           "practice", "resource", "hours", "date"]
 
 
 def to_bool(value: str) -> str:

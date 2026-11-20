@@ -149,8 +149,8 @@ export async function modify<T>(env: Env, path: string, header: string, message:
 }
 
 export async function getTaxonomy(env: Env) {
-  const [s, t, main] = await Promise.all([readList<Series>(env, SERIES_FILE), readList<Tag>(env, TAGS_FILE), getMain(env)]);
-  return { series: s.items, tags: t.items, main };
+  const [s, t, main, l] = await Promise.all([readList<Series>(env, SERIES_FILE), readList<Tag>(env, TAGS_FILE), getMain(env), readList<{ id: string }>(env, "_data/links.yml")]);
+  return { series: s.items, tags: t.items, main, links: l.items };
 }
 
 export async function saveSeries(env: Env, input: Record<string, unknown>, now = Date.now()) {

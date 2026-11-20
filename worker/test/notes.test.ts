@@ -126,6 +126,29 @@ describe("프로젝트와 태그 API", () => {
     expect((await r.json()).main).toBe("cs");
     expect(parseYaml(repo.get("_data/settings.yml")!.text).main_project).toBe("cs");
   });
+  it("링크를 넣고 고치고 지워요 (프로젝트별, 제목 없으면 주소로)", async () => {
+    expect((await api("/api/links", "POST", { url: "https://missing-semester-kr.github.io/" }, guest)).status).toBe(403);
+    let r = await api("/api/links", "POST", { url: "https://missing-semester-kr.github.io/", project: "cs", note: "  시간 날 때 " });
+    expect(r.status).toBe(200);
+    const first = (await r.json()).link;
+    expect(first).toMatchObject({ title: "missing-semester-kr.github.io", project: "cs", note: "시간 날 때" });
+    expect(first.added).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect((await api("/api/links", "POST", { url: "https://missing-semester-kr.github.io/", project: "cs" })).status).toBe(409);
+    expect((await api("/api/links", "POST", { url: "ftp://x.y" })).status).toBe(400);
+    expect((await api("/api/links", "POST", { url: "https://a.b", project: "nope" })).status).toBe(400);
+    await api("/api/series", "POST", { create: true, id: "shell", title: "쉘" });
+    r = await api("/api/links", "POST", { url: "https://a.b/c/", title: "쉘 자료", project: "shell" });
+    const second = (await r.json()).link;
+    let saved = parseYaml(repo.get("_data/links.yml")!.text);
+    expect(saved.map((l: { id: string }) => l.id)).toEqual([second.id, first.id]);
+    await api("/api/links", "POST", { id: first.id, url: first.url, title: "Missing Semester 한국어", project: "cs" });
+    saved = parseYaml(repo.get("_data/links.yml")!.text);
+    expect(saved[1].title).toBe("Missing Semester 한국어");
+    expect(saved[1].note).toBeUndefined();
+    expect((await (await api("/api/taxonomy")).json()).links).toHaveLength(2);
+    expect((await api(`/api/links?id=${second.id}`, "DELETE")).status).toBe(200);
+    expect((await api(`/api/links?id=${second.id}`, "DELETE")).status).toBe(404);
+  });
   it("태그를 만들고 설명을 고치고 지워요", async () => {
     await api("/api/tags", "POST", { create: true, name: "JUnit" });
     expect((await api("/api/tags", "POST", { create: true, name: "junit" })).status).toBe(409);

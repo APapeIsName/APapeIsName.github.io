@@ -22,7 +22,7 @@ layout: default
       <tbody>
         <tr><th scope="row">과목</th><td>{% if s %}<a href="{{ '/syllabus/' | relative_url }}#{{ s.slug }}">{{ s.code }} {{ s.title }}</a>{% else %}지정 안 됨{% endif %}</td></tr>
         <tr><th scope="row">과제</th><td>{% if q %}{{ q.quest }}{% else %}{{ page.quest | default: "지정 안 됨" }}{% endif %}</td></tr>
-        {% if q.recall %}<tr><th scope="row">인출 방법</th><td>{{ q.recall }}</td></tr>{% endif %}
+        {% if q.practice %}<tr><th scope="row">실습 거리</th><td>{{ q.practice }}</td></tr>{% endif %}
         <tr><th scope="row">제출자</th><td>{{ site.student }}</td></tr>
         <tr><th scope="row">제출일</th><td><time datetime="{{ page.date | date: '%Y-%m-%d' }}">{{ page.date | date: "%Y년 %-m월 %-d일" }}</time></td></tr>
         {% if page.hours %}<tr><th scope="row">쓴 시간</th><td>{{ page.hours }}시간</td></tr>{% endif %}
@@ -43,7 +43,7 @@ layout: default
     {% if ok %}
     <section class="sec-{{ sec.key }}"><h2>{{ sec.title }}</h2><div class="prose-text">{% if sec.key == "body" %}{{ content }}{% else %}{{ v | markdownify }}{% endif %}</div></section>
     {% elsif sec.required %}
-    {% assign hint = overrides[sec.key] | default: sec.placeholder | replace: "{recall}", q.recall | replace: "{resource}", q.resource %}
+    {% assign hint = overrides[sec.key] | default: sec.placeholder | replace: "{practice}", q.practice | replace: "{resource}", q.resource %}
     <section class="sec-{{ sec.key }} is-missing"><h2>{{ sec.title }}</h2><p class="missing-box"><span class="missing-tag">아직 비어 있어요</span> {{ hint }}</p></section>
     {% endif %}
     {% endfor %}

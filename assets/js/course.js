@@ -118,7 +118,7 @@
     // 리포트는 "과제 클리어"를 찍고 필수 칸까지 채워야 완성으로 쳐요.
     var doneByReport = rs.filter(reportComplete).map(function (r) { return r.date; }).sort()[0];
     return {
-      id: q.id, season: q.season, type: q.type, quest: q.quest, recall: q.recall,
+      id: q.id, season: q.season, type: q.type, quest: q.quest, practice: q.practice,
       hours: parseFloat(q.hours) || 0,
       done: bool(q.done) || !!doneByReport,
       recalled: bool(q.recalled) || rs.some(function (r) { return r.recalled && r.recallFilled !== false; }),
@@ -278,7 +278,7 @@
         (q.type !== "메인" ? '<span class="tag tag-' + esc(q.type) + '">' + esc(q.type) + "</span> " : "");
       return '<li class="' + (q.done ? "is-done" : "") + '"><span class="todo-title">' + tags + esc(q.quest) + "</span>" +
         '<span class="todo-meta">' + esc(weekLabel(q)) + ", " + esc(q.season) + ", 약 " + q.hours + "시간" + (q.done ? ", 끝냄" : "") + "</span>" +
-        (q.recall && !q.done ? '<span class="todo-recall">인출: ' + esc(q.recall) + "</span>" : "") +
+        (q.practice && !q.done ? '<span class="todo-practice">실습 거리: ' + esc(q.practice) + "</span>" : "") +
         (!q.done ? '<a class="owner-only todo-write" hidden href="' + esc(cfg.writeUrl) + "?quest=" + encodeURIComponent(q.id) + '">리포트 쓰기</a>' : "") + "</li>";
     }
     var html = late.map(function (q) { return item(q, "밀림"); }).join("") + thisWeek.map(function (q) { return item(q); }).join("");

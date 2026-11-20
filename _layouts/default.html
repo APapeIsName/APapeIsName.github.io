@@ -23,6 +23,7 @@
         <a href="{{ '/' | relative_url }}" {% if page.page_id == 'home' %}aria-current="page"{% endif %}>홈</a>
         <a href="{{ '/projects/' | relative_url }}" {% if page.section == 'projects' %}aria-current="page"{% endif %}>프로젝트</a>
         <a href="{{ '/notes/' | relative_url }}" {% if page.section == 'notes' %}aria-current="page"{% endif %}>공부 노트</a>
+        <a href="{{ '/links/' | relative_url }}" {% if page.section == 'links' %}aria-current="page"{% endif %}>링크 모음</a>
         <a href="{{ '/course/' | relative_url }}" {% if page.section == 'course' %}aria-current="page"{% endif %}>CS 과정</a>
         <span class="auth-slot" id="auth-slot" hidden></span>
         <button type="button" class="theme-toggle" id="theme-toggle" aria-label="다크 모드로 바꾸기">

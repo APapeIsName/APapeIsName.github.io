@@ -119,18 +119,18 @@
     var q = questsById[f.quest.value];
     var s = q ? seasonsById[q.season] : null;
     $("w-subject").textContent = s ? s.code + " " + s.title : "과제를 고르면 채워져요";
-    $("w-recall").textContent = q && q.recall ? q.recall : "";
-    $("w-recall-row").hidden = !(q && q.recall);
+    $("w-practice").textContent = q && q.practice ? q.practice : "";
+    $("w-practice-row").hidden = !(q && q.practice);
     f.hours.placeholder = q && q.hours ? "예상 " + q.hours : "";
     var badge = $("w-badge");
     badge.setAttribute("data-badge", s ? s.code : "S0");
     if (C.drawBadges) C.drawBadges();
-    // 칸마다 과제에 맞는 안내 문구를 넣어요: 과제별 문구 → 양식 문구(인출 방법, 자료로 채움)
+    // 칸마다 과제에 맞는 안내 문구를 넣어요: 과제별 문구 → 양식 문구(실습 거리, 자료로 채움)
     var raw = (C.quests || []).filter(function (x) { return x.id === f.quest.value; })[0] || {};
     var own = overrides[f.quest.value] || {};
     SECTIONS.forEach(function (x) {
       var text = own[x.key] || x.placeholder;
-      text = text.replace(/\{recall\}/g, raw.recall || "계획서의 인출 방법").replace(/\{resource\}/g, raw.resource || "자료");
+      text = text.replace(/\{(practice|recall)\}/g, raw.practice || "계획서의 실습 거리").replace(/\{resource\}/g, raw.resource || "자료");
       x.el.placeholder = text;
     });
     syncMissing();

@@ -16,6 +16,7 @@ window.COURSE = {
     manageUrl: {{ '/manage/' | relative_url | jsonify }},
     checkinsUrl: {{ '/checkins/' | relative_url | jsonify }},
     projectsUrl: {{ '/projects/' | relative_url | jsonify }},
+    linksUrl: {{ '/links/' | relative_url | jsonify }},
     projectUrl: {{ '/project/' | relative_url | jsonify }},
     courseTitle: {{ site.course_title | jsonify }},
     bgmYoutube: {{ site.bgm_youtube | default: "" | jsonify }},
@@ -33,6 +34,7 @@ window.COURSE = {
   ],
   checkins: {% if site.data.checkins %}{{ site.data.checkins | jsonify }}{% else %}[]{% endif %},
   series: {% if site.data.series %}{{ site.data.series | jsonify }}{% else %}[]{% endif %},
+  links: {% if site.data.links %}{{ site.data.links | jsonify }}{% else %}[]{% endif %},
   mainProject: {% include main-project.html %}{{ main_id | jsonify }},
   tags: {% if site.data.tags %}{{ site.data.tags | jsonify }}{% else %}[]{% endif %}
 };

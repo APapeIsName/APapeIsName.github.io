@@ -89,6 +89,7 @@ npm run dev       # 로컬 실행 (비밀값은 worker/.dev.vars 에, 저장소�
 | `PUT /api/posts/item?path=` | 주인 | 리포트 수정 (`sha` 필요) |
 | `DELETE /api/posts/item?path=&sha=` | 주인 | 리포트 삭제 |
 | `GET /api/posts/status?path=` | 주인 | 발행됐는지 확인 (공개 주소가 열리면 발행됨) |
+| `POST /api/links`, `DELETE /api/links?id=` | 주인 | 링크 모음에 넣기, 고치기(id를 보내면), 지우기 |
 | `POST /api/interview` | 주인 | 리포트 인터뷰. `mode: "chat"`이면 다음 질문, `"draft"`면 대화로 세 칸 채우기 |
 
 ## 나중에 도메인을 사면

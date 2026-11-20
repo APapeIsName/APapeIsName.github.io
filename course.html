@@ -4,6 +4,8 @@ page_id: course
 section: course
 title: CS 과정
 permalink: /course/
+scripts:
+  - /assets/js/links.js
 ---
 <div class="ds">
   <section class="screen screen-top" aria-labelledby="intro-title">
@@ -39,6 +41,13 @@ permalink: /course/
     </div>
   </section>
 </div>
+
+<section class="window recent" aria-labelledby="links-title">
+  <h2 id="links-title">과정 링크 모음</h2>
+  <p class="mini-msg" data-links-msg role="status"></p>
+  <div data-links="cs"></div>
+  <p class="more-links"><a href="{{ '/links/' | relative_url }}">링크 모음 전체 보기</a></p>
+</section>
 
 <section class="window recent" aria-labelledby="recent-title">
   <h2 id="recent-title">최근 제출한 리포트</h2>

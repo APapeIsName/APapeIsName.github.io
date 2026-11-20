@@ -2,6 +2,7 @@ import type { Env } from "./env";
 import { handleCallback, handleLogin, requireOwner, requireUser } from "./auth";
 import { HttpError, json, readJson, withCors } from "./http";
 import { interview } from "./interview";
+import { deleteLink, saveLink } from "./links";
 
 /** 배포할 때마다 바뀌는 건 아니고, 기능이 크게 바뀔 때 올려요. /api/health 에 보여요. */
 export const VERSION = "2026-11-20 리포트 인터뷰";
@@ -144,6 +145,11 @@ async function route(req: Request, env: Env, url: URL): Promise<Response> {
     await requireOwner(req, env);
     if (m === "POST") return json(await saveSeries(env, await readJson(req)));
     if (m === "DELETE") return json(await deleteSeries(env, url.searchParams.get("id") || ""));
+  }
+  if (p === "/api/links") {
+    await requireOwner(req, env);
+    if (m === "POST") return json(await saveLink(env, await readJson(req)));
+    if (m === "DELETE") return json(await deleteLink(env, url.searchParams.get("id") || ""));
   }
   if (p === "/api/interview" && m === "POST") {
     await requireOwner(req, env);

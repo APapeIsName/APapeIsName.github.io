@@ -38,7 +38,7 @@ permalink: /syllabus/
       <tr>
         <th scope="col" class="c-state"><span class="sr">상태</span></th>
         <th scope="col">과제</th>
-        <th scope="col">인출 방법</th>
+        <th scope="col">실습 거리</th>
         <th scope="col" class="c-res">자료</th>
         <th scope="col" class="c-num">시간</th>
         <th scope="col" class="c-sub">리포트</th>
@@ -53,7 +53,7 @@ permalink: /syllabus/
           {% if q.type != "메인" %}<span class="tag tag-{{ q.type }}">{{ q.type }}</span>{% endif %}
           {{ q.quest }}
         </td>
-        <td class="c-recall">{{ q.recall }}</td>
+        <td class="c-practice">{{ q.practice }}</td>
         <td class="c-res">{{ q.resource }}</td>
         <td class="c-num">{{ q.hours }}</td>
         <td class="c-sub">

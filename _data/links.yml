@@ -1,0 +1,14 @@
+# 링크 모음
+# 블로그 글쓰기 화면이나 관리 화면에서 바뀌어요. 직접 고쳐도 돼요.
+- id: ms2026kr
+  title: Missing Semester 한국어 번역 (2026)
+  url: https://missing-semester-kr.github.io/
+  note: 셸, Git, 디버깅 등 개발 도구 강의. 시간 날 때마다 한 강의씩 보기
+  project: cs
+  added: "2026-11-20"
+- id: ms2026en
+  title: The Missing Semester of Your CS Education (MIT 원본)
+  url: https://missing.csail.mit.edu/
+  note: 영어 원본. 강의마다 유튜브 영상과 연습 문제가 있어요
+  project: cs
+  added: "2026-11-20"

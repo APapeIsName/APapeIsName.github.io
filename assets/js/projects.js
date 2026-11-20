@@ -157,9 +157,14 @@
     } else {
       h.push('<p class="empty">아직 이 프로젝트의 글이 없어요.' + (owner ? ' <a href="' + esc(cfg.noteWriteUrl) + "?series=" + encodeURIComponent(p.id) + '">첫 노트 쓰기</a>' : "") + "</p>");
     }
-    h.push("</section></div>");
+    h.push("</section>");
+
+    // 링크 모음 (links.js가 채워요)
+    h.push('<section class="window project-links" aria-labelledby="pv-links"><h2 id="pv-links">링크 모음</h2><p class="mini-msg" data-links-msg role="status"></p><div data-links="' + esc(p.id) + '"></div></section>');
+    h.push("</div>");
 
     view.innerHTML = h.join("");
+    if (window.LinkBox) view.querySelectorAll("[data-links]").forEach(window.LinkBox.mount);
     wire();
   }
 

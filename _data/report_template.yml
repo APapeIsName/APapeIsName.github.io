@@ -8,7 +8,7 @@
 #   required     true면 이 칸을 채워야 "과제 클리어"로 인정돼요.
 #   recall       true면 이 칸을 채워야 "인출 OK"를 찍을 수 있어요. (한 칸만)
 #   placeholder  칸이 비어 있을 때 보이는 안내 문구. 아래 낱말은 과제 정보로 바뀌어요.
-#                  {recall}   계획서의 인출 방법
+#                  {practice} 계획서의 실습 거리
 #                  {resource} 계획서의 자료
 #   rows         글쓰기 칸의 처음 높이 (줄 수)
 #
