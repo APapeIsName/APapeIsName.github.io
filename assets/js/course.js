@@ -302,7 +302,7 @@
     }).join("");
     var stats = [
       ["연속 출석", streak + "주"],
-      ["백지 인출", quests.filter(function (q) { return q.recalled; }).length + "회"],
+      ["인출", quests.filter(function (q) { return q.recalled; }).length + "회"],
       ["제출 리포트", (C.reports || []).length + "편"],
       ["종강 예정", courseEnd ? totalWeeks + "주차, " + fmtMonth(courseEnd) : totalWeeks + "주차"]
     ];
