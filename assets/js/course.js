@@ -115,7 +115,7 @@
 
   var quests = (C.quests || []).map(function (q) {
     var rs = reportsByQuest[q.id] || [];
-    // 리포트는 "과제 클리어"를 찍고 필수 칸(백지 인출 결과 등)까지 채워야 완성으로 쳐요.
+    // 리포트는 "과제 클리어"를 찍고 필수 칸까지 채워야 완성으로 쳐요.
     var doneByReport = rs.filter(reportComplete).map(function (r) { return r.date; }).sort()[0];
     return {
       id: q.id, season: q.season, type: q.type, quest: q.quest, recall: q.recall,

@@ -5,7 +5,8 @@ import { deleteFile, getFile, listDir, putFile } from "./github";
 import { assertNotePath, noteUrl } from "./notes";
 
 export const KINDS = ["과제 리포트", "강의 노트", "보스 회고", "시즌 결산"] as const;
-const TEXT_FIELDS = ["goal", "recall_note", "gaps", "stuck", "next_steps"] as const;
+// thoughts, sparks: 지금 양식. 나머지는 예전 양식 리포트를 고칠 때 쓰여요.
+const TEXT_FIELDS = ["thoughts", "sparks", "goal", "recall_note", "gaps", "stuck", "next_steps"] as const;
 const POST_PATH = /^_posts\/(\d{4})-(\d{2})-(\d{2})-([A-Za-z0-9-]+)\.md$/;
 export const RAW_OPEN = "{% raw %}";
 export const RAW_CLOSE = "{% endraw %}";
@@ -18,6 +19,8 @@ export interface PostFields {
   hours?: number;
   complete: boolean;
   recalled: boolean;
+  thoughts?: string;
+  sparks?: string;
   goal?: string;
   recall_note?: string;
   gaps?: string;
@@ -112,6 +115,8 @@ export function parseMarkdown(text: string): PostFields {
     hours: typeof fm.hours === "number" ? fm.hours : undefined,
     complete: fm.complete === true,
     recalled: fm.recalled === true,
+    thoughts: fm.thoughts ? String(fm.thoughts) : undefined,
+    sparks: fm.sparks ? String(fm.sparks) : undefined,
     goal: fm.goal ? String(fm.goal) : undefined,
     recall_note: fm.recall_note ? String(fm.recall_note) : undefined,
     gaps: fm.gaps ? String(fm.gaps) : undefined,
@@ -137,16 +142,23 @@ export function postUrl(env: Env, path: string): string {
   return `${env.BLOG_ORIGIN}/reports/${m[1]}/${m[2]}/${m[3]}/${m[4]}/`;
 }
 
-/** 리포트 양식(_data/report_template.yml)에서 "과제 클리어"에 꼭 필요한 칸을 읽어요. */
-export const DEFAULT_REQUIRED = [{ key: "recall_note", title: "백지 인출 결과" }];
-export async function requiredSections(env: Env): Promise<{ key: string; title: string }[]> {
+/** 리포트 양식(_data/report_template.yml)에서 "과제 클리어"에 꼭 필요한 칸과 "인출 OK"에 필요한 칸을 읽어요. */
+export interface Section { key: string; title: string }
+export interface ReportRules { required: Section[]; recall: Section | null }
+export const DEFAULT_RULES: ReportRules = {
+  required: [{ key: "body", title: "오늘은 어떤 내용을 공부했어요?" }, { key: "thoughts", title: "그 내용들에 대해 어떻게 생각해요?" }],
+  recall: { key: "body", title: "오늘은 어떤 내용을 공부했어요?" },
+};
+export async function reportRules(env: Env): Promise<ReportRules> {
   try {
     const f = await getFile(env, "_data/report_template.yml");
-    const tpl = parseYaml(f.text) as { sections?: { key: string; title: string; required?: boolean }[] };
-    const req = (tpl?.sections || []).filter((s) => s && s.required).map((s) => ({ key: String(s.key), title: String(s.title || s.key) }));
-    return req;
+    const tpl = parseYaml(f.text) as { sections?: { key: string; title: string; required?: boolean; recall?: boolean }[] };
+    const secs = (tpl?.sections || []).filter((s) => s && s.key);
+    const pick = (s: { key: string; title: string }) => ({ key: String(s.key), title: String(s.title || s.key) });
+    const rc = secs.find((s) => s.recall);
+    return { required: secs.filter((s) => s.required).map(pick), recall: rc ? pick(rc) : null };
   } catch (e) {
-    if (e instanceof HttpError && e.status === 404) return DEFAULT_REQUIRED;
+    if (e instanceof HttpError && e.status === 404) return DEFAULT_RULES;
     throw e;
   }
 }
@@ -157,18 +169,19 @@ export function isFilled(v: string | undefined): boolean {
   return !!t && !(t.startsWith("(") && t.endsWith(")"));
 }
 
-/** "과제 클리어"는 필수 칸을, "인출 OK"는 백지 인출 결과를 채워야 찍을 수 있어요. */
-export function checkCompleteness(f: PostFields, required: { key: string; title: string }[]) {
+/** "과제 클리어"는 필수 칸을, "인출 OK"는 양식의 recall 칸을 채워야 찍을 수 있어요. */
+export function checkCompleteness(f: PostFields, rules: ReportRules) {
+  const val = (k: string) => (f as unknown as Record<string, string | undefined>)[k];
   if (f.complete) {
-    const miss = required.filter((r) => !isFilled((f as unknown as Record<string, string | undefined>)[r.key]));
-    if (miss.length) throw new HttpError(400, `과제 클리어를 찍으려면 ${miss.map((m) => m.title).join(", ")} 칸을 채워 주세요.`);
+    const miss = rules.required.filter((r) => !isFilled(val(r.key)));
+    if (miss.length) throw new HttpError(400, `과제 클리어를 찍으려면 ${miss.map((m) => `'${m.title}'`).join(", ")} 칸을 채워 주세요.`);
   }
-  if (f.recalled && !isFilled(f.recall_note)) throw new HttpError(400, "인출 OK를 찍으려면 백지 인출 결과 칸을 채워 주세요.");
+  if (f.recalled && rules.recall && !isFilled(val(rules.recall.key))) throw new HttpError(400, `인출 OK를 찍으려면 '${rules.recall.title}' 칸을 채워 주세요.`);
 }
 
 export async function publishPost(env: Env, input: Record<string, unknown>, now = new Date()) {
   const f = validateFields(input);
-  checkCompleteness(f, await requiredSections(env));
+  checkCompleteness(f, await reportRules(env));
   let path = postPath(f, now);
   const text = buildMarkdown(f);
   try {
@@ -193,7 +206,7 @@ export async function updatePost(env: Env, path: string, input: Record<string, u
   const sha = typeof input.sha === "string" ? input.sha : "";
   if (!sha) throw new HttpError(400, "수정하려면 파일 버전(sha)이 필요해요.");
   const f = validateFields(input);
-  checkCompleteness(f, await requiredSections(env));
+  checkCompleteness(f, await reportRules(env));
   await putFile(env, path, buildMarkdown(f), `리포트 수정: ${f.title}`, sha);
   return { path, url: postUrl(env, path) };
 }

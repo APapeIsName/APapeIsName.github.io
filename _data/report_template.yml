@@ -1,9 +1,12 @@
 # 과제 리포트 양식이에요. 글쓰기 화면, 리포트 화면, 진도 계산, 글쓰기 서버가 모두 이 파일을 봐요.
+# 시험이나 평가를 위한 게 아니라, 공부한 걸 내 생각대로 편하게 적어 두는 자리예요.
+# 지식(무엇을 공부했나) → 연결(어떻게 생각하나) → 호기심과 인출(무엇이 떠올랐나)
 #
 # sections: 리포트 칸 목록 (이 순서대로 보여요)
-#   key          리포트 파일 머리말의 이름. body는 본문(정리)이에요.
+#   key          리포트 파일 머리말의 이름. body는 본문이에요.
 #   title        칸 제목
 #   required     true면 이 칸을 채워야 "과제 클리어"로 인정돼요.
+#   recall       true면 이 칸을 채워야 "인출 OK"를 찍을 수 있어요. (한 칸만)
 #   placeholder  칸이 비어 있을 때 보이는 안내 문구. 아래 낱말은 과제 정보로 바뀌어요.
 #                  {recall}   계획서의 인출 방법
 #                  {resource} 계획서의 자료
@@ -15,27 +18,21 @@
 # 안내 문구는 칸에 미리 들어가는 글이 아니라, 비어 있을 때만 흐리게 보이는 글이에요.
 
 sections:
-  - key: goal
-    title: 학습 목표
-    required: false
-    rows: 2
-    placeholder: "이 과제를 마치면 무엇을 할 수 있게 되나요?"
-  - key: recall_note
-    title: 백지 인출 결과
+  - key: body
+    title: 오늘은 어떤 내용을 공부했어요?
+    required: true
+    recall: true
+    rows: 12
+    placeholder: "자료를 덮고, 오늘 공부한 내용을 기억나는 대로 편하게 적어요. 마크다운을 쓸 수 있어요."
+  - key: thoughts
+    title: 그 내용들에 대해 어떻게 생각해요?
     required: true
     rows: 5
-    placeholder: "인출 방법: {recall}. 자료를 덮고 떠올린 것을 그대로 적어요. 틀려도 괜찮아요."
-  - key: body
-    title: 정리
+    placeholder: "재미있었던 것, 의외였던 것, 내가 알던 것과 닮았거나 달랐던 것을 적어요."
+  - key: sparks
+    title: 이번 학습을 통해 떠오른 게 있었나요?
     required: false
-    rows: 12
-    placeholder: "배운 내용을 내 말로 정리해요. 마크다운을 쓸 수 있어요. (## 소제목, **굵게**, `코드`, ``` 코드 블록)"
-  - key: next_steps
-    title: 다음에 할 일
-    required: false
-    rows: 2
-    placeholder: "- 다음 과제 읽기"
+    rows: 3
+    placeholder: "새로 생긴 궁금증이나 해 보고 싶어진 것이 있으면 적어요. 없으면 비워 둬요."
 
-quest_placeholders:
-  S0-69fab2:
-    recall_note: "책을 덮고 떠올린 게임 규칙 5개를 여기에 그대로 적어보세요."
+quest_placeholders: {}

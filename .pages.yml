@@ -333,19 +333,15 @@ content:
         type: boolean
         description: 체크하면 계획서와 대시보드의 진도에 바로 반영돼요.
       - name: recalled
-        label: 책을 덮고 백지 인출을 했어요
+        label: 인출 OK (공부한 내용을 자료 없이 떠올려 적었어요)
         type: boolean
-      - name: goal
-        label: 1. 학습 목표
-        type: text
-        description: 이번 과제로 무엇을 설명할 수 있게 되고 싶은지 한두 줄로 적어요.
-      - name: recall_note
-        label: 2. 백지 인출 결과
-        type: text
-        description: 책을 덮고 떠올린 내용을 고치지 말고 그대로 적어요. 틀려도 괜찮아요.
       - name: body
-        label: 3. 정리
+        label: 1. 오늘은 어떤 내용을 공부했어요?
         type: rich-text
-      - name: next_steps
-        label: 4. 다음에 할 일
+        description: 자료를 덮고, 오늘 공부한 내용을 기억나는 대로 편하게 적어요.
+      - name: thoughts
+        label: 2. 그 내용들에 대해 어떻게 생각해요?
+        type: text
+      - name: sparks
+        label: 3. 이번 학습을 통해 떠오른 게 있었나요? (선택)
         type: text

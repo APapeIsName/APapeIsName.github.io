@@ -31,6 +31,7 @@ const sample = {
   goal: "명시적 가용 리스트를 설명할 수 있다",
   recall_note: "- 헤더/푸터\n- 경계 태그",
   gaps: "병합 조건을 빠뜨렸다",
+  thoughts: "경계 태그가 생각보다 단순해서 재미있었다",
   body: "## 정리\n\n```c\nprintf(\"{{ not liquid }}\");\n```",
 };
 

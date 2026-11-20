@@ -755,6 +755,7 @@ a.chip { text-decoration: none; display: inline-block; }
 
 /* ── 리포트 필수 칸 ─────────────────────────────── */
 .req-tag { display: inline-block; font-size: 11px; line-height: 1; padding: 3px 5px; margin-left: 6px; vertical-align: 2px; color: #fff; background: var(--red); }
+.opt-tag { display: inline-block; font-size: 11px; line-height: 1; padding: 3px 5px; margin-left: 6px; vertical-align: 2px; color: var(--muted); box-shadow: inset 0 0 0 1px var(--faint); }
 .stamp-missing { background: transparent; color: var(--red); box-shadow: inset 0 0 0 2px var(--red); }
 .missing-note { margin: 10px 0 0; font-size: 13px; color: var(--red); }
 .missing-note[hidden] { display: none; }

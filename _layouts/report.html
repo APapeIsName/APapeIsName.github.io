@@ -32,7 +32,7 @@ layout: default
       {% if page.complete and missing == "" %}<span class="stamp stamp-clear">과제 클리어</span>{% elsif page.complete %}<span class="stamp stamp-missing">미완성</span>{% else %}<span class="stamp stamp-wip">진행 중</span>{% endif %}
       {% if page.recalled and recall_ok %}<span class="stamp stamp-recall">인출 OK</span>{% endif %}
     </p>
-    {% if missing != "" %}<p class="missing-note">리포트를 완성하려면 {{ missing_list | join: ", " }} 칸을 채워야 해요.</p>{% endif %}
+    {% if missing != "" %}<p class="missing-note">리포트를 완성하려면 '{{ missing_list | join: "', '" }}' 칸을 채워야 해요.</p>{% endif %}
   </header>
 
   <div class="report-body">

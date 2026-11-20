@@ -167,36 +167,39 @@ describe("노트 API", () => {
 });
 
 describe("리포트 완성 기준", () => {
-  const report = { title: "개강 리포트", date: "2026-11-16", quest: "S0-69fab2", kind: "과제 리포트", complete: true, recalled: true, recall_note: "- 게으른 날 15분", gaps: "- 이틀 규칙을 빠뜨림", body: "" };
-  const tpl = "sections:\n  - key: recall_note\n    title: 백지 인출 결과\n    required: true\n  - key: gaps\n    title: 못 떠올린 것과 틀린 것\n    required: true\n  - key: goal\n    title: 학습 목표\n";
+  const report = { title: "S1 리포트", date: "2026-11-16", quest: "S1-62a82f", kind: "과제 리포트", complete: true, recalled: true, body: "재귀와 반복", thoughts: "생각보다 재미있다" };
+  const tpl = "sections:\n  - key: body\n    title: 오늘은 어떤 내용을 공부했어요?\n    required: true\n    recall: true\n  - key: thoughts\n    title: 그 내용들에 대해 어떻게 생각해요?\n    required: true\n  - key: sparks\n    title: 떠오른 것\n";
   it("옛 안내 문구는 빈 칸으로 쳐요", () => {
     expect(isFilled("(책을 덮고 떠올린 게임 규칙 5개를 여기에 그대로 적어보세요.)")).toBe(false);
     expect(isFilled("  ")).toBe(false);
     expect(isFilled("(괄호로 시작하지만) 내용이 있어요")).toBe(true);
   });
-  it("필수 칸을 다 채우면 과제 클리어로 낼 수 있어요", async () => {
+  it("필수 칸을 다 채우면 과제 클리어로 낼 수 있고, 새 칸이 파일에 남아요", async () => {
     repo.set("_data/report_template.yml", { text: tpl, sha: "t" });
-    expect((await api("/api/posts", "POST", report)).status).toBe(201);
+    expect((await api("/api/posts", "POST", { ...report, sparks: "꼬리 재귀가 궁금" })).status).toBe(201);
+    const saved = [...repo.entries()].find(([k]) => k.startsWith("_posts/"))![1].text;
+    expect(saved).toContain('thoughts: "생각보다 재미있다"');
+    expect(saved).toContain('sparks: "꼬리 재귀가 궁금"');
   });
   it("필수 칸이 비면 과제 클리어를 막아요", async () => {
     repo.set("_data/report_template.yml", { text: tpl, sha: "t" });
-    const r = await api("/api/posts", "POST", { ...report, gaps: "(게임 규칙 탭과 대조해서 빠뜨린 규칙을 적어보세요.)" });
+    const r = await api("/api/posts", "POST", { ...report, thoughts: "" });
     expect(r.status).toBe(400);
-    expect((await r.json()).error).toContain("못 떠올린 것과 틀린 것");
+    expect((await r.json()).error).toContain("어떻게 생각해요");
   });
   it("과제 클리어를 안 찍으면 진행 중 리포트로 낼 수 있어요", async () => {
     repo.set("_data/report_template.yml", { text: tpl, sha: "t" });
-    expect((await api("/api/posts", "POST", { ...report, complete: false, recalled: false, gaps: "" })).status).toBe(201);
+    expect((await api("/api/posts", "POST", { ...report, complete: false, thoughts: "" })).status).toBe(201);
   });
-  it("인출 OK는 백지 인출 결과가 있어야 해요", async () => {
-    const r = await api("/api/posts", "POST", { ...report, complete: false, recall_note: "" });
+  it("인출 OK는 양식의 recall 칸이 있어야 해요", async () => {
+    repo.set("_data/report_template.yml", { text: tpl, sha: "t" });
+    const r = await api("/api/posts", "POST", { ...report, complete: false, body: "" });
     expect(r.status).toBe(400);
     expect((await r.json()).error).toContain("인출 OK");
   });
-  it("양식이 없으면 기본 필수 칸을 써요", async () => {
-    const r = await api("/api/posts", "POST", { ...report, recall_note: "" });
-    expect(r.status).toBe(400);
-    expect((await api("/api/posts", "POST", { ...report, gaps: "" })).status).toBe(201);
+  it("양식이 없으면 기본 칸(공부한 내용, 생각)을 써요", async () => {
+    expect((await api("/api/posts", "POST", { ...report, thoughts: "" })).status).toBe(400);
+    expect((await api("/api/posts", "POST", report)).status).toBe(201);
   });
 });
 

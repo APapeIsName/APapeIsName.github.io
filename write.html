@@ -58,8 +58,8 @@ scripts:
   <div class="report-body">
     {% for sec in site.data.report_template.sections %}
     <section class="sec-{{ sec.key }}">
-      <h2><label for="w-{{ sec.key }}">{{ sec.title }}</label>{% if sec.required %} <span class="req-tag" title="채워야 과제 클리어로 인정돼요">필수</span>{% endif %}</h2>
-      <textarea id="w-{{ sec.key }}" class="field{% if sec.key == 'body' %} field-body{% endif %}" rows="{{ sec.rows | default: 3 }}" maxlength="{% if sec.key == 'body' %}100000{% else %}20000{% endif %}" data-section="{{ sec.key }}" data-title="{{ sec.title | escape }}" data-placeholder="{{ sec.placeholder | escape }}"{% if sec.required %} data-required{% endif %}></textarea>
+      <h2><label for="w-{{ sec.key }}">{{ sec.title }}</label>{% if sec.required %} <span class="req-tag" title="채워야 과제 클리어로 인정돼요">필수</span>{% else %} <span class="opt-tag">선택</span>{% endif %}</h2>
+      <textarea id="w-{{ sec.key }}" class="field{% if sec.key == 'body' %} field-body{% endif %}" rows="{{ sec.rows | default: 3 }}" maxlength="{% if sec.key == 'body' %}100000{% else %}20000{% endif %}" data-section="{{ sec.key }}" data-title="{{ sec.title | escape }}" data-placeholder="{{ sec.placeholder | escape }}"{% if sec.required %} data-required{% endif %}{% if sec.recall %} data-recall{% endif %}></textarea>
       <div class="preview prose-text" data-for="w-{{ sec.key }}" hidden></div>
     </section>
     {% endfor %}

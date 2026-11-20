@@ -9,8 +9,10 @@
   var computed = C.computed || { quests: [], currentWeek: 1, overdue: [], weekLabel: function () { return ""; } };
   // 리포트 칸은 _data/report_template.yml에서 만들어져요. 화면에 그려진 칸을 그대로 읽어요.
   var SECTIONS = Array.prototype.map.call(document.querySelectorAll("textarea[data-section]"), function (t) {
-    return { key: t.getAttribute("data-section"), title: t.getAttribute("data-title"), placeholder: t.getAttribute("data-placeholder") || "", required: t.hasAttribute("data-required"), el: t };
+    return { key: t.getAttribute("data-section"), title: t.getAttribute("data-title"), placeholder: t.getAttribute("data-placeholder") || "", required: t.hasAttribute("data-required"), recall: t.hasAttribute("data-recall"), el: t };
   });
+  // "인출 OK"를 찍으려면 채워야 하는 칸 (양식에서 recall: true)
+  var RECALL = SECTIONS.filter(function (x) { return x.recall; })[0] || null;
   var FIELDS = SECTIONS.map(function (x) { return x.key; });
   var overrides = ((C.reportTemplate || {}).quest_placeholders) || {};
   var POLL_MS = 8000, POLL_MAX = 40;
@@ -145,10 +147,10 @@
     var box = $("w-missing");
     SECTIONS.forEach(function (x) { x.el.closest("section").classList.toggle("is-missing", x.required && !filled(x.el.value)); });
     if (f.complete.checked && miss.length) {
-      box.textContent = "과제 클리어로 인정받으려면 " + miss.map(function (x) { return x.title; }).join(", ") + " 칸을 채워야 해요.";
+      box.textContent = "과제 클리어로 인정받으려면 " + miss.map(function (x) { return "'" + x.title + "'"; }).join(", ") + " 칸을 채워야 해요.";
       box.hidden = false;
-    } else if (f.recalled.checked && f.recall_note && !filled(f.recall_note.value)) {
-      box.textContent = "인출 OK를 찍으려면 백지 인출 결과 칸을 채워야 해요.";
+    } else if (f.recalled.checked && RECALL && !filled(RECALL.el.value)) {
+      box.textContent = "인출 OK를 찍으려면 '" + RECALL.title + "' 칸을 채워야 해요.";
       box.hidden = false;
     } else box.hidden = true;
   }
@@ -262,12 +264,12 @@
     if (data.complete && miss.length) {
       if (previewing) setPreview(false);
       miss[0].el.focus();
-      return "과제 클리어를 찍으려면 " + miss.map(function (x) { return x.title; }).join(", ") + " 칸을 채워 주세요. 아직 덜 했다면 도장을 빼고 제출하면 '진행 중' 리포트로 올라가요.";
+      return "과제 클리어를 찍으려면 " + miss.map(function (x) { return "'" + x.title + "'"; }).join(", ") + " 칸을 채워 주세요. 아직 덜 했다면 도장을 빼고 제출하면 '진행 중' 리포트로 올라가요.";
     }
-    if (data.recalled && f.recall_note && !filled(f.recall_note.value)) {
+    if (data.recalled && RECALL && !filled(RECALL.el.value)) {
       if (previewing) setPreview(false);
-      f.recall_note.focus();
-      return "인출 OK를 찍으려면 백지 인출 결과 칸을 채워 주세요.";
+      RECALL.el.focus();
+      return "인출 OK를 찍으려면 '" + RECALL.title + "' 칸을 채워 주세요.";
     }
     return "";
   }
