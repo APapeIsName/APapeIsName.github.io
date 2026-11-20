@@ -346,13 +346,6 @@ content:
       - name: body
         label: 3. 정리
         type: rich-text
-      - name: gaps
-        label: 4. 못 떠올린 것과 틀린 것
-        type: text
-        description: 인출 결과를 책과 대조해서 빠졌거나 틀린 부분을 적어요. 다음 복습 거리가 돼요.
-      - name: stuck
-        label: 5. 막힌 점과 해결
-        type: text
       - name: next_steps
-        label: 6. 다음에 할 일
+        label: 4. 다음에 할 일
         type: text

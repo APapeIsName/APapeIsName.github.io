@@ -194,8 +194,9 @@ describe("리포트 완성 기준", () => {
     expect((await r.json()).error).toContain("인출 OK");
   });
   it("양식이 없으면 기본 필수 칸을 써요", async () => {
-    const r = await api("/api/posts", "POST", { ...report, gaps: "" });
+    const r = await api("/api/posts", "POST", { ...report, recall_note: "" });
     expect(r.status).toBe(400);
+    expect((await api("/api/posts", "POST", { ...report, gaps: "" })).status).toBe(201);
   });
 });
 

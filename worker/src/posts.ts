@@ -138,7 +138,7 @@ export function postUrl(env: Env, path: string): string {
 }
 
 /** 리포트 양식(_data/report_template.yml)에서 "과제 클리어"에 꼭 필요한 칸을 읽어요. */
-export const DEFAULT_REQUIRED = [{ key: "recall_note", title: "백지 인출 결과" }, { key: "gaps", title: "못 떠올린 것과 틀린 것" }];
+export const DEFAULT_REQUIRED = [{ key: "recall_note", title: "백지 인출 결과" }];
 export async function requiredSections(env: Env): Promise<{ key: string; title: string }[]> {
   try {
     const f = await getFile(env, "_data/report_template.yml");
