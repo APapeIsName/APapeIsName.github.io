@@ -199,9 +199,19 @@
     form.querySelectorAll("textarea").forEach(grow);
   }
 
+  /* 글이 길어지면 칸을 늘려요. 높이를 잠깐 "auto"로 줄였다 늘리는 사이 화면이 위로 튀니까,
+     스크롤 위치를 그대로 돌려놓고, 맨 끝에 쓰고 있으면 아래 고정 막대에 가리지 않게 따라 내려가요. */
   function grow(t) {
+    var x = window.scrollX, y = window.scrollY;
     t.style.height = "auto";
     t.style.height = t.scrollHeight + 4 + "px";
+    window.scrollTo(x, y);
+    if (document.activeElement === t && t.selectionEnd === t.value.length) {
+      var bar = document.querySelector(".write-bar");
+      var limit = window.innerHeight - (bar ? bar.offsetHeight : 0) - 16;
+      var bottom = t.getBoundingClientRect().bottom;
+      if (bottom > limit) window.scrollBy(0, bottom - limit);
+    }
   }
 
   /* ── 임시 저장 ───────────────────────────────── */
