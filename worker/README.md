@@ -56,6 +56,17 @@ npx wrangler deploy
 - 블로그에서 로그인 → 프로필 사진과 **글쓰기** 메뉴가 보이면 주인으로 인식된 거예요.
 - 다른 GitHub 계정으로 로그인하면 글쓰기 메뉴가 안 보이고, API도 403으로 막혀요.
 
+## 선택: 리포트 인터뷰 AI 켜기
+
+글쓰기 화면의 "인터뷰로 쓰기"는 Claude API를 써요. Claude 앱 구독과는 따로, 쓴 만큼 요금이 나가요(기본 모델은 가볍고 값싼 claude-haiku-5-5예요).
+
+1. https://platform.claude.com 에 가입하고 결제 수단을 등록해요. 월 사용 한도(Limits)를 낮게 걸어 두면 안심이에요.
+2. API Keys에서 키를 하나 만들어요.
+3. 이 폴더에서 `npx wrangler secret put ANTHROPIC_API_KEY` 를 치고 키를 붙여 넣어요.
+4. `npx wrangler deploy`
+
+키가 없으면 인터뷰만 "ANTHROPIC_API_KEY를 넣어 주세요"라고 알려 주고, 나머지 기능은 그대로 돌아가요. 모델을 바꾸려면 `wrangler.toml`의 `[vars]`에 `INTERVIEW_MODEL = "모델 id"`를 더해요.
+
 ## 개발
 
 ```bash
@@ -78,6 +89,7 @@ npm run dev       # 로컬 실행 (비밀값은 worker/.dev.vars 에, 저장소�
 | `PUT /api/posts/item?path=` | 주인 | 리포트 수정 (`sha` 필요) |
 | `DELETE /api/posts/item?path=&sha=` | 주인 | 리포트 삭제 |
 | `GET /api/posts/status?path=` | 주인 | 발행됐는지 확인 (공개 주소가 열리면 발행됨) |
+| `POST /api/interview` | 주인 | 리포트 인터뷰. `mode: "chat"`이면 다음 질문, `"draft"`면 대화로 세 칸 채우기 |
 
 ## 나중에 도메인을 사면
 `blog.내도메인`과 `api.내도메인`을 같은 사이트로 두고, 세션을 HttpOnly 쿠키로 바꿀 수 있어요. 지금은 로그인 뒤 토큰을 블로그 주소의 `#` 뒤로 넘겨 브라우저에 저장하는 방식이에요.

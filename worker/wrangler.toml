@@ -20,3 +20,5 @@ GITHUB_CLIENT_ID = "Ov23lidAhwaKmLuWyfCL"
 #   GITHUB_CLIENT_SECRET  OAuth App의 Client secret
 #   SESSION_SECRET        세션 토큰 서명 키 (아무도 모르는 긴 무작위 문자열)
 #   GITHUB_REPO_TOKEN     블로그 저장소 전용 세분화 토큰 (Contents: Read and write)
+#   ANTHROPIC_API_KEY     (선택) 리포트 인터뷰 AI용 Claude API 키. 없으면 인터뷰만 꺼져요.
+# 인터뷰 모델을 바꾸고 싶으면 [vars]에 INTERVIEW_MODEL = "모델 id" 를 더해요. 기본은 claude-haiku-5-5.

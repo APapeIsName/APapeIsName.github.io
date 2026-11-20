@@ -8,6 +8,7 @@ scripts:
   - /assets/lib/marked.umd.js
   - /assets/lib/purify.min.js
   - /assets/js/write.js
+  - /assets/js/interview.js
 ---
 {% include write-tabs.html %}
 <div class="dialog write-gate" id="write-gate" role="status">
@@ -54,6 +55,29 @@ scripts:
     </p>
     <p class="missing-note" id="w-missing" hidden></p>
   </header>
+
+  <section class="window interview" id="interview" aria-labelledby="iv-title">
+    <div class="interview-head">
+      <div>
+        <h2 id="iv-title">인터뷰로 쓰기</h2>
+        <p class="interview-sub">이야기하듯 답하면, 끝에 내가 한 말로 아래 칸을 채워 줘요. 지식을 가르쳐 주지는 않고 들어 주기만 해요.</p>
+      </div>
+      <button type="button" class="px-btn" id="iv-toggle" aria-expanded="false" aria-controls="iv-body">인터뷰 시작</button>
+    </div>
+    <div class="interview-body" id="iv-body" hidden>
+      <ol class="iv-log" id="iv-log" aria-live="polite"></ol>
+      <div class="iv-input">
+        <label class="sr" for="iv-text">인터뷰 답</label>
+        <textarea id="iv-text" class="field" rows="2" maxlength="4000" placeholder="편하게 답해 보세요. Enter로 보내고, Shift+Enter로 줄을 바꿔요."></textarea>
+        <button type="button" class="px-btn is-primary" id="iv-send">보내기</button>
+      </div>
+      <p class="iv-actions">
+        <button type="button" class="px-btn" id="iv-fill">칸에 정리해 넣기</button>
+        <button type="button" class="px-btn is-ghost" id="iv-reset">처음부터 다시</button>
+        <span class="mini-msg" id="iv-msg" role="status"></span>
+      </p>
+    </div>
+  </section>
 
   <div class="report-body">
     {% for sec in site.data.report_template.sections %}

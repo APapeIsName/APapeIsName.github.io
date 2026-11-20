@@ -920,3 +920,26 @@ a.chip { text-decoration: none; display: inline-block; }
 @media (max-width: 760px) {
   .project-layout { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* ── 리포트 인터뷰 ─────────────────────────────── */
+.interview { margin-bottom: 22px; }
+.interview-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.interview-head h2 { margin-bottom: 6px; }
+.interview-sub { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.interview-head .px-btn { flex: none; }
+.interview-body { margin-top: 14px; }
+.iv-log { list-style: none; margin: 0; padding: 12px; max-height: 420px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: var(--sky-1); }
+.iv-log:empty { display: none; }
+.iv-turn { max-width: 85%; padding: 8px 12px; background: var(--panel); box-shadow: inset 0 0 0 2px var(--line); }
+.iv-turn p { margin: 0; white-space: pre-wrap; font-family: var(--sans); font-size: 15px; line-height: 1.7; overflow-wrap: anywhere; }
+.iv-turn.is-user { align-self: flex-end; background: var(--panel); box-shadow: inset 0 0 0 2px var(--line), 3px 3px 0 0 var(--red); }
+.iv-turn.is-assistant { align-self: flex-start; box-shadow: inset 0 0 0 2px var(--line), 3px 3px 0 0 var(--hp-dark); }
+.iv-turn.is-typing p { color: var(--muted); }
+.iv-who { display: block; font-size: 11px; color: var(--muted); margin-bottom: 2px; }
+.iv-input { display: flex; gap: 8px; align-items: flex-end; margin-top: 10px; }
+.iv-input textarea { flex: 1; min-width: 0; resize: vertical; }
+.iv-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 10px 0 0; }
+@media (max-width: 640px) {
+  .interview-head { flex-direction: column; }
+  .iv-turn { max-width: 100%; }
+}

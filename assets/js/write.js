@@ -193,6 +193,17 @@
 
   /* ── 임시 저장 ───────────────────────────────── */
   function draftKey() { return "cs_draft:" + (mode.path || "new"); }
+
+  // 인터뷰(interview.js)가 과제 정보를 읽고 칸을 채울 수 있게 열어 둬요.
+  window.ReportWriter = {
+    key: function () { return mode.path || "new"; },
+    quest: function () {
+      var raw = (C.quests || []).filter(function (x) { return x.id === f.quest.value; })[0] || {};
+      return { quest: raw.quest || "", resource: raw.resource || "", title: f.title.value.trim() };
+    },
+    field: function (k) { return FIELDS.indexOf(k) >= 0 ? f[k] : null; },
+    title: function (k) { var s = SECTIONS.filter(function (x) { return x.key === k; })[0]; return s ? s.title : k; }
+  };
   function readDraft() { try { return JSON.parse(localStorage.getItem(draftKey()) || "null"); } catch (e) { return null; } }
   function dropDraft() { try { localStorage.removeItem(draftKey()); } catch (e) {} }
   var saveTimer = null, dirty = false;
@@ -319,6 +330,7 @@
     say("리포트를 제출하고 있어요.");
     A.api("/api/posts", { method: "POST", body: data }).then(function (r) {
       dropDraft();
+      if (window.ReportInterview) window.ReportInterview.clear();
       setEditMode(r.path, r.url);
       refreshSha().catch(function () {});
       lock(false);
@@ -372,6 +384,7 @@
     A.api("/api/posts/item?path=" + encodeURIComponent(mode.path) + "&sha=" + encodeURIComponent(mode.sha), { method: "DELETE" })
       .then(function () {
         dropDraft();
+        if (window.ReportInterview) window.ReportInterview.clear();
         form.querySelectorAll("input, select, textarea, .write-bar button").forEach(function (n) { n.disabled = true; });
         busy = true;
         say("지웠어요. 블로그에서는 1~2분 뒤에 사라져요.", [link(cfg.writeUrl || "/write/", "새 리포트 쓰기"), link(cfg.reportsUrl || "/reports/", "리포트 목록", "px-btn is-ghost")]);
@@ -394,6 +407,7 @@
     });
     f.title.addEventListener("keydown", function (e) { if (e.key === "Enter") e.preventDefault(); });
     form.addEventListener("keydown", function (e) {
+      if (e.target.closest && e.target.closest("#interview")) return;
       if ((e.ctrlKey || e.metaKey) && e.key === "Enter") submit(e);
     });
     $("w-preview-toggle").addEventListener("click", function () { setPreview(!previewing); });
