@@ -11,6 +11,6 @@ export interface Env {
   GITHUB_REPO_TOKEN: string;
   /** 리포트 인터뷰(AI)용. 없으면 인터뷰만 꺼져요. */
   ANTHROPIC_API_KEY?: string;
-  /** 인터뷰에 쓸 모델 (기본 claude-haiku-5-5) */
+  /** 인터뷰에 쓸 모델 (기본 claude-sonnet-5-5) */
   INTERVIEW_MODEL?: string;
 }

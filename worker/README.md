@@ -58,14 +58,14 @@ npx wrangler deploy
 
 ## 선택: 리포트 인터뷰 AI 켜기
 
-글쓰기 화면의 "인터뷰로 쓰기"는 Claude API를 써요. Claude 앱 구독과는 따로, 쓴 만큼 요금이 나가요(기본 모델은 가볍고 값싼 claude-haiku-5-5예요).
+글쓰기 화면의 "인터뷰로 쓰기"는 Claude API를 써요. Claude 앱 구독과는 따로, 쓴 만큼 요금이 나가요(기본 모델은 claude-sonnet-5-5예요. 더 싸게 쓰려면 claude-haiku-5-5로 바꿀 수 있어요).
 
 1. https://platform.claude.com 에 가입하고 결제 수단을 등록해요. 월 사용 한도(Limits)를 낮게 걸어 두면 안심이에요.
 2. API Keys에서 키를 하나 만들어요.
 3. 이 폴더에서 `npx wrangler secret put ANTHROPIC_API_KEY` 를 치고 키를 붙여 넣어요.
 4. `npx wrangler deploy`
 
-키가 없으면 인터뷰만 "ANTHROPIC_API_KEY를 넣어 주세요"라고 알려 주고, 나머지 기능은 그대로 돌아가요. 모델을 바꾸려면 `wrangler.toml`의 `[vars]`에 `INTERVIEW_MODEL = "모델 id"`를 더해요.
+키가 없으면 인터뷰만 "ANTHROPIC_API_KEY를 넣어 주세요"라고 알려 주고, 나머지 기능은 그대로 돌아가요. 모델은 `wrangler.toml`의 `[vars]`에 있는 `INTERVIEW_MODEL`에서 바꿔요.
 
 ## 개발
 

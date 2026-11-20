@@ -46,7 +46,8 @@
     msg.textContent = label || "";
   }
 
-  function ask() {
+  /** sent: 방금 보낸 내 말. 실패하면 대화에서 빼고 입력칸에 돌려놔서, 다시 보내도 두 번 들어가지 않아요. */
+  function ask(sent) {
     setBusy(true, "인터뷰어가 답을 쓰고 있어요.");
     var typing = bubble({ role: "assistant", content: "…" }, "is-typing");
     return A.api("/api/interview", { method: "POST", body: { mode: "chat", messages: turns, quest: W.quest() } }).then(function (r) {
@@ -58,7 +59,15 @@
       text.focus();
     }, function (err) {
       typing.remove();
-      setBusy(false, err.message);
+      if (sent && turns.length && turns[turns.length - 1] === sent) {
+        turns.pop();
+        save();
+        if (log.lastChild) log.removeChild(log.lastChild);
+        if (!text.value.trim()) text.value = sent.content;
+        setBusy(false, err.message + " 쓴 말은 입력칸에 돌려놨어요. 다시 보내 주세요.");
+      } else {
+        setBusy(false, err.message);
+      }
     });
   }
 
@@ -75,11 +84,12 @@
   function submitAnswer() {
     var v = text.value.trim();
     if (!v || busy) return;
-    turns.push({ role: "user", content: v });
+    var sent = { role: "user", content: v };
+    turns.push(sent);
     save();
-    bubble(turns[turns.length - 1]);
+    bubble(sent);
     text.value = "";
-    ask();
+    ask(sent);
   }
 
   /** 대화를 세 칸으로 정리해요. 이미 쓴 칸은 지우지 않고 그 아래에 덧붙여요. */

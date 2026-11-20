@@ -11,7 +11,7 @@ import { HttpError } from "./http";
 
 const API_URL = "https://api.anthropic.com/v1/messages";
 const API_VERSION = "2023-06-01";
-const DEFAULT_MODEL = "claude-haiku-5-5";
+const DEFAULT_MODEL = "claude-sonnet-5-5";
 const MAX_TURNS = 60;
 const MAX_CHARS = 4000;
 
@@ -34,6 +34,9 @@ const CHAT_SYSTEM = `너는 공부 기록 블로그 주인의 "리포트 인터�
 3. 이번 학습을 통해 떠오른 게 있었나요? (호기심과 인출, 선택이라 없으면 넘어가)
 
 지켜야 할 것:
+- 상대의 말을 먼저 정확히 읽어. 시제를 특히 봐: "공부할 거예요"는 아직 안 한 거고, "공부했어요"는 한 거야. 상대가 말하지 않은 걸 했다고 가정하지 마.
+- 아직 공부를 안 했거나 테스트로 써 보는 거라면, 질문을 밀어붙이지 말고 그 상황에 맞춰 짧게 답해. 예: 오늘 무엇을 공부할지 기대되는 점을 가볍게 묻거나, 공부를 마치고 돌아오면 이어서 이야기하자고 해.
+- 이미 상대가 답한 질문은 다시 묻지 말고, 흐름에서 다음으로 넘어가.
 - 한 번에 질문은 하나만. 짧게, 두세 문장 안으로 말해.
 - 먼저 상대가 한 말에 공감하거나 그대로 비춰 준 다음, 더 꺼내 볼 수 있게 가볍게 물어. 캐묻거나 시험하지 마.
 - 지식은 절대 가르치거나 설명하지 마. 개념이 맞는지 틀린지 판단하지도, 고쳐 주지도 마. 사실을 덧붙이지도 마.
@@ -123,7 +126,9 @@ export async function interview(env: Env, input: Record<string, unknown>, fetche
     return { fields: parseDraft(text) };
   }
   if (input.mode !== "chat") throw new HttpError(400, "mode는 chat이나 draft예요.");
-  const opener = "(리포트 인터뷰를 시작해요. 인사하고 첫 질문을 해 주세요.)";
+  const opener = turns.length && turns[0].role === "user"
+    ? "(리포트 인터뷰를 시작해요. 아래가 사용자가 먼저 한 말이에요. 그 말에 맞춰 답해 주세요.)"
+    : "(리포트 인터뷰를 시작해요. 인사하고 첫 질문을 해 주세요.)";
   const reply = await callClaude(env, CHAT_SYSTEM + questLine(quest), toApiMessages(turns, opener), 600, fetcher);
   return { reply };
 }

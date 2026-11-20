@@ -48,7 +48,7 @@ describe("리포트 인터뷰", () => {
     const b = seen[0].body;
     expect(seen[0].url).toBe("https://api.anthropic.com/v1/messages");
     expect(seen[0].headers["x-api-key"]).toBe("sk-test");
-    expect(b.model).toBe("claude-haiku-5-5");
+    expect(b.model).toBe("claude-sonnet-5-5");
     expect(b.messages.map((m: any) => m.role)).toEqual(["user", "assistant", "user"]);
     expect(b.messages[2].content).toBe("재귀\n\n그리고 반복");
     expect(b.system).toContain("가르치거나 설명하지 마");
