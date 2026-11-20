@@ -28,6 +28,13 @@ describe("리포트 인터뷰", () => {
     expect(r.status).toBe(200);
     expect((await r.json()).reply).toBe("안녕하세요");
   });
+  it("상태 확인에 인터뷰가 켜졌는지 보여요 (키 값은 안 보여요)", async () => {
+    const on = await (await worker.fetch(new Request("https://api.example.dev/api/health"), env)).json();
+    expect(on.interview).toBe(true);
+    expect(JSON.stringify(on)).not.toContain("sk-test");
+    const off = await (await worker.fetch(new Request("https://api.example.dev/api/health"), { ...env, ANTHROPIC_API_KEY: undefined })).json();
+    expect(off.interview).toBe(false);
+  });
   it("API 키가 없으면 503으로 알려요", async () => {
     const r = await call({ mode: "chat", messages: [] }, "owner", { ...env, ANTHROPIC_API_KEY: undefined });
     expect(r.status).toBe(503);

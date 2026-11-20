@@ -2,6 +2,9 @@ import type { Env } from "./env";
 import { handleCallback, handleLogin, requireOwner, requireUser } from "./auth";
 import { HttpError, json, readJson, withCors } from "./http";
 import { interview } from "./interview";
+
+/** 배포할 때마다 바뀌는 건 아니고, 기능이 크게 바뀔 때 올려요. /api/health 에 보여요. */
+export const VERSION = "2026-11-20 리포트 인터뷰";
 import { deletePost, getPost, listPosts, postStatus, publishPost, updatePost } from "./posts";
 import { deleteNote, getNote, publishNote, updateNote } from "./notes";
 import { deleteSeries, deleteTag, getTaxonomy, saveSeries, saveTag, setMain } from "./taxonomy";
@@ -71,7 +74,8 @@ async function route(req: Request, env: Env, url: URL): Promise<Response> {
   const { pathname: p } = url;
   const m = req.method;
 
-  if (p === "/api/health") return json({ ok: true });
+  // 배포된 버전과 켜진 기능을 브라우저에서 바로 볼 수 있어요. 비밀값 자체는 절대 보여주지 않아요.
+  if (p === "/api/health") return json({ ok: true, version: VERSION, interview: !!env.ANTHROPIC_API_KEY });
   if (p === "/scene.svg" && m === "GET") return sceneResponse(url, Date.now(), fetch, env);
   if (p === "/api/now" && m === "GET") return json(await nowState(env));
 
