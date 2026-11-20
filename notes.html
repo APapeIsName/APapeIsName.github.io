@@ -21,6 +21,7 @@ scripts:
 <div class="note-filters">
   <div class="filters" role="group" aria-label="프로젝트로 거르기">
     <a class="chip" href="{{ '/notes/' | relative_url }}" data-series="" aria-pressed="true">전체</a>
+    <a class="chip" href="{{ '/notes/' | relative_url }}?series=cs" data-series="cs" data-title="{{ site.course_title | escape }}" data-desc="메인으로 하는 CS 기본기 과정의 공부 노트예요." data-link="" aria-pressed="false">{{ site.course_title }}</a>
     {% for s in site.data.series %}
     <a class="chip" href="{{ '/notes/' | relative_url }}?series={{ s.id }}" data-series="{{ s.id }}" data-title="{{ s.title | escape }}" data-desc="{{ s.description | escape }}" data-link="{{ s.link | escape }}" aria-pressed="false">{{ s.title }}</a>
     {% endfor %}
@@ -44,7 +45,7 @@ scripts:
         <a class="note-title" href="{{ n.url | relative_url }}">{{ n.title }}</a>
         {% if n.summary %}<span class="feed-summary">{{ n.summary }}</span>{% endif %}
         <span class="feed-meta">
-          {% if s %}<span class="feed-series">{{ s.title }}</span>{% endif %}
+          {% if s %}<span class="feed-series">{{ s.title }}</span>{% elsif n.series == "cs" %}<span class="feed-series">{{ site.course_title }}</span>{% endif %}
           {% for t in n.tags %}<span class="tag-chip is-static">#{{ t }}</span>{% endfor %}
         </span>
       </div>

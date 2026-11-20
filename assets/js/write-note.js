@@ -9,7 +9,7 @@
 
   function $(id) { return document.getElementById(id); }
   var gate = $("write-gate"), form = $("note-form");
-  var f = { series: $("n-series"), title: $("n-title"), summary: $("n-summary"), date: $("n-date"), hours: $("n-hours"), body: $("n-body") };
+  var f = { quest: $("n-quest"), series: $("n-series"), title: $("n-title"), summary: $("n-summary"), date: $("n-date"), hours: $("n-hours"), body: $("n-body") };
   var params = new URLSearchParams(location.search);
   var mode = { path: params.get("path") || "", sha: "", url: "" };
   var busy = false, opened = false;
@@ -49,13 +49,44 @@
     var sel = f.series;
     sel.textContent = "";
     sel.appendChild(node("option", { value: "" }, "프로젝트 없음"));
-    seriesList.forEach(function (s) { sel.appendChild(node("option", { value: s.id }, s.title)); });
-    if (selected && !seriesList.some(function (s) { return s.id === selected; })) {
+    var main = C.mainProject || "cs";
+    sel.appendChild(node("option", { value: "cs" }, (cfg.courseTitle || "CS 과정") + (main === "cs" ? " (메인)" : "")));
+    seriesList.forEach(function (s) { sel.appendChild(node("option", { value: s.id }, s.title + (main === s.id ? " (메인)" : ""))); });
+    if (selected && selected !== "cs" && !seriesList.some(function (s) { return s.id === selected; })) {
       sel.appendChild(node("option", { value: selected }, selected + " (목록에 없는 프로젝트)"));
     }
     sel.appendChild(node("option", { value: NEW }, "+ 새 프로젝트 만들기"));
     sel.value = selected || "";
     sel.setAttribute("data-last", sel.value);
+    syncQuestPick();
+  }
+
+  /* ── CS 과정 노트면 어느 과제를 공부했는지 골라요 (나중에 리포트를 쓸 때 모아 보여줘요) ── */
+  function questList() { return (C.computed && C.computed.quests) || C.quests || []; }
+  function nextQuestId() {
+    var q = questList().filter(function (x) { return !x.done && x.type !== "사이드"; })[0];
+    return q ? q.id : "";
+  }
+  function buildQuestOptions(selected) {
+    var sel = f.quest;
+    if (!sel) return;
+    sel.textContent = "";
+    sel.appendChild(node("option", { value: "" }, "과제 없이"));
+    var groups = {};
+    var order = [];
+    questList().forEach(function (q) {
+      if (!groups[q.season]) { groups[q.season] = node("optgroup", { label: q.season }); order.push(q.season); }
+      groups[q.season].appendChild(node("option", { value: q.id }, (q.done ? "✓ " : "") + q.quest));
+    });
+    order.forEach(function (s) { sel.appendChild(groups[s]); });
+    sel.value = selected || "";
+  }
+  function syncQuestPick() {
+    var pick = $("n-quest-pick");
+    if (!pick) return;
+    var isCourse = f.series.value === "cs";
+    pick.hidden = !isCourse;
+    if (isCourse && !f.quest.options.length) buildQuestOptions(nextQuestId());
   }
 
   function openNewSeries() {
@@ -144,12 +175,14 @@
   function collect() {
     var v = f.series.value === NEW ? (f.series.getAttribute("data-last") || "") : f.series.value;
     var data = { title: f.title.value.trim(), summary: f.summary.value.trim(), date: f.date.value, series: v, tags: tags.slice(), body: f.body.value };
+    if (v === "cs" && f.quest && f.quest.value) data.quest = f.quest.value;
     var h = f.hours.value.trim();
     if (h !== "") data.hours = Number(h);
     return data;
   }
   function apply(d) {
     d = d || {};
+    buildQuestOptions(d.quest || (d.series === "cs" ? nextQuestId() : ""));
     buildSeriesOptions(d.series || "");
     f.title.value = d.title || "";
     f.summary.value = d.summary || "";
@@ -332,6 +365,7 @@
       if (f.series.value === NEW) { openNewSeries(); return; }
       f.series.setAttribute("data-last", f.series.value);
       closeNewSeries(true);
+      syncQuestPick();
       scheduleSave();
     });
     $("ns-create").addEventListener("click", createSeries);
@@ -376,7 +410,8 @@
     if (!mode.path) {
       gate.hidden = true;
       form.hidden = false;
-      restoreDraftOr(function () { apply({ series: params.get("series") || "", date: todayStr() }); });
+      // 새 노트는 메인 프로젝트로 시작해요 (주소에 ?series= 가 있으면 그걸로)
+      restoreDraftOr(function () { apply({ series: params.has("series") ? params.get("series") : (C.mainProject || "cs"), quest: params.get("quest") || "", date: todayStr() }); });
       refreshTaxonomy();
       f.title.focus();
       return;

@@ -5,7 +5,8 @@ layout: default
 {% assign body = content | strip %}
 <article class="note">
   <header class="note-head">
-    {% if s %}<p class="note-series"><a href="{{ '/project/' | relative_url }}?id={{ s.id }}">{{ s.title }}</a></p>{% endif %}
+    {% if s %}<p class="note-series"><a href="{{ '/project/' | relative_url }}?id={{ s.id }}">{{ s.title }}</a></p>
+    {% elsif page.series == "cs" %}{% assign nq = site.data.quests | where: "id", page.quest | first %}<p class="note-series"><a href="{{ '/course/' | relative_url }}">{{ site.course_title }}</a>{% if nq %} <span class="note-quest">{{ nq.season }}, {{ nq.quest }}</span>{% endif %}</p>{% endif %}
     <h1>{{ page.title }}</h1>
     {% if page.summary %}<p class="note-summary">{{ page.summary }}</p>{% endif %}
     <p class="note-meta">
@@ -37,6 +38,20 @@ layout: default
       {% assign next_i = idx | plus: 1 %}
       {% if next_i < in_series.size %}<a class="is-next" href="{{ in_series[next_i].url | relative_url }}">다음 글: {{ in_series[next_i].title }}</a>{% endif %}
     </p>
+  </nav>
+  {% endif %}
+  {% endif %}
+
+  {% if page.series == "cs" and page.quest %}
+  {% assign same_q = site.notes | where: "quest", page.quest | sort: "date" %}
+  {% assign q_reports = site.posts | where: "quest", page.quest %}
+  {% if same_q.size > 1 or q_reports.size > 0 %}
+  <nav class="window series-box" aria-labelledby="quest-box-title">
+    <h2 id="quest-box-title">같은 과제의 글</h2>
+    <ol class="series-toc">
+      {% for n in same_q %}<li{% if n.url == page.url %} class="is-here" aria-current="page"{% endif %}><a href="{{ n.url | relative_url }}">{{ n.title }}</a></li>{% endfor %}
+      {% for r in q_reports %}<li><a href="{{ r.url | relative_url }}">리포트: {{ r.title }}</a></li>{% endfor %}
+    </ol>
   </nav>
   {% endif %}
   {% endif %}

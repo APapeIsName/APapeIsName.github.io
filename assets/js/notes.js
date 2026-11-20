@@ -32,7 +32,9 @@
     document.title = chip.getAttribute("data-title") + " | " + document.title.split(" | ").slice(-1)[0];
     var pbox = document.getElementById("notes-project");
     if (pbox) {
-      pbox.querySelector("a").href = pbox.getAttribute("data-base") + "?id=" + encodeURIComponent(series);
+      var pa = pbox.querySelector("a");
+      if (series === "cs") { pa.href = (window.COURSE && COURSE.config && COURSE.config.courseUrl) || "/course/"; pa.textContent = "과정 대시보드 보기"; }
+      else pa.href = pbox.getAttribute("data-base") + "?id=" + encodeURIComponent(series);
       pbox.hidden = false;
     }
     var w = document.getElementById("notes-write");

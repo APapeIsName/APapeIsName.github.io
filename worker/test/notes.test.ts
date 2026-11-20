@@ -164,6 +164,16 @@ describe("노트 API", () => {
     expect(r.status).toBe(400);
     expect((await r.json()).error).toContain("프로젝트를 먼저");
   });
+  it("CS 과정(메인)에도 노트를 쓸 수 있고, 과제를 붙일 수 있어요", async () => {
+    const r = await api("/api/notes", "POST", { ...note, series: "cs", quest: "S0-863670" });
+    expect(r.status).toBe(201);
+    const { path } = await r.json();
+    expect(path).toMatch(/^_notes\/2026-11-16-cs-\d{4}\.md$/);
+    expect(repo.get(path)!.text).toContain('quest: "S0-863670"');
+    const got = await (await api(`/api/notes/item?path=${encodeURIComponent(path)}`)).json();
+    expect(got.fields.quest).toBe("S0-863670");
+    expect((await api("/api/notes", "POST", { ...note, series: "cs", quest: "아무거나" })).status).toBe(400);
+  });
   it("쓰면 새 태그가 목록에 더해지고, 고치고 지울 수 있어요", async () => {
     await api("/api/series", "POST", { create: true, id: "toby-spring", title: "토비의 스프링" });
     await api("/api/tags", "POST", { create: true, name: "Spring" });

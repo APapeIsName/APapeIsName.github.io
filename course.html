@@ -42,6 +42,28 @@ scripts:
   </section>
 </div>
 
+<section class="window recent" aria-labelledby="cs-notes-title">
+  <h2 id="cs-notes-title">과정 공부 노트</h2>
+  {% assign cs_notes = site.notes | where: "series", "cs" | sort: "date" | reverse %}
+  {% if cs_notes.size > 0 %}
+  <ul class="report-list">
+    {% for n in cs_notes limit: 5 %}
+    {% assign nq = site.data.quests | where: "id", n.quest | first %}
+    <li>
+      <time datetime="{{ n.date | date: '%Y-%m-%d' }}">{{ n.date | date: "%-m월 %-d일" }}</time>
+      <div>
+        <a href="{{ n.url | relative_url }}">{{ n.title }}</a>
+        {% if nq %}<span class="report-meta">{{ nq.season }}, {{ nq.quest }}</span>{% endif %}
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="empty">아직 과정 노트가 없어요. 공부한 날 바로 적어 두고, 리포트는 과제를 마친 뒤에 써도 돼요.</p>
+  {% endif %}
+  <p class="more-links">{% if cs_notes.size > 5 %}<a href="{{ '/notes/' | relative_url }}?series=cs">과정 노트 전체 보기</a>{% endif %}<a class="owner-only" hidden href="{{ '/write/note/' | relative_url }}?series=cs">과정 노트 쓰기</a></p>
+</section>
+
 <section class="window recent" aria-labelledby="links-title">
   <h2 id="links-title">과정 링크 모음</h2>
   <p class="mini-msg" data-links-msg role="status"></p>

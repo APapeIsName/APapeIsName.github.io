@@ -267,7 +267,7 @@ export async function ensureTags(env: Env, names: string[]) {
 }
 
 export async function assertSeriesExists(env: Env, id: string | undefined) {
-  if (!id) return;
+  if (!id || id === COURSE_PROJECT_ID) return; // CS 과정은 늘 있어요
   const { items } = await readList<Series>(env, SERIES_FILE);
   if (!items.some((s) => s.id === id)) throw new HttpError(400, "그 프로젝트가 없어요. 프로젝트를 먼저 만들어 주세요.");
 }

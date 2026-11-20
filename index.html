@@ -36,7 +36,7 @@ scripts:
             {% if p.collection == 'notes' %}
               <span class="kind-pill is-note">노트</span>
               {% assign s = site.data.series | where: "id", p.series | first %}
-              {% if s %}<a class="feed-series" href="{{ '/project/' | relative_url }}?id={{ s.id }}">{{ s.title }}</a>{% endif %}
+              {% if s %}<a class="feed-series" href="{{ '/project/' | relative_url }}?id={{ s.id }}">{{ s.title }}</a>{% elsif p.series == "cs" %}<a class="feed-series" href="{{ '/course/' | relative_url }}">{{ site.course_title }}</a>{% endif %}
               {% for t in p.tags %}<a class="tag-chip" href="{{ '/notes/' | relative_url }}?tag={{ t | url_encode }}">#{{ t }}</a>{% endfor %}
             {% else %}
               {% assign q = site.data.quests | where: "id", p.quest | first %}

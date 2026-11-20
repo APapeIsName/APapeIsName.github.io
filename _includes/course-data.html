@@ -30,7 +30,7 @@ window.COURSE = {
     {"date": {{ p.date | date: "%Y-%m-%d" | jsonify }}, "quest": {{ p.quest | jsonify }}, "complete": {% if p.complete %}true{% else %}false{% endif %}, "recalled": {% if p.recalled %}true{% else %}false{% endif %}, "hours": {{ p.hours | default: 0 }}, "title": {{ p.title | jsonify }}, "url": {{ p.url | relative_url | jsonify }}, "path": {{ p.path | jsonify }}, "missing": {{ rc_missing_keys | split: "|" | jsonify }}, "recallFilled": {{ rc_recall_ok }}}{% unless forloop.last %},{% endunless %}{% endfor %}
   ],
   notes: [{% assign notes_sorted = site.notes | sort: "date" | reverse %}{% for n in notes_sorted %}
-    {"date": {{ n.date | date: "%Y-%m-%d" | jsonify }}, "title": {{ n.title | jsonify }}, "url": {{ n.url | relative_url | jsonify }}, "path": {{ n.path | jsonify }}, "series": {{ n.series | default: "" | jsonify }}, "tags": {% if n.tags %}{{ n.tags | jsonify }}{% else %}[]{% endif %}, "hours": {{ n.hours | default: 0 }}, "summary": {{ n.summary | default: "" | jsonify }}}{% unless forloop.last %},{% endunless %}{% endfor %}
+    {"date": {{ n.date | date: "%Y-%m-%d" | jsonify }}, "title": {{ n.title | jsonify }}, "url": {{ n.url | relative_url | jsonify }}, "path": {{ n.path | jsonify }}, "series": {{ n.series | default: "" | jsonify }}, "quest": {{ n.quest | default: "" | jsonify }}, "tags": {% if n.tags %}{{ n.tags | jsonify }}{% else %}[]{% endif %}, "hours": {{ n.hours | default: 0 }}, "summary": {{ n.summary | default: "" | jsonify }}}{% unless forloop.last %},{% endunless %}{% endfor %}
   ],
   checkins: {% if site.data.checkins %}{{ site.data.checkins | jsonify }}{% else %}[]{% endif %},
   series: {% if site.data.series %}{{ site.data.series | jsonify }}{% else %}[]{% endif %},

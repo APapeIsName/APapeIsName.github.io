@@ -968,3 +968,6 @@ a.chip { text-decoration: none; display: inline-block; }
 .link-form-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 10px 0 0; }
 .project-links { grid-column: 1 / -1; }
 @media (max-width: 640px) { .link-form-grid { grid-template-columns: 1fr; } }
+.quest-notes { margin: 0; padding-left: 18px; font-size: 14px; line-height: 1.7; }
+.note-quest { color: var(--muted); font-size: 13px; margin-left: 6px; }
+.series-pick[hidden] { display: none; }
