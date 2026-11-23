@@ -88,7 +88,8 @@
     sel.appendChild(node("option", { value: "" }, "과제 없이"));
     var groups = {};
     var order = [];
-    questList().forEach(function (q) {
+    var opened = ((C.computed && C.computed.dungeons) || []).filter(function (d) { return d.open; });
+    questList().concat(opened).forEach(function (q) {
       if (!groups[q.season]) { groups[q.season] = node("optgroup", { label: q.season }); order.push(q.season); }
       groups[q.season].appendChild(node("option", { value: q.id }, (q.done ? "✓ " : "") + q.quest));
     });

@@ -8,6 +8,7 @@ permalink: /syllabus/
 <header class="page-head">
   <h1>계획서</h1>
   <p>시즌마다 참고하는 대학 강의와 교재, 과제 목록이에요. 체크 표시는 끝낸 과제, 노란 테두리는 지금 듣는 시즌이에요. 시즌 보스를 깨면 배지가 켜지고, 리포트를 낸 과제에는 제출 링크가 붙어요.</p>
+  <p>과제마다 '받아 오는 지식'은 다른 시즌에서 이어 받는 과제예요. 무엇이 무엇으로 자라는지는 <a href="{{ '/tree/' | relative_url }}">스킬 트리</a>에서 한눈에 볼 수 있어요. 맨 아래에는 CS 과제를 깨면 하나씩 열리는 히든 던전이 있어요.</p>
 </header>
 
 {% assign groups = site.data.quests | group_by: "season" %}
@@ -53,6 +54,10 @@ permalink: /syllabus/
           {% if q.type != "메인" %}<span class="tag tag-{{ q.type }}">{{ q.type }}</span>{% endif %}
           {{ q.quest }}
           {% assign br = q.branches %}{% include branches.html %}
+          {% assign q_code = q.season | split: " " | first %}{% assign reqs = q.requires | split: " " %}{% assign cross = "" %}
+          {% for rid in reqs %}{% assign r_code = rid | split: "-" | first %}{% if r_code != q_code %}{% assign cross = cross | append: rid | append: " " %}{% endif %}{% endfor %}
+          {% assign cross_ids = cross | strip | split: " " %}
+          {% if cross_ids.size > 0 %}<p class="reqs"><span class="reqs-label">받아 오는 지식</span>{% for rid in cross_ids %}{% assign rq = site.data.quests | where: "id", rid | first %}<span class="req" data-req="{{ rid }}">{{ rid | split: "-" | first }} {{ rq.quest }}</span>{% endfor %}</p>{% endif %}
         </td>
         <td class="c-practice">{{ q.practice }}</td>
         <td class="c-res">{{ q.resource }}</td>
@@ -69,3 +74,13 @@ permalink: /syllabus/
   </div>
 </section>
 {% endfor %}
+
+<section class="season hidden-dungeons" id="hidden">
+  <header class="window season-head">
+    <div class="season-title">
+      <h2><span class="season-code">???</span> 히든 던전</h2>
+      <p class="season-blurb">서버, 프론트, AI로 뻗은 엮을 거리를 분야별 던전으로 묶었어요. 열리는 조건을 채우면 이름과 방이 드러나요. 분야의 던전을 모두 깨면 히든 보스가 나타나요. 주차에는 넣지 않으니, 재밌을 때 들어가요.</p>
+    </div>
+  </header>
+  <div class="hidden-grid" data-hidden-dungeons><p>던전을 찾는 중이에요.</p></div>
+</section>

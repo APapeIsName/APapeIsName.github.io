@@ -985,3 +985,109 @@ a.chip { text-decoration: none; display: inline-block; }
 /* 칩 목록이 감싸는 목록(대시보드 메뉴, 할 일)의 li 모양을 물려받지 않게 */
 ul.branches > li.branch { display: inline-block; margin: 0; padding: 1px 7px 1px 0; border: 0; list-style: none; }
 ul.branches > li.branch::before, ul.branches > li.branch::marker { content: none; }
+
+/* ── 트리: 선행 과제와 히든 던전 ───────────────────── */
+.reqs { margin: 4px 0 0; display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: baseline; font-size: 12px; }
+.reqs-label { color: var(--muted); }
+.req { padding: 0 6px; color: var(--muted); box-shadow: inset 0 0 0 2px var(--faint); }
+.req.is-met { color: var(--hp-dark); box-shadow: inset 0 0 0 2px var(--hp); }
+tr.is-locked td { color: var(--muted); }
+tr.is-locked .check { background: var(--lock-fill); }
+.hidden-grid { display: grid; gap: 16px; margin-top: 12px; }
+.hidden-field { padding: 12px 16px; }
+.hidden-field h3 { margin: 0 0 8px; font-size: 16px; }
+.hidden-count { font-size: 12px; color: var(--muted); font-weight: 400; }
+.dungeon-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.dungeon { padding: 8px 10px; box-shadow: inset 0 0 0 2px var(--faint); }
+.dungeon p { margin: 0; }
+.dungeon.is-locked { background: repeating-linear-gradient(135deg, transparent 0 6px, var(--stripe-a) 6px 12px); }
+.dungeon.is-locked .dungeon-name { color: var(--muted); letter-spacing: 1px; }
+.dungeon-hint, .dungeon-meta, .room-src { font-size: 12px; color: var(--muted); }
+.dungeon.is-open { box-shadow: inset 0 0 0 2px var(--edge-hot); }
+.dungeon.is-done { box-shadow: inset 0 0 0 2px var(--hp); }
+.dungeon.is-boss.is-open { box-shadow: inset 0 0 0 3px var(--red); }
+.dungeon-name { font-weight: 700; }
+.dungeon-practice { margin-top: 4px !important; }
+.dungeon-rooms { margin-top: 4px; font-size: 13px; }
+.dungeon-rooms ul { margin: 4px 0 0; padding-left: 18px; }
+.dungeon-act { margin-top: 4px !important; font-size: 13px; }
+.tag-히든-던전 { background: #6b4fb0; }
+.tag-히든-보스 { background: var(--red); }
+.field-server h3 { color: #3f6fb5; }
+.field-front h3 { color: #b5603f; }
+.field-ai h3 { color: #6b4fb0; }
+
+/* ── 스킬 트리 페이지 ─────────────────────────────── */
+.tree-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 12px; }
+.tree-legend { display: inline-flex; flex-wrap: wrap; gap: 6px 10px; margin-left: auto; font-size: 12px; color: var(--muted); }
+.lg::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-right: 4px; vertical-align: -1px; box-shadow: inset 0 0 0 2px var(--line); background: var(--panel); }
+.lg-done::before { background: var(--hp); }
+.lg-locked::before { background: var(--lock-fill); box-shadow: none; }
+.lg-boss::before { box-shadow: inset 0 0 0 2px var(--red); }
+.lg-hidden::before { background: #6b4fb0; box-shadow: none; }
+.tree-wrap { padding: 0; }
+.tree-scroll { overflow: auto; max-height: 78vh; }
+.tree-scroll:focus-visible { outline: 3px solid var(--edge-hot); outline-offset: -3px; }
+.tree-canvas { position: relative; min-height: 200px; }
+.tree-loading { padding: 16px; }
+.tree-edges { position: absolute; left: 0; top: 0; pointer-events: none; shape-rendering: crispEdges; }
+.tree-edges .e { fill: none; stroke: var(--faint); stroke-width: 2; }
+.tree-edges .e-cross { stroke-opacity: .55; }
+.tree-edges .e-hidden { stroke-dasharray: 2 4; stroke-opacity: .5; }
+.tree-edges .e-met { stroke: var(--hp); stroke-opacity: .7; }
+.tree-edges .e-trunk { stroke: var(--gold); stroke-width: 4; stroke-opacity: 1; }
+.tree-col-head { position: absolute; top: 8px; font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tree-col-head b { color: var(--text); }
+.tree-band { position: absolute; left: 14px; right: 14px; padding-top: 8px; border-top: 2px dashed var(--faint); font-size: 12px; color: var(--muted); }
+.tree-band b { color: #6b4fb0; margin-right: 6px; }
+.tree-lane { position: absolute; left: 14px; font-size: 12px; font-weight: 700; }
+.tree-lane.field-server { color: #3f6fb5; }
+.tree-lane.field-front { color: #b5603f; }
+.tree-lane.field-ai { color: #6b4fb0; }
+.tnode { position: absolute; width: 168px; height: 38px; padding: 3px 7px; font: inherit; font-size: 11px; line-height: 15px; text-align: left; color: var(--text); background: var(--panel); border: 0; box-shadow: inset 0 0 0 2px var(--line); cursor: pointer; z-index: 1; }
+.tnode-text { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.tnode:hover { box-shadow: inset 0 0 0 2px var(--edge-hot); }
+.tnode:focus-visible { outline: 3px solid var(--edge-hot); outline-offset: 1px; }
+.tnode.is-done { background: var(--hp); color: #10301a; }
+.tnode.is-locked { color: var(--muted); background: repeating-linear-gradient(135deg, var(--panel) 0 6px, var(--stripe-a) 6px 12px); box-shadow: inset 0 0 0 2px var(--faint); }
+.tnode.is-side { box-shadow: inset 0 0 0 2px var(--faint); }
+.tnode.is-side.is-locked { box-shadow: inset 0 0 0 2px var(--faint); }
+.tnode.is-review { font-size: 10px; }
+.tnode.is-boss { box-shadow: inset 0 0 0 3px var(--red); font-weight: 700; }
+.tnode.is-trunk.is-boss { box-shadow: inset 0 0 0 3px var(--red), 0 0 0 3px var(--gold); }
+.tnode.is-hidden { color: #fff; background: #6b4fb0; box-shadow: none; }
+.tnode.is-hidden.field-server { background: #3f6fb5; }
+.tnode.is-hidden.field-front { background: #b5603f; }
+.tnode.is-hidden.is-locked { color: #fff; background: repeating-linear-gradient(135deg, #4a5874 0 6px, #56647f 6px 12px); letter-spacing: 2px; }
+.tnode.is-hidden.is-boss { box-shadow: inset 0 0 0 3px var(--red); }
+.tnode.is-hidden.is-done { box-shadow: inset 0 0 0 3px var(--hp); }
+.tnode.is-next::after { content: "지금"; position: absolute; right: -2px; top: -9px; padding: 0 4px; font-size: 10px; line-height: 14px; color: #000; background: var(--edge-hot); }
+/* 골랐을 때: 나머지는 흐리게 */
+.has-sel .tnode { opacity: .28; }
+.has-sel .tnode.is-anc, .has-sel .tnode.is-desc { opacity: .6; }
+.has-sel .tnode.is-sel, .has-sel .tnode.is-near { opacity: 1; }
+.has-sel .tnode.is-sel { outline: 3px solid var(--edge-hot); outline-offset: 1px; z-index: 2; }
+.has-sel .tnode.is-anc { box-shadow: inset 0 0 0 3px var(--xp); }
+.has-sel .tnode.is-desc { box-shadow: inset 0 0 0 3px var(--hp-dark); }
+.has-sel .tree-edges .e { stroke-opacity: .12; }
+.has-sel .tree-edges .e-anc { stroke: var(--xp); stroke-opacity: .45; stroke-width: 2; stroke-dasharray: none; }
+.has-sel .tree-edges .e-desc { stroke: var(--hp-dark); stroke-opacity: .45; stroke-width: 2; stroke-dasharray: none; }
+.has-sel .tree-edges .e-near.e-anc, .has-sel .tree-edges .e-near.e-desc { stroke-opacity: 1; stroke-width: 4; }
+.only-trunk .tnode:not(.is-trunk) { opacity: .2; }
+.only-trunk .tree-edges .e:not(.e-trunk) { stroke-opacity: .08; }
+.only-side .tnode.is-side { display: none; }
+.tree-detail { margin-top: 16px; padding: 14px 16px; }
+.tree-detail h2 { margin: 0 0 4px; font-size: 18px; }
+.tree-detail h3 { margin: 12px 0 6px; font-size: 14px; }
+.tree-detail h3 span { font-weight: 400; font-size: 12px; color: var(--muted); margin-left: 4px; }
+.tree-detail-meta { margin: 0; font-size: 13px; color: var(--muted); }
+.tree-detail-practice { margin: 8px 0 0; }
+.tree-detail-empty { color: var(--muted); margin: 0; }
+.tree-detail-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0 24px; }
+.tlinks, .tree-rooms { margin: 0; padding-left: 18px; }
+.tlinks li, .tree-rooms li { margin: 2px 0; }
+.tlink { font: inherit; font-size: 13px; color: var(--xp); background: none; border: 0; padding: 0; cursor: pointer; text-align: left; text-decoration: underline; text-underline-offset: 2px; }
+.tlink.is-done { color: var(--hp-dark); }
+.tlink.is-done::before { content: "✓ "; }
+@media (prefers-reduced-motion: reduce) { .tnode { transition: none; } }
+.hidden-dungeons .season-head { grid-template-columns: 1fr; }

@@ -173,6 +173,7 @@ describe("노트 API", () => {
     const got = await (await api(`/api/notes/item?path=${encodeURIComponent(path)}`)).json();
     expect(got.fields.quest).toBe("S0-863670");
     expect((await api("/api/notes", "POST", { ...note, series: "cs", quest: "아무거나" })).status).toBe(400);
+    expect((await api("/api/notes", "POST", { ...note, title: "던전 노트", series: "cs", quest: "HA-83eed1" })).status).toBe(201);
   });
   it("쓰면 새 태그가 목록에 더해지고, 고치고 지울 수 있어요", async () => {
     await api("/api/series", "POST", { create: true, id: "toby-spring", title: "토비의 스프링" });

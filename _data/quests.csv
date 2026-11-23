@@ -1,120 +1,120 @@
-id,done,recalled,season,type,quest,practice,branches,resource,hours,date
-S0-69fab2,FALSE,FALSE,S0 튜토리얼,메인,"게임 규칙 탭 읽고, 학습 블로그(GitHub Pages) 배포하기",블로그에 첫 리포트 올리기,프론트: 정적 사이트와 GitHub Pages 배포 | 서버: Cloudflare Workers로 만든 블로그 API,게임 규칙 탭 / 학습 블로그,2,
-S0-863670,FALSE,FALSE,S0 튜토리얼,메인,Missing Semester: 셸과 Git 강의,"강의 연습 문제 몇 개를 터미널에서 풀고, 이 블로그 저장소로 브랜치와 커밋 만져 보기",서버: SSH로 리눅스 서버 다루기 | 프론트: npm 스크립트와 패키지 매니저 | AI: Claude Code 같은 터미널 AI 도구 | 서버: CI/CD는 셸 스크립트 자동화,missing.csail.mit.edu,3,
-S1-0540f7,FALSE,FALSE,S1 SICP,메인,1.1 프로시저와 표현식,Racket(Scheme) REPL을 깔고 책의 예제를 직접 쳐 보기,"프론트: JavaScript의 일급 함수 | AI: 프롬프트도 프로그램(입력, 규칙, 출력 형식)",SICP 1.1 / CS 61A,3,
-S1-8bbf66,FALSE,FALSE,S1 SICP,메인,1.1 연습문제 풀기,연습문제를 REPL에서 돌려 보며 풀기,,SICP 연습문제,3,
-S1-02fabd,FALSE,FALSE,S1 SICP,메인,1.2 재귀 프로세스와 반복 프로세스,같은 함수를 재귀와 반복 두 방식으로 짜서 큰 입력으로 돌려 보기,서버: JVM 호출 스택과 StackOverflowError | AI: 생각의 사슬(CoT)은 계산 과정을 펼치는 것,SICP 1.2 / CS 61A,3,
-S1-de69f7,FALSE,FALSE,S1 SICP,메인,1.3 고차 함수 + 연습문제,"자주 쓰는 언어로 map, filter, reduce를 직접 만들어 보기","서버: Java 람다와 Stream API | 프론트: map, filter, reduce와 React 훅",SICP 1.3 / CS 61A,4,
-S1-b5fa02,FALSE,FALSE,S1 SICP,메인,2.1~2.2 데이터 추상화와 계층적 데이터,유리수나 구간 같은 작은 데이터 추상화를 직접 만들어 보기,"서버: DTO와 도메인 모델의 경계 | 프론트: 컴포넌트 props로 데이터 감추기 | 서버: 단위 테스트는 추상화 경계가 있어야 쉽다 | 서버: 모놀리스와 마이크로서비스, 경계 나누기 | 프론트: 유틸리티 CSS(Tailwind)와 컴포넌트 추상화 | 프론트: 웹 컴포넌트와 Shadow DOM, 캡슐화 | 프론트: 디자인 시스템은 UI의 추상화 장벽 | 프론트: 컴포넌트 테스트와 E2E 테스트(Playwright) | AI: LLM 회귀 테스트(평가 세트 고정하기)",SICP 2.1~2.2,4,
-S1-ae18ac,FALSE,FALSE,S1 SICP,사이드,2.3~2.5 기호 데이터와 범용 연산,기호 미분기를 만들어 식 몇 개를 미분해 보기,"서버: 인터페이스와 다형성, 스프링 DI | AI: 토큰화, 글을 기호로 쪼개기 | 프론트: 시맨틱 HTML, 태그는 의미를 담은 기호",SICP 2.3~2.5,5,
-S1-00196c,FALSE,FALSE,S1 SICP,메인,3.1~3.2 상태와 환경 모델,카운터나 은행 계좌를 클로저로 만들어 상태가 어떻게 남는지 확인하기,서버: 싱글톤 스프링 빈에 상태를 두면 생기는 일 | 프론트: 클로저와 React 상태,SICP 3.1~3.2,4,
-S1-3cf879,FALSE,FALSE,S1 SICP,사이드,3.3~3.5 가변 데이터와 스트림,무한 스트림으로 소수나 피보나치 수열 만들어 보기,서버: 리액티브 스트림(WebFlux)과 지연 평가 | 프론트: 이벤트 스트림(RxJS) | AI: LLM 스트리밍 응답 | 프론트: 시그널 기반 반응성(SolidJS),SICP 3.3~3.5,6,
-S1-7a046a,FALSE,FALSE,S1 SICP,보스,61A 프로젝트 하나 완성 (Hog 또는 Scheme 인터프리터),프로젝트를 완성하고 설계를 README에 정리해 GitHub에 올리기,AI: 인터프리터와 코드 실행 도구를 쓰는 에이전트,CS 61A 프로젝트,8,
-S1-62a82f,FALSE,FALSE,S1 SICP,복습,시즌 회고와 모의 면접,"시즌 회고를 쓰고, 모의 면접에서 개념을 얼마나 넓혀 갈 수 있는지 보기",,-,1,
-S2-5eb821,FALSE,FALSE,S2 CS:APP,복습,지난 시즌 돌아보기: S1에 쓴 글 다시 읽기,다시 읽다 새로 엮이는 게 있으면 그 글에 덧붙이기,,내 노트,0.5,
-S2-96abcf,FALSE,FALSE,S2 CS:APP,메인,1장 개관 + 2장 정수 표현,C로 정수 오버플로를 일부러 일으키고 비트를 출력해 보기,"서버: int 오버플로와 2038년 문제 | AI: 모델 양자화(int8, int4)",CS:APP 1~2장 / CS 61C,4,
-S2-42969c,FALSE,FALSE,S2 CS:APP,메인,2장 부동소수점,0.1+0.2의 비트를 직접 출력해 보며 왜 0.3이 아닌지 확인하기,"서버: 금액은 왜 BigDecimal인가 | 프론트: JavaScript 숫자는 모두 double | AI: fp16, bf16과 모델 정밀도",CS:APP 2장,3,
-S2-19ca67,FALSE,FALSE,S2 CS:APP,메인,Data Lab,"퍼즐을 풀고, 마음에 든 풀이 하나를 블로그에 남기기",서버: 비트 플래그로 권한과 상태 저장,CS:APP 랩,6,
-S2-bbb409,FALSE,FALSE,S2 CS:APP,메인,3장 어셈블리: 제어 흐름과 프로시저,간단한 C 함수를 gcc -S로 컴파일해 어셈블리 읽어 보기,서버: JVM 바이트코드와 JIT 컴파일,CS:APP 3장 / CS 61C,5,
-S2-1f83bd,FALSE,FALSE,S2 CS:APP,메인,"3장 배열, 구조체, 버퍼 오버플로",일부러 버퍼 오버플로를 일으키는 C 코드를 짜서 gdb로 스택 들여다보기,"서버: OWASP 보안 취약점과 입력 검증 | AI: 프롬프트 인젝션, 입력이 명령이 되는 같은 구조 | 프론트: CSP(콘텐츠 보안 정책)와 XSS",CS:APP 3장,4,
-S2-08fd4f,FALSE,FALSE,S2 CS:APP,메인,Bomb Lab,gdb로 폭탄을 해체하며 쓴 기법을 모아 두기,,CS:APP 랩,10,
-S2-20b72f,FALSE,FALSE,S2 CS:APP,사이드,Attack Lab,"공격 하나를 성공시키고, 막는 방법을 코드에 적용해 보기","서버: 웹 공격과 방어(SQL 인젝션, XSS) | AI: 적대적 테스트(레드팀)",CS:APP 랩,8,
-S2-aaa2ce,FALSE,FALSE,S2 CS:APP,메인,6장 메모리 계층과 캐시,배열을 행 우선과 열 우선으로 순회하며 속도 차이 재 보기,서버: Redis 캐시와 캐시 무효화 | 프론트: 브라우저 캐시와 Cache-Control | AI: KV 캐시와 프롬프트 캐싱 | 프론트: 서비스 워커와 오프라인 캐시(PWA) | AI: 컨텍스트 창은 작고 빠른 메모리,CS:APP 6장 / CS 61C,5,
-S2-2e91c0,FALSE,FALSE,S2 CS:APP,메인,Cache Lab,행렬 전치를 캐시 친화적으로 바꾸며 미스 수 줄여 보기,서버: ArrayList와 LinkedList의 실제 속도 차이 | 서버: 프로파일러로 병목 찾기,CS:APP 랩,8,
-S2-74e823,FALSE,FALSE,S2 CS:APP,메인,7장 링킹,작은 정적 라이브러리를 만들어 링크하고 nm으로 심볼 보기,"서버: Gradle 의존성, JAR, 클래스 로딩 | 프론트: 번들러(Vite)와 트리 셰이킹 | 프론트: 패키지 매니저(npm, pnpm)와 의존성 해결",CS:APP 7장,3,
-S2-376122,FALSE,FALSE,S2 CS:APP,메인,8장 프로세스와 시그널,fork를 여러 번 쓰는 프로그램을 짜서 출력 순서 실험하기,"서버: 그레이스풀 셧다운(SIGTERM)과 스프링 종료 훅 | 서버: 컨테이너 안의 PID 1 | 서버: Twelve-Factor 앱(설정은 환경 변수, 프로세스는 언제든 버려도 되게)",CS:APP 8장,5,
-S2-1ccc9d,FALSE,FALSE,S2 CS:APP,메인,Shell Lab,"작업 관리가 되는 셸을 완성하고, 맨손 쉘 프로젝트와 비교해 보기",서버: 도커 컨테이너도 결국 프로세스 | 맨손으로 쉘 만들기 프로젝트와 비교 | AI: MCP의 stdio 전송은 파이프,CS:APP 랩,10,
-S2-6b09a2,FALSE,FALSE,S2 CS:APP,메인,9장 가상 메모리,/proc/self/maps로 내 프로그램의 메모리 지도 들여다보기,"서버: JVM 힙, GC, 메모리 누수 | AI: 모델 가중치를 메모리에 올리기(mmap) | AI: Ollama로 모델 직접 돌려 보기",CS:APP 9장 / CS 61C,5,
-S2-8b0c8b,FALSE,FALSE,S2 CS:APP,보스,Malloc Lab,내 할당기를 만들고 성능을 끌어올린 과정을 README로,"서버: JVM GC 알고리즘 비교(G1, ZGC)",CS:APP 랩,20,
-S2-40b1c7,FALSE,FALSE,S2 CS:APP,사이드,10~12장 + Proxy Lab,동시 접속을 받는 작은 프록시를 만들어 브라우저로 붙어 보기,서버: 톰캣 스레드 풀과 요청 처리 | 서버: Nginx 리버스 프록시 | 서버: 서비스 메시와 사이드카 프록시,CS:APP 10~12장,20,
-S2-4822e4,FALSE,FALSE,S2 CS:APP,복습,시즌 회고와 모의 면접,"시즌 회고를 쓰고, 모의 면접에서 개념을 얼마나 넓혀 갈 수 있는지 보기",,-,1,
-S3-55900d,FALSE,FALSE,S3 운영체제,복습,지난 시즌 돌아보기: S2에 쓴 글 다시 읽기,다시 읽다 새로 엮이는 게 있으면 그 글에 덧붙이기,,내 노트,0.5,
-S3-ac2d74,FALSE,FALSE,S3 운영체제,메인,"프로세스, 프로세스 API, 제한적 직접 실행",OSTEP 시뮬레이터 숙제를 직접 돌려 보기,"서버: 컨테이너 격리(namespace, cgroup) | 서버: 서버리스는 요청마다 뜨고 지는 프로세스 | 프론트: Web API는 브라우저가 주는 시스템 콜 | 프론트: Electron과 Tauri의 프로세스 구조 | AI: 컨텍스트 격리(서브 에이전트)는 프로세스 격리",OSTEP 4~6장 / CS 162,3,
-S3-1c1be3,FALSE,FALSE,S3 운영체제,메인,CPU 스케줄링 (FIFO부터 MLFQ까지),스케줄러 시뮬레이터에 여러 작업을 넣어 정책별 결과 비교하기,"서버: 스레드 풀 크기 정하기 | AI: 추론 서버의 배치 스케줄링 | 서버: 부하 이동, 급하지 않은 일은 한가할 때 | 프론트: 16ms 프레임 예산과 메인 스레드",OSTEP 7~9장,3,
-S3-e40832,FALSE,FALSE,S3 운영체제,메인,"주소 공간, 세그멘테이션, 페이징, TLB",페이지 테이블 시뮬레이터로 주소 변환을 직접 돌려 보기,서버: 컨테이너 메모리 제한과 OOM Killer | 서버: 가상 머신과 컨테이너의 차이,OSTEP 13~20장 / CS 162,5,
-S3-584840,FALSE,FALSE,S3 운영체제,메인,스와핑과 페이지 교체 정책,LRU와 FIFO를 직접 짜서 같은 접근 패턴으로 비교하기,"서버: 캐시 교체 정책(LRU, Redis maxmemory) | AI: 컨텍스트 압축은 무엇을 내보낼지 고르는 문제",OSTEP 21~22장,3,
-S3-e54e24,FALSE,FALSE,S3 운영체제,메인,스레드와 락,락 없이 생기는 경쟁 조건을 코드로 재현하고 락으로 고치기,"서버: synchronized, 분산 락, @Transactional과 동시성 | 프론트: JavaScript는 왜 싱글 스레드인가",OSTEP 26~29장 / CS 162,4,
-S3-3d57eb,FALSE,FALSE,S3 운영체제,메인,"조건 변수, 세마포어, 동시성 버그","세마포어로 생산자-소비자를 짜고, 일부러 교착 상태도 만들어 보기",서버: 커넥션 풀(HikariCP)과 데드락 | 프론트: async/await와 이벤트 루프,OSTEP 30~32장,4,
-S3-53c5ba,FALSE,FALSE,S3 운영체제,메인,"I/O 장치, 디스크, 파일 시스템 구현",strace로 파일 하나를 읽을 때 부르는 시스템 콜 지켜보기,"서버: 논블로킹 I/O(Netty, WebFlux) | 서버: 로그 파일과 로그 수집",OSTEP 36~40장,4,
-S3-452bc3,FALSE,FALSE,S3 운영체제,메인,크래시 일관성과 저널링,파일을 쓰는 도중 프로세스를 죽여 보고 무엇이 남는지 확인하기,서버: DB의 WAL과 메시지 큐의 내구성,OSTEP 42장,3,
-S3-a6e2fe,FALSE,FALSE,S3 운영체제,보스,스레드 안전한 생산자-소비자 큐 구현 + 부하 테스트,설계와 부하 테스트 결과를 README로,"서버: 메시지 큐(Kafka, RabbitMQ) | AI: 작업 큐로 LLM 요청 몰아 처리하기 | 서버: 백프레셔, 큐가 차면 생산자를 늦추기",OSTEP 30장 참고,6,
-S3-acfae6,FALSE,FALSE,S3 운영체제,사이드,"xv6 랩 2~3개 (시스템 콜, 페이지 테이블)",시스템 콜 하나를 직접 추가해 커널 고쳐 보기,,MIT 6.1810,20,
-S3-6b4429,FALSE,FALSE,S3 운영체제,복습,시즌 회고와 모의 면접,"시즌 회고를 쓰고, 모의 면접에서 개념을 얼마나 넓혀 갈 수 있는지 보기",,-,1,
-S4-d8e79d,FALSE,FALSE,S4 CS 수학,복습,지난 시즌 돌아보기: S3에 쓴 글 다시 읽기,다시 읽다 새로 엮이는 게 있으면 그 글에 덧붙이기,,내 노트,0.5,
-S4-7ca9d7,FALSE,FALSE,S4 CS 수학,메인,증명과 귀납법,작은 정리 하나를 귀납법으로 직접 증명해 보기,,MCS / MIT 6.042J,5,
-S4-12ea74,FALSE,FALSE,S4 CS 수학,메인,"집합, 관계, 함수",집합 연산을 코드로 만들고 성질을 테스트로 확인하기,"서버: SQL은 집합 연산(조인, 합집합, 차집합) | 서버: DB 정규화는 관계와 함수 종속 | 프론트: GraphQL 클라이언트(Apollo, Relay)의 정규화 캐시",MCS / MIT 6.042J,3,
-S4-c5d4a5,FALSE,FALSE,S4 CS 수학,메인,그래프 이론,실무 의존성 그래프를 그려 순환이 있는지 찾아보기,서버: 스프링 빈의 순환 의존 | 프론트: 모듈 의존 그래프 | 서버: 그래프 DB(Neo4j),MCS / MIT 6.042J,5,
-S4-31211f,FALSE,FALSE,S4 CS 수학,메인,셈과 조합,"경우의 수를 손으로 세고, 코드로 모든 경우를 나열해 맞춰 보기",,MCS / MIT 6.042J,4,
-S4-75b33c,FALSE,FALSE,S4 CS 수학,메인,확률 기초와 조건부 확률,몬티홀 문제를 코드로 시뮬레이션해 확인하기,"서버: A/B 테스트 | AI: 다음 토큰 확률과 temperature | AI: top-k, top-p 샘플링과 반복 페널티 | AI: 데이터 편향과 공정성",MCS / MIT 6.042J,5,
-S4-ab9aee,FALSE,FALSE,S4 CS 수학,메인,"확률 변수, 기댓값, 편차",응답 시간 같은 실제 데이터를 모아 평균과 분산 계산해 보기,"서버: 응답 시간의 평균과 p99 | AI: LLM 평가 지표의 분산 | 서버: 메트릭과 모니터링 대시보드 | AI: LLM 호출 추적과 비용, 지연 모니터링 | AI: 이상 탐지는 평균에서 얼마나 먼가",MCS / MIT 6.042J,4,
-S4-2504c0,FALSE,FALSE,S4 CS 수학,사이드,정수론과 RSA,작은 소수로 RSA 암호화와 복호화를 직접 짜 보기,"서버: HTTPS와 TLS 인증서, JWT 서명",MCS,4,
-S4-a0198a,FALSE,FALSE,S4 CS 수학,사이드,선형대수 직관,행렬로 점들을 돌리고 늘리는 코드를 짜서 그려 보기,"AI: 임베딩과 코사인 유사도 | AI: 트랜스포머는 행렬 곱의 연속 | 프론트: CSS transform과 애니메이션은 행렬 | AI: 이미지는 숫자 행렬, 추천은 벡터 사이 거리",3Blue1Brown Essence of Linear Algebra,5,
-S4-9c1e47,FALSE,FALSE,S4 CS 수학,사이드,그래픽스 기초: 좌표 변환과 래스터화,삼각형 하나를 픽셀로 직접 그려 보기,프론트: 브라우저의 페인트와 합성(레이어) | 프론트: Canvas와 WebGL | AI: 이미지 생성 모델이 다루는 픽셀,Computer Graphics from Scratch (웹 무료),6,
-S4-3b7d20,FALSE,FALSE,S4 CS 수학,사이드,정보 이론 기초: 엔트로피와 압축,허프만 부호로 글을 압축해 보고 gzip과 비교하기,"서버: gzip, Brotli 응답 압축 | 프론트: 이미지 포맷(WebP, AVIF) | AI: 토큰과 엔트로피, 퍼플렉시티 | AI: 음성은 샘플링된 신호",직접 구현,4,
-S4-e85a13,FALSE,FALSE,S4 CS 수학,사이드,머신러닝 기초: 경사 하강과 작은 신경망 직접 만들기,micrograd를 따라 자동 미분을 직접 짜 보기,AI: LLM이 학습되는 방식 | AI: 파인튜닝과 RAG 중 무엇을 고를까 | AI: 사전 학습 모델과 Hugging Face,"Karpathy, Neural Networks: Zero to Hero",10,
-S4-61f0d8,FALSE,FALSE,S4 CS 수학,사이드,"사람이 화면을 읽는 방식: 지각, 대비, 피츠 법칙",내 블로그의 버튼 크기와 글자 대비를 기준에 맞춰 고쳐 보기,"프론트: 접근성(WCAG 대비, 키보드 탐색) | 프론트: 디자인 시스템 | AI: AI 응답 화면(스트리밍, 불확실성 보여주기)",Laws of UX (lawsofux.com),3,
-S4-f2be01,FALSE,FALSE,S4 CS 수학,보스,생일 문제로 해시 충돌 확률 계산 + 코드로 검증,계산값과 실험값을 비교하는 짧은 글 쓰기,서버: UUID와 해시 충돌 확률,MCS 확률 파트,3,
-S4-c70053,FALSE,FALSE,S4 CS 수학,복습,시즌 회고와 모의 면접,"시즌 회고를 쓰고, 모의 면접에서 개념을 얼마나 넓혀 갈 수 있는지 보기",,-,1,
-S5-9123d8,FALSE,FALSE,S5 알고리즘,복습,지난 시즌 돌아보기: S4에 쓴 글 다시 읽기,다시 읽다 새로 엮이는 게 있으면 그 글에 덧붙이기,,내 노트,0.5,
-S5-f354f0,FALSE,FALSE,S5 알고리즘,메인,계산 모델과 점근 분석,내 코드 하나를 입력 크기별로 돌려 실행 시간 그래프 그리기,서버: N+1 쿼리 문제,MIT 6.006 1강,3,
-S5-7b7baa,FALSE,FALSE,S5 알고리즘,메인,시퀀스 인터페이스: 연결 리스트와 동적 배열 직접 구현,직접 만든 동적 배열과 연결 리스트의 속도 재 보기,서버: Java 컬렉션 내부 구현,MIT 6.006 2강,4,
-S5-70bfb0,FALSE,FALSE,S5 알고리즘,메인,"집합 인터페이스와 정렬 (선택, 삽입, 병합)",병합 정렬을 직접 짜서 내장 정렬과 비교해 보기,서버: DB의 ORDER BY와 정렬 비용,MIT 6.006 3강,4,
-S5-5a2f9e,FALSE,FALSE,S5 알고리즘,메인,"해싱: 해시 테이블 직접 구현 (체이닝, 크기 조정)",직접 만든 해시 테이블에 데이터를 넣으며 크기 조정 시점 관찰하기,"서버: HashMap 내부, 해시 샤딩 | AI: 벡터 검색의 근사 해싱(LSH) | 서버: 비밀번호 해싱(bcrypt, scrypt)과 암호용 해시(SHA)",MIT 6.006 4강,4,
-S5-e698b1,FALSE,FALSE,S5 알고리즘,메인,선형 정렬: 계수 정렬과 기수 정렬,기수 정렬을 짜서 비교 정렬과 속도 비교하기,,MIT 6.006 5강,3,
-S5-2433ad,FALSE,FALSE,S5 알고리즘,메인,이진 트리와 AVL 트리 직접 구현,AVL 트리의 회전을 화면에 출력해 보며 균형 확인하기,서버: DB 인덱스(B-Tree)로 이어지는 길,MIT 6.006 6~7강,5,
-S5-0a8f62,FALSE,FALSE,S5 알고리즘,메인,이진 힙과 우선순위 큐 직접 구현,직접 만든 힙으로 작업 스케줄러 흉내 내 보기,서버: 우선순위 작업 큐와 스케줄러,MIT 6.006 8강,4,
-S5-30f8e0,FALSE,FALSE,S5 알고리즘,메인,"그래프 탐색: BFS, DFS, 위상 정렬",미로나 실무 데이터에 BFS와 DFS를 돌려 경로 비교하기,프론트: DOM 트리 순회 | 서버: 빌드 의존성의 위상 정렬 | 프론트: 레이아웃 계산은 트리를 돌며 크기 정하기 | 프론트: React 재조정은 트리 비교 | 프론트: 접근성 트리,MIT 6.006 9~10강,5,
-S5-e3b984,FALSE,FALSE,S5 알고리즘,메인,"최단 경로: DAG 완화, 벨만-포드, 다익스트라",작은 지도 데이터에 다익스트라를 돌려 경로 찾아보기,서버: 지도와 경로 API,MIT 6.006 11~14강,6,
-S5-d1e26e,FALSE,FALSE,S5 알고리즘,메인,동적 계획법: SRTBOT으로 문제 쪼개기,"DP 문제 하나를 재귀, 메모이제이션, 표 채우기 순서로 바꿔 보기",프론트: React 메모이제이션(useMemo) | AI: 빔 서치와 디코딩,MIT 6.006 15~18강,6,
-S5-f5800f,FALSE,FALSE,S5 알고리즘,메인,계산 복잡도와 NP-완전성 감 잡기,외판원 문제를 완전 탐색으로 짜서 도시 수를 늘려 보기,,MIT 6.006 19강 / Skiena 11장,2,
-S5-af3ab6,FALSE,FALSE,S5 알고리즘,사이드,6.006 문제 세트 골라 풀기,끌리는 문제를 골라 풀기,,MIT 6.006 Problem Sets,15,
-S5-b3c463,FALSE,FALSE,S5 알고리즘,사이드,LeetCode 누적 100문제,재미있었던 문제를 골라 풀이를 블로그에 남기기,,LeetCode,30,
-S5-fac68e,FALSE,FALSE,S5 알고리즘,보스,지하철 노선 최단 경로 탐색기 (직접 만든 힙과 다익스트라로),자료구조를 고른 이유를 README로,서버: 경로 탐색을 API로 만들기 | 프론트: 노선도 화면 붙이기,직접 구현,6,
-S5-a6c0ee,FALSE,FALSE,S5 알고리즘,복습,시즌 회고와 모의 면접,"시즌 회고를 쓰고, 모의 면접에서 개념을 얼마나 넓혀 갈 수 있는지 보기",,-,1,
-S6-9680a3,FALSE,FALSE,S6 네트워크,복습,지난 시즌 돌아보기: S5에 쓴 글 다시 읽기,다시 읽다 새로 엮이는 게 있으면 그 글에 덧붙이기,,내 노트,0.5,
-S6-e158c1,FALSE,FALSE,S6 네트워크,메인,1장 개요: 지연과 계층 구조,ping과 traceroute로 패킷이 거치는 길과 지연 재 보기,서버: 타임아웃과 재시도 설정 | 프론트: 페이지 로딩 성능,Top-Down 1장 / CS 144,3,
-S6-77bf2c,FALSE,FALSE,S6 네트워크,메인,2장 HTTP와 DNS,curl -v와 dig로 URL 하나가 열리는 과정 따라가기,"서버: REST API 설계와 HTTP 캐시 | 프론트: CORS, 쿠키와 세션 | AI: LLM API도 결국 HTTP와 SSE 스트리밍 | 서버: 도메인, DNS 레코드와 호스팅 | 프론트: SSR, CSR, SSG는 HTML을 어디서 만드는가 | AI: OpenAI 호환 API와 라우터(OpenRouter)",Top-Down 2장,4,
-S6-e58375,FALSE,FALSE,S6 네트워크,메인,"Wireshark 랩: HTTP, DNS",예상한 패킷 흐름과 실제 캡처 비교하기,프론트: DevTools 네트워크 탭으로 요청 뜯어보기,교재 Wireshark 랩,3,
-S6-4dc900,FALSE,FALSE,S6 네트워크,메인,3장 UDP와 신뢰성 있는 전송의 원리,UDP 위에 간단한 재전송을 직접 붙여 보기,서버: QUIC과 HTTP/3 | 서버: WebSocket과 실시간 통신,Top-Down 3장,4,
-S6-4ba52c,FALSE,FALSE,S6 네트워크,메인,3장 TCP와 혼잡 제어,Wireshark로 3-way handshake와 혼잡 윈도 변화 직접 보기,"서버: keep-alive와 HTTP 커넥션 풀 | 서버: 롱 폴링과 SSE | 서버: 스로틀링과 레이트 리밋, TCP 혼잡 제어와 같은 생각",Top-Down 3장 / CS 144,4,
-S6-638e2a,FALSE,FALSE,S6 네트워크,메인,Wireshark 랩: TCP,캡처에서 재전송과 윈도 변화 찾기,,교재 Wireshark 랩,2,
-S6-49562e,FALSE,FALSE,S6 네트워크,메인,4~5장 IP와 라우팅,내 네트워크의 서브넷과 라우팅 테이블 직접 확인해 보기,"서버: 로드 밸런서, VPC, 서브넷 | 서버: CDN과 엣지 | 서버: 리눅스 서버 보안(방화벽, 권한) | 프론트: 엣지 배포(Vercel, Cloudflare)",Top-Down 4~5장,5,
-S6-441198,FALSE,FALSE,S6 네트워크,보스,소켓으로 HTTP 서버 직접 만들기,동시 접속 처리 방식을 고르고 부하를 걸어 보기,"서버: 스프링 MVC가 안에서 하는 일 | 서버: 인증(JWT, OAuth, 세션) | 서버: OpenID Connect, SAML | 프론트: 토큰은 어디에 두나(쿠키와 스토리지)",직접 구현,6,
-S6-9b01e5,FALSE,FALSE,S6 네트워크,사이드,TCP 직접 구현 랩,구현하며 만난 버그와 고친 과정 남기기,,Stanford CS 144,25,
-S6-fad36b,FALSE,FALSE,S6 네트워크,복습,시즌 회고와 모의 면접,"시즌 회고를 쓰고, 모의 면접에서 개념을 얼마나 넓혀 갈 수 있는지 보기",,-,1,
-S7-119343,FALSE,FALSE,S7 데이터베이스,복습,지난 시즌 돌아보기: S6에 쓴 글 다시 읽기,다시 읽다 새로 엮이는 게 있으면 그 글에 덧붙이기,,내 노트,0.5,
-S7-5667c2,FALSE,FALSE,S7 데이터베이스,메인,"디스크, 파일 구조, 버퍼 관리",같은 데이터를 순차와 무작위로 읽어 속도 비교하기,서버: MySQL InnoDB 버퍼 풀 | 서버: MySQL과 PostgreSQL의 저장 방식 차이 | 서버: 컬럼형 DB(ClickHouse)가 분석에 빠른 이유 | AI: 청킹은 문서를 페이지로 나누기,Berkeley CS 186,4,
-S7-0b2966,FALSE,FALSE,S7 데이터베이스,메인,B+Tree 인덱스,작은 B+Tree를 짜서 삽입하며 노드 분할 출력해 보기,서버: 인덱스 설계와 실행 계획(EXPLAIN) | AI: RAG는 검색 인덱스에 생성을 붙인 것,CS 186,4,
-S7-e842b0,FALSE,FALSE,S7 데이터베이스,메인,해시 인덱스와 외부 정렬,메모리보다 큰 파일을 나눠 정렬하고 합치는 코드 짜 보기,서버: 대용량 정렬과 페이징 쿼리 | 서버: 검색 엔진(Elasticsearch)과 역색인,CS 186,3,
-S7-6a2e13,FALSE,FALSE,S7 데이터베이스,메인,조인 알고리즘과 쿼리 최적화,회사 쿼리 하나의 EXPLAIN을 읽고 인덱스를 바꿔 보기,"서버: JPA가 만드는 쿼리, N+1과 fetch join",CS 186,5,
-S7-6f4ded,FALSE,FALSE,S7 데이터베이스,메인,"트랜잭션, 2PL, MVCC",격리 수준별 이상 현상을 실제 DB에서 재현하기,"서버: @Transactional 격리 수준, 낙관적 락과 비관적 락",CS 186,5,
-S7-a2862e,FALSE,FALSE,S7 데이터베이스,메인,로깅과 복구 (ARIES),로그로 복구하는 과정을 흉내 내는 작은 코드 짜 보기,"서버: 백업과 복구, 바이너리 로그",CS 186,3,
-S7-63f6c8,FALSE,FALSE,S7 데이터베이스,보스,나만의 작은 KV 저장소 (append-only 로그 + 해시 인덱스),설계와 한계를 README로,서버: Redis도 같은 구조 | AI: 벡터 DB의 저장 구조 | AI: 에이전트의 장기 기억 저장소,직접 구현,8,
-S7-ffd1bf,FALSE,FALSE,S7 데이터베이스,사이드,Red Book 논문 3편 골라 읽기,읽은 논문의 아이디어 하나를 작은 코드로 흉내 내 보기,AI: 벡터 DB 논문 하나 골라 보기,Readings in Database Systems,6,
-S7-c4551a,FALSE,FALSE,S7 데이터베이스,사이드,"BusTub 프로젝트 (버퍼 풀, 인덱스)",버퍼 풀을 구현하고 테스트 통과시키기,,CMU 15-445,30,
-S7-8973e1,FALSE,FALSE,S7 데이터베이스,복습,시즌 회고와 모의 면접,"시즌 회고를 쓰고, 모의 면접에서 개념을 얼마나 넓혀 갈 수 있는지 보기",,-,1,
-S8-2b6b79,FALSE,FALSE,S8 인터프리터,복습,지난 시즌 돌아보기: S7에 쓴 글 다시 읽기,다시 읽다 새로 엮이는 게 있으면 그 글에 덧붙이기,,내 노트,0.5,
-S8-fd0c6a,FALSE,FALSE,S8 인터프리터,메인,시작하기와 스캐너 구현,스캐너로 내 코드 한 줄을 토큰으로 쪼개 보기,AI: LLM 토크나이저(BPE)와 비교,Crafting Interpreters 1~4장,4,
-S8-5fb8bd,FALSE,FALSE,S8 인터프리터,메인,코드 표현과 파서,파서로 식의 파스 트리를 출력해 보기,"프론트: Babel, ESLint가 다루는 AST | 서버: SQL 파서 | 서버: GraphQL은 쿼리 언어, 파서와 리졸버 | 프론트: 브라우저가 HTML과 CSS를 파싱해 DOM 트리를 만드는 과정 | 프론트: SWC, esbuild는 빠르게 짠 컴파일러",Crafting Interpreters 5~6장,5,
-S8-791d2d,FALSE,FALSE,S8 인터프리터,메인,"표현식 평가, 문장과 상태",내 인터프리터로 작은 프로그램 돌려 보기,"프론트: JavaScript 엔진(V8) | AI: 에이전트 루프는 읽고, 실행하고, 다시 읽는 인터프리터",Crafting Interpreters 7~8장,5,
-S8-dd3339,FALSE,FALSE,S8 인터프리터,메인,제어 흐름과 함수,클로저를 지원하게 만들고 카운터 예제 돌려 보기,AI: 함수 호출은 모델이 쓴 호출을 내가 실행하는 것,Crafting Interpreters 9~10장,5,
-S8-d48bfa,FALSE,FALSE,S8 인터프리터,메인,"리졸빙, 바인딩, 클래스",SICP 3장의 환경 모델 예제를 내 Lox에서 돌려 보기,프론트: JavaScript의 프로토타입과 클래스 | 서버: 스프링 AOP 프록시 | 프론트: CSS 캐스케이드와 상속은 이름 찾기 규칙,Crafting Interpreters 11~13장,6,
-S8-21fecc,FALSE,FALSE,S8 인터프리터,보스,나만의 Lox 완성 + 문법 하나 직접 추가,추가한 기능의 설계 과정을 README로,AI: 내 언어에 도구 호출 문법 붙여 보기 | 프론트: Svelte는 프레임워크가 아니라 컴파일러,직접 구현,6,
-S8-a3f310,FALSE,FALSE,S8 인터프리터,사이드,2부 바이트코드 VM (clox),같은 프로그램을 jlox와 clox로 돌려 속도 비교하기,"서버: JVM 구조와 GC | 서버: 언어마다 다른 실행 모델(인터프리터, JVM, 네이티브)",Crafting Interpreters 2부,30,
-S8-7e2c95,FALSE,FALSE,S8 인터프리터,사이드,타입 검사기 붙이기: 정적 타입의 원리,내 Lox에 간단한 타입 검사를 붙여 보기,프론트: TypeScript 타입 검사기 | 서버: 자바 제네릭과 타입 소거 | AI: 구조화된 출력의 스키마 검증,직접 구현,8,
-S8-cf4e78,FALSE,FALSE,S8 인터프리터,복습,시즌 회고와 모의 면접,"시즌 회고를 쓰고, 모의 면접에서 개념을 얼마나 넓혀 갈 수 있는지 보기",,-,1,
-S9-a84167,FALSE,FALSE,S9 분산 시스템,복습,지난 시즌 돌아보기: S8에 쓴 글 다시 읽기,다시 읽다 새로 엮이는 게 있으면 그 글에 덧붙이기,,내 노트,0.5,
-S9-c73598,FALSE,FALSE,S9 분산 시스템,메인,"DDIA 1~2장: 신뢰성·확장성, 데이터 모델",우리 회사 시스템 하나를 신뢰성과 확장성 관점에서 그려 보기,"서버: 시스템 설계, 관계형과 문서형 DB | 서버: 문서형, 그래프, 시계열, 컬럼형 NoSQL | 서버: 관측성(로그, 메트릭, 분산 트레이싱) | AI: 컨텍스트 소스와 데이터 카탈로그",DDIA (1판 기준),4,
-S9-42a919,FALSE,FALSE,S9 분산 시스템,메인,DDIA 3장: 저장소와 검색,S7에서 만든 KV 저장소에 LSM 방식을 붙여 보기,"서버: LSM 트리(RocksDB, Cassandra) | AI: 벡터 인덱스(HNSW)",DDIA (1판 기준),3,
-S9-0875ad,FALSE,FALSE,S9 분산 시스템,메인,DDIA 4장: 인코딩과 진화,같은 데이터를 JSON과 Protobuf로 인코딩하고 스키마를 바꿔 보기,"서버: JSON, Protobuf, gRPC, API 버전 관리 | 프론트: API 스키마로 타입 만들기 | AI: 구조화된 출력과 스키마 | 서버: DB 스키마 마이그레이션 | 서버: OpenAPI 스펙 | 프론트: React Native 브리지와 직렬화 | AI: MCP 메시지는 JSON-RPC",DDIA (1판 기준),2,
-S9-65b042,FALSE,FALSE,S9 분산 시스템,메인,DDIA 5~6장: 복제와 파티셔닝,로컬에 DB 복제를 띄워 복제 지연을 직접 만들어 보기,"서버: DB 레플리카와 읽기 분리, 샤딩",DDIA (1판 기준),5,
-S9-03be58,FALSE,FALSE,S9 분산 시스템,메인,DDIA 7장: 트랜잭션,두 세션에서 같은 행을 동시에 고쳐 보며 격리 수준 비교하기,서버: 분산 트랜잭션과 사가 패턴,DDIA (1판 기준),3,
-S9-9cb89e,FALSE,FALSE,S9 분산 시스템,메인,"DDIA 8~9장: 분산 시스템의 문제, 일관성과 합의",시계가 어긋난 두 프로세스를 흉내 내 순서가 꼬이는 걸 재현하기,"서버: 분산 락과 멱등성 키 | 서버: CAP 정리 | 서버: 장애 유형, 서킷 브레이커, 우아한 기능 저하 | AI: 멀티 에이전트는 작은 분산 시스템",DDIA (1판 기준),7,
-S9-513e60,FALSE,FALSE,S9 분산 시스템,메인,MapReduce 논문 + 랩,랩을 완성하고 워커를 일부러 죽여 보기,AI: 대규모 학습 데이터 처리,MIT 6.824 (현 6.5840),12,
-S9-1eac1f,FALSE,FALSE,S9 분산 시스템,메인,Raft 논문 정독,Raft 시각화(raft.github.io)에서 리더를 죽여 보며 동작 지켜보기,서버: etcd와 쿠버네티스,MIT 6.824,5,
-S9-c7ca82,FALSE,FALSE,S9 분산 시스템,메인,Raft 랩: 리더 선출,테스트를 여러 번 돌려 실패를 재현하고 고치기,,MIT 6.824,10,
-S9-9885b7,FALSE,FALSE,S9 분산 시스템,메인,Raft 랩: 로그 복제,테스트를 여러 번 돌려 실패를 재현하고 고치기,,MIT 6.824,15,
-S9-24c7c5,FALSE,FALSE,S9 분산 시스템,보스,Raft 랩: 영속성과 스냅샷 + 테스트 수백 번 통과,1년 여정을 담은 Raft 구현기를 블로그에 쓰기,,MIT 6.824,15,
-S9-0791b6,FALSE,FALSE,S9 분산 시스템,사이드,Raft 위에 장애 허용 KV 서버,장애를 일으켜도 값이 맞는지 테스트로 확인하기,,MIT 6.824,15,
-S9-b0ba95,FALSE,FALSE,S9 분산 시스템,사이드,DDIA 10~12장: 배치와 스트림 처리,작은 배치 처리나 스트림 처리 파이프라인 만들어 보기,서버: Kafka와 이벤트 기반 아키텍처 | AI: RAG 데이터 파이프라인,DDIA (1판 기준),6,
-S9-fafeb5,FALSE,FALSE,S9 분산 시스템,복습,엔딩: 1년 회고 + 최종 모의 면접,S0 첫 리포트와 지금의 내 글을 나란히 놓고 비교해 보기,,-,3,
+id,done,recalled,season,type,quest,practice,branches,resource,hours,date,requires
+S0-69fab2,FALSE,FALSE,S0 튜토리얼,메인,"게임 규칙 탭 읽고, 학습 블로그(GitHub Pages) 배포하기",블로그에 첫 리포트 올리기,프론트: 정적 사이트와 GitHub Pages 배포 | 서버: Cloudflare Workers로 만든 블로그 API,게임 규칙 탭 / 학습 블로그,2,,
+S0-863670,FALSE,FALSE,S0 튜토리얼,메인,Missing Semester: 셸과 Git 강의,"강의 연습 문제 몇 개를 터미널에서 풀고, 이 블로그 저장소로 브랜치와 커밋 만져 보기",서버: SSH로 리눅스 서버 다루기 | 프론트: npm 스크립트와 패키지 매니저 | AI: Claude Code 같은 터미널 AI 도구 | 서버: CI/CD는 셸 스크립트 자동화,missing.csail.mit.edu,3,,
+S1-0540f7,FALSE,FALSE,S1 SICP,메인,1.1 프로시저와 표현식,Racket(Scheme) REPL을 깔고 책의 예제를 직접 쳐 보기,"프론트: JavaScript의 일급 함수 | AI: 프롬프트도 프로그램(입력, 규칙, 출력 형식)",SICP 1.1 / CS 61A,3,,S0-69fab2
+S1-8bbf66,FALSE,FALSE,S1 SICP,메인,1.1 연습문제 풀기,연습문제를 REPL에서 돌려 보며 풀기,,SICP 연습문제,3,,S1-0540f7
+S1-02fabd,FALSE,FALSE,S1 SICP,메인,1.2 재귀 프로세스와 반복 프로세스,같은 함수를 재귀와 반복 두 방식으로 짜서 큰 입력으로 돌려 보기,서버: JVM 호출 스택과 StackOverflowError | AI: 생각의 사슬(CoT)은 계산 과정을 펼치는 것,SICP 1.2 / CS 61A,3,,S1-8bbf66
+S1-de69f7,FALSE,FALSE,S1 SICP,메인,1.3 고차 함수 + 연습문제,"자주 쓰는 언어로 map, filter, reduce를 직접 만들어 보기","서버: Java 람다와 Stream API | 프론트: map, filter, reduce와 React 훅",SICP 1.3 / CS 61A,4,,S1-02fabd
+S1-b5fa02,FALSE,FALSE,S1 SICP,메인,2.1~2.2 데이터 추상화와 계층적 데이터,유리수나 구간 같은 작은 데이터 추상화를 직접 만들어 보기,"서버: DTO와 도메인 모델의 경계 | 프론트: 컴포넌트 props로 데이터 감추기 | 서버: 단위 테스트는 추상화 경계가 있어야 쉽다 | 서버: 모놀리스와 마이크로서비스, 경계 나누기 | 프론트: 유틸리티 CSS(Tailwind)와 컴포넌트 추상화 | 프론트: 웹 컴포넌트와 Shadow DOM, 캡슐화 | 프론트: 디자인 시스템은 UI의 추상화 장벽 | 프론트: 컴포넌트 테스트와 E2E 테스트(Playwright) | AI: LLM 회귀 테스트(평가 세트 고정하기)",SICP 2.1~2.2,4,,S1-de69f7
+S1-ae18ac,FALSE,FALSE,S1 SICP,사이드,2.3~2.5 기호 데이터와 범용 연산,기호 미분기를 만들어 식 몇 개를 미분해 보기,"서버: 인터페이스와 다형성, 스프링 DI | AI: 토큰화, 글을 기호로 쪼개기 | 프론트: 시맨틱 HTML, 태그는 의미를 담은 기호",SICP 2.3~2.5,5,,S1-b5fa02
+S1-00196c,FALSE,FALSE,S1 SICP,메인,3.1~3.2 상태와 환경 모델,카운터나 은행 계좌를 클로저로 만들어 상태가 어떻게 남는지 확인하기,서버: 싱글톤 스프링 빈에 상태를 두면 생기는 일 | 프론트: 클로저와 React 상태,SICP 3.1~3.2,4,,S1-b5fa02
+S1-3cf879,FALSE,FALSE,S1 SICP,사이드,3.3~3.5 가변 데이터와 스트림,무한 스트림으로 소수나 피보나치 수열 만들어 보기,서버: 리액티브 스트림(WebFlux)과 지연 평가 | 프론트: 이벤트 스트림(RxJS) | AI: LLM 스트리밍 응답 | 프론트: 시그널 기반 반응성(SolidJS),SICP 3.3~3.5,6,,S1-00196c
+S1-d44926,FALSE,FALSE,S1 SICP,보스,61A Scheme 인터프리터 완성,"인터프리터를 완성하고, S8에서 다시 만날 구조(읽기, 평가, 환경)를 README에 정리하기",AI: 인터프리터와 코드 실행 도구를 쓰는 에이전트,CS 61A 프로젝트,12,,S1-00196c
+S1-6e4f9f,FALSE,FALSE,S1 SICP,복습,시즌 회고와 모의 면접,"시즌 회고를 쓰고, 모의 면접에서 개념을 얼마나 넓혀 갈 수 있는지 보기",,-,1,,S1-d44926
+S2-c436b4,FALSE,FALSE,S2 CS:APP,복습,지난 시즌 돌아보기: S1에 쓴 글 다시 읽기,다시 읽다 새로 엮이는 게 있으면 그 글에 덧붙이기,,내 노트,0.5,,S1-6e4f9f
+S2-96abcf,FALSE,FALSE,S2 CS:APP,메인,1장 개관 + 2장 정수 표현,C로 정수 오버플로를 일부러 일으키고 비트를 출력해 보기,"서버: int 오버플로와 2038년 문제 | AI: 모델 양자화(int8, int4)",CS:APP 1~2장 / CS 61C,4,,S2-c436b4
+S2-42969c,FALSE,FALSE,S2 CS:APP,메인,2장 부동소수점,0.1+0.2의 비트를 직접 출력해 보며 왜 0.3이 아닌지 확인하기,"서버: 금액은 왜 BigDecimal인가 | 프론트: JavaScript 숫자는 모두 double | AI: fp16, bf16과 모델 정밀도",CS:APP 2장,3,,S2-96abcf
+S2-19ca67,FALSE,FALSE,S2 CS:APP,메인,Data Lab,"퍼즐을 풀고, 마음에 든 풀이 하나를 블로그에 남기기",서버: 비트 플래그로 권한과 상태 저장,CS:APP 랩,6,,S2-42969c
+S2-bbb409,FALSE,FALSE,S2 CS:APP,메인,3장 어셈블리: 제어 흐름과 프로시저,간단한 C 함수를 gcc -S로 컴파일해 어셈블리 읽어 보기,서버: JVM 바이트코드와 JIT 컴파일,CS:APP 3장 / CS 61C,5,,S2-19ca67 S1-02fabd
+S2-1f83bd,FALSE,FALSE,S2 CS:APP,메인,"3장 배열, 구조체, 버퍼 오버플로",일부러 버퍼 오버플로를 일으키는 C 코드를 짜서 gdb로 스택 들여다보기,"서버: OWASP 보안 취약점과 입력 검증 | AI: 프롬프트 인젝션, 입력이 명령이 되는 같은 구조 | 프론트: CSP(콘텐츠 보안 정책)와 XSS",CS:APP 3장,4,,S2-bbb409
+S2-08fd4f,FALSE,FALSE,S2 CS:APP,메인,Bomb Lab,gdb로 폭탄을 해체하며 쓴 기법을 모아 두기,,CS:APP 랩,10,,S2-1f83bd
+S2-20b72f,FALSE,FALSE,S2 CS:APP,사이드,Attack Lab,"공격 하나를 성공시키고, 막는 방법을 코드에 적용해 보기","서버: 웹 공격과 방어(SQL 인젝션, XSS) | AI: 적대적 테스트(레드팀)",CS:APP 랩,8,,S2-08fd4f
+S2-aaa2ce,FALSE,FALSE,S2 CS:APP,메인,6장 메모리 계층과 캐시,배열을 행 우선과 열 우선으로 순회하며 속도 차이 재 보기,서버: Redis 캐시와 캐시 무효화 | 프론트: 브라우저 캐시와 Cache-Control | AI: KV 캐시와 프롬프트 캐싱 | 프론트: 서비스 워커와 오프라인 캐시(PWA) | AI: 컨텍스트 창은 작고 빠른 메모리,CS:APP 6장 / CS 61C,5,,S2-08fd4f
+S2-2e91c0,FALSE,FALSE,S2 CS:APP,메인,Cache Lab,행렬 전치를 캐시 친화적으로 바꾸며 미스 수 줄여 보기,서버: ArrayList와 LinkedList의 실제 속도 차이 | 서버: 프로파일러로 병목 찾기,CS:APP 랩,8,,S2-aaa2ce
+S2-74e823,FALSE,FALSE,S2 CS:APP,메인,7장 링킹,작은 정적 라이브러리를 만들어 링크하고 nm으로 심볼 보기,"서버: Gradle 의존성, JAR, 클래스 로딩 | 프론트: 번들러(Vite)와 트리 셰이킹 | 프론트: 패키지 매니저(npm, pnpm)와 의존성 해결",CS:APP 7장,3,,S2-2e91c0
+S2-376122,FALSE,FALSE,S2 CS:APP,메인,8장 프로세스와 시그널,fork를 여러 번 쓰는 프로그램을 짜서 출력 순서 실험하기,"서버: 그레이스풀 셧다운(SIGTERM)과 스프링 종료 훅 | 서버: 컨테이너 안의 PID 1 | 서버: Twelve-Factor 앱(설정은 환경 변수, 프로세스는 언제든 버려도 되게)",CS:APP 8장,5,,S2-74e823
+S2-1ccc9d,FALSE,FALSE,S2 CS:APP,메인,Shell Lab,"작업 관리가 되는 셸을 완성하고, 맨손 쉘 프로젝트와 비교해 보기",서버: 도커 컨테이너도 결국 프로세스 | 맨손으로 쉘 만들기 프로젝트와 비교 | AI: MCP의 stdio 전송은 파이프,CS:APP 랩,10,,S2-376122 S0-863670
+S2-6b09a2,FALSE,FALSE,S2 CS:APP,메인,9장 가상 메모리,/proc/self/maps로 내 프로그램의 메모리 지도 들여다보기,"서버: JVM 힙, GC, 메모리 누수 | AI: 모델 가중치를 메모리에 올리기(mmap) | AI: Ollama로 모델 직접 돌려 보기",CS:APP 9장 / CS 61C,5,,S2-1ccc9d
+S2-8b0c8b,FALSE,FALSE,S2 CS:APP,보스,Malloc Lab,내 할당기의 설계와 성능 개선 과정을 README로. C 코드는 S7 DB 서버에 끼워 볼 수 있게 남겨 두기,"서버: JVM GC 알고리즘 비교(G1, ZGC)",CS:APP 랩,20,,S2-6b09a2
+S2-40b1c7,FALSE,FALSE,S2 CS:APP,사이드,10~12장 + Proxy Lab,동시 접속을 받는 작은 프록시를 만들어 브라우저로 붙어 보기,서버: 톰캣 스레드 풀과 요청 처리 | 서버: Nginx 리버스 프록시 | 서버: 서비스 메시와 사이드카 프록시,CS:APP 10~12장,20,,S2-376122 S2-6b09a2
+S2-c85469,FALSE,FALSE,S2 CS:APP,복습,시즌 회고와 모의 면접,"시즌 회고를 쓰고, 모의 면접에서 개념을 얼마나 넓혀 갈 수 있는지 보기",,-,1,,S2-8b0c8b
+S3-7f030d,FALSE,FALSE,S3 운영체제,복습,지난 시즌 돌아보기: S2에 쓴 글 다시 읽기,다시 읽다 새로 엮이는 게 있으면 그 글에 덧붙이기,,내 노트,0.5,,S2-c85469
+S3-ac2d74,FALSE,FALSE,S3 운영체제,메인,"프로세스, 프로세스 API, 제한적 직접 실행",OSTEP 시뮬레이터 숙제를 직접 돌려 보기,"서버: 컨테이너 격리(namespace, cgroup) | 서버: 서버리스는 요청마다 뜨고 지는 프로세스 | 프론트: Web API는 브라우저가 주는 시스템 콜 | 프론트: Electron과 Tauri의 프로세스 구조 | AI: 컨텍스트 격리(서브 에이전트)는 프로세스 격리",OSTEP 4~6장 / CS 162,3,,S3-7f030d S2-376122
+S3-1c1be3,FALSE,FALSE,S3 운영체제,메인,CPU 스케줄링 (FIFO부터 MLFQ까지),스케줄러 시뮬레이터에 여러 작업을 넣어 정책별 결과 비교하기,"서버: 스레드 풀 크기 정하기 | AI: 추론 서버의 배치 스케줄링 | 서버: 부하 이동, 급하지 않은 일은 한가할 때 | 프론트: 16ms 프레임 예산과 메인 스레드",OSTEP 7~9장,3,,S3-ac2d74
+S3-e40832,FALSE,FALSE,S3 운영체제,메인,"주소 공간, 세그멘테이션, 페이징, TLB",페이지 테이블 시뮬레이터로 주소 변환을 직접 돌려 보기,서버: 컨테이너 메모리 제한과 OOM Killer | 서버: 가상 머신과 컨테이너의 차이,OSTEP 13~20장 / CS 162,5,,S3-1c1be3 S2-6b09a2
+S3-584840,FALSE,FALSE,S3 운영체제,메인,스와핑과 페이지 교체 정책,LRU와 FIFO를 직접 짜서 같은 접근 패턴으로 비교하기,"서버: 캐시 교체 정책(LRU, Redis maxmemory) | AI: 컨텍스트 압축은 무엇을 내보낼지 고르는 문제",OSTEP 21~22장,3,,S3-e40832 S2-aaa2ce
+S3-e54e24,FALSE,FALSE,S3 운영체제,메인,스레드와 락,락 없이 생기는 경쟁 조건을 코드로 재현하고 락으로 고치기,"서버: synchronized, 분산 락, @Transactional과 동시성 | 프론트: JavaScript는 왜 싱글 스레드인가",OSTEP 26~29장 / CS 162,4,,S3-584840 S2-40b1c7
+S3-3d57eb,FALSE,FALSE,S3 운영체제,메인,"조건 변수, 세마포어, 동시성 버그","세마포어로 생산자-소비자를 짜고, 일부러 교착 상태도 만들어 보기",서버: 커넥션 풀(HikariCP)과 데드락 | 프론트: async/await와 이벤트 루프,OSTEP 30~32장,4,,S3-e54e24
+S3-53c5ba,FALSE,FALSE,S3 운영체제,메인,"I/O 장치, 디스크, 파일 시스템 구현",strace로 파일 하나를 읽을 때 부르는 시스템 콜 지켜보기,"서버: 논블로킹 I/O(Netty, WebFlux) | 서버: 로그 파일과 로그 수집",OSTEP 36~40장,4,,S3-3d57eb
+S3-452bc3,FALSE,FALSE,S3 운영체제,메인,크래시 일관성과 저널링,파일을 쓰는 도중 프로세스를 죽여 보고 무엇이 남는지 확인하기,서버: DB의 WAL과 메시지 큐의 내구성,OSTEP 42장,3,,S3-53c5ba
+S3-a6e2fe,FALSE,FALSE,S3 운영체제,보스,스레드 안전한 생산자-소비자 큐 구현 + 부하 테스트,"C와 pthread로 만들어, S6 HTTP 서버가 그대로 가져다 쓸 부품으로 남기기","서버: 메시지 큐(Kafka, RabbitMQ) | AI: 작업 큐로 LLM 요청 몰아 처리하기 | 서버: 백프레셔, 큐가 차면 생산자를 늦추기","OSTEP 30장 참고 (C, pthread)",6,,S3-452bc3
+S3-acfae6,FALSE,FALSE,S3 운영체제,사이드,"xv6 랩 2~3개 (시스템 콜, 페이지 테이블)",시스템 콜 하나를 직접 추가해 커널 고쳐 보기,,MIT 6.1810,20,,S3-e40832
+S3-ec5bbd,FALSE,FALSE,S3 운영체제,복습,시즌 회고와 모의 면접,"시즌 회고를 쓰고, 모의 면접에서 개념을 얼마나 넓혀 갈 수 있는지 보기",,-,1,,S3-a6e2fe
+S4-69a9fd,FALSE,FALSE,S4 CS 수학,복습,지난 시즌 돌아보기: S3에 쓴 글 다시 읽기,다시 읽다 새로 엮이는 게 있으면 그 글에 덧붙이기,,내 노트,0.5,,S3-ec5bbd
+S4-7ca9d7,FALSE,FALSE,S4 CS 수학,메인,증명과 귀납법,작은 정리 하나를 귀납법으로 직접 증명해 보기,,MCS / MIT 6.042J,5,,S4-69a9fd
+S4-12ea74,FALSE,FALSE,S4 CS 수학,메인,"집합, 관계, 함수",집합 연산을 코드로 만들고 성질을 테스트로 확인하기,"서버: SQL은 집합 연산(조인, 합집합, 차집합) | 서버: DB 정규화는 관계와 함수 종속 | 프론트: GraphQL 클라이언트(Apollo, Relay)의 정규화 캐시",MCS / MIT 6.042J,3,,S4-7ca9d7
+S4-c5d4a5,FALSE,FALSE,S4 CS 수학,메인,그래프 이론,실무 의존성 그래프를 그려 순환이 있는지 찾아보기,서버: 스프링 빈의 순환 의존 | 프론트: 모듈 의존 그래프 | 서버: 그래프 DB(Neo4j),MCS / MIT 6.042J,5,,S4-12ea74
+S4-31211f,FALSE,FALSE,S4 CS 수학,메인,셈과 조합,"경우의 수를 손으로 세고, 코드로 모든 경우를 나열해 맞춰 보기",,MCS / MIT 6.042J,4,,S4-c5d4a5
+S4-75b33c,FALSE,FALSE,S4 CS 수학,메인,확률 기초와 조건부 확률,몬티홀 문제를 코드로 시뮬레이션해 확인하기,"서버: A/B 테스트 | AI: 다음 토큰 확률과 temperature | AI: top-k, top-p 샘플링과 반복 페널티 | AI: 데이터 편향과 공정성",MCS / MIT 6.042J,5,,S4-31211f
+S4-ab9aee,FALSE,FALSE,S4 CS 수학,메인,"확률 변수, 기댓값, 편차",응답 시간 같은 실제 데이터를 모아 평균과 분산 계산해 보기,"서버: 응답 시간의 평균과 p99 | AI: LLM 평가 지표의 분산 | 서버: 메트릭과 모니터링 대시보드 | AI: LLM 호출 추적과 비용, 지연 모니터링 | AI: 이상 탐지는 평균에서 얼마나 먼가",MCS / MIT 6.042J,4,,S4-75b33c
+S4-2504c0,FALSE,FALSE,S4 CS 수학,사이드,정수론과 RSA,작은 소수로 RSA 암호화와 복호화를 직접 짜 보기,"서버: HTTPS와 TLS 인증서, JWT 서명",MCS,4,,S4-7ca9d7
+S4-a0198a,FALSE,FALSE,S4 CS 수학,사이드,선형대수 직관,행렬로 점들을 돌리고 늘리는 코드를 짜서 그려 보기,"AI: 임베딩과 코사인 유사도 | AI: 트랜스포머는 행렬 곱의 연속 | 프론트: CSS transform과 애니메이션은 행렬 | AI: 이미지는 숫자 행렬, 추천은 벡터 사이 거리",3Blue1Brown Essence of Linear Algebra,5,,S4-69a9fd
+S4-070552,FALSE,FALSE,S4 CS 수학,사이드,그래픽스 기초: 좌표 변환과 래스터화,삼각형 하나를 픽셀로 직접 그려 보기,프론트: 브라우저의 페인트와 합성(레이어) | 프론트: Canvas와 WebGL | AI: 이미지 생성 모델이 다루는 픽셀,Computer Graphics from Scratch (웹 무료),6,,S4-a0198a
+S4-eae2f2,FALSE,FALSE,S4 CS 수학,사이드,정보 이론 기초: 엔트로피와 압축,허프만 부호로 글을 압축해 보고 gzip과 비교하기,"서버: gzip, Brotli 응답 압축 | 프론트: 이미지 포맷(WebP, AVIF) | AI: 토큰과 엔트로피, 퍼플렉시티 | AI: 음성은 샘플링된 신호",직접 구현,4,,S4-75b33c
+S4-25a8be,FALSE,FALSE,S4 CS 수학,사이드,머신러닝 기초: 경사 하강과 작은 신경망 직접 만들기,micrograd를 따라 자동 미분을 직접 짜 보기,AI: LLM이 학습되는 방식 | AI: 파인튜닝과 RAG 중 무엇을 고를까 | AI: 사전 학습 모델과 Hugging Face,"Karpathy, Neural Networks: Zero to Hero",10,,S4-a0198a S4-ab9aee
+S4-5a37ab,FALSE,FALSE,S4 CS 수학,사이드,"사람이 화면을 읽는 방식: 지각, 대비, 피츠 법칙",내 블로그의 버튼 크기와 글자 대비를 기준에 맞춰 고쳐 보기,"프론트: 접근성(WCAG 대비, 키보드 탐색) | 프론트: 디자인 시스템 | AI: AI 응답 화면(스트리밍, 불확실성 보여주기)",Laws of UX (lawsofux.com),3,,S4-69a9fd
+S4-f2be01,FALSE,FALSE,S4 CS 수학,보스,생일 문제로 해시 충돌 확률 계산 + 코드로 검증,"계산값과 실험값을 비교하고, 그 확률로 S5 해시 테이블의 크기 늘리는 기준 정하기",서버: UUID와 해시 충돌 확률,MCS 확률 파트,3,,S4-ab9aee S4-31211f
+S4-8f65fd,FALSE,FALSE,S4 CS 수학,복습,시즌 회고와 모의 면접,"시즌 회고를 쓰고, 모의 면접에서 개념을 얼마나 넓혀 갈 수 있는지 보기",,-,1,,S4-f2be01
+S5-a81800,FALSE,FALSE,S5 알고리즘,복습,지난 시즌 돌아보기: S4에 쓴 글 다시 읽기,다시 읽다 새로 엮이는 게 있으면 그 글에 덧붙이기,,내 노트,0.5,,S4-8f65fd
+S5-f354f0,FALSE,FALSE,S5 알고리즘,메인,계산 모델과 점근 분석,내 코드 하나를 입력 크기별로 돌려 실행 시간 그래프 그리기,서버: N+1 쿼리 문제,MIT 6.006 1강,3,,S5-a81800
+S5-7b7baa,FALSE,FALSE,S5 알고리즘,메인,시퀀스 인터페이스: 연결 리스트와 동적 배열 직접 구현,직접 만든 동적 배열과 연결 리스트의 속도 재 보기,서버: Java 컬렉션 내부 구현,MIT 6.006 2강,4,,S5-f354f0 S1-b5fa02
+S5-70bfb0,FALSE,FALSE,S5 알고리즘,메인,"집합 인터페이스와 정렬 (선택, 삽입, 병합)",병합 정렬을 직접 짜서 내장 정렬과 비교해 보기,서버: DB의 ORDER BY와 정렬 비용,MIT 6.006 3강,4,,S5-7b7baa
+S5-5a2f9e,FALSE,FALSE,S5 알고리즘,메인,"해싱: 해시 테이블 직접 구현 (체이닝, 크기 조정)",C로 짜서 S7 DB 서버의 인덱스로 다시 쓸 수 있게 남기기,"서버: HashMap 내부, 해시 샤딩 | AI: 벡터 검색의 근사 해싱(LSH) | 서버: 비밀번호 해싱(bcrypt, scrypt)과 암호용 해시(SHA)",MIT 6.006 4강,4,,S5-70bfb0 S4-f2be01
+S5-e698b1,FALSE,FALSE,S5 알고리즘,메인,선형 정렬: 계수 정렬과 기수 정렬,기수 정렬을 짜서 비교 정렬과 속도 비교하기,,MIT 6.006 5강,3,,S5-5a2f9e
+S5-2433ad,FALSE,FALSE,S5 알고리즘,메인,이진 트리와 AVL 트리 직접 구현,AVL 트리의 회전을 화면에 출력해 보며 균형 확인하기,서버: DB 인덱스(B-Tree)로 이어지는 길,MIT 6.006 6~7강,5,,S5-e698b1
+S5-0a8f62,FALSE,FALSE,S5 알고리즘,메인,이진 힙과 우선순위 큐 직접 구현,C로 짜서 S5 보스의 다익스트라에 그대로 쓰기,서버: 우선순위 작업 큐와 스케줄러,MIT 6.006 8강,4,,S5-2433ad
+S5-30f8e0,FALSE,FALSE,S5 알고리즘,메인,"그래프 탐색: BFS, DFS, 위상 정렬",미로나 실무 데이터에 BFS와 DFS를 돌려 경로 비교하기,프론트: DOM 트리 순회 | 서버: 빌드 의존성의 위상 정렬 | 프론트: 레이아웃 계산은 트리를 돌며 크기 정하기 | 프론트: React 재조정은 트리 비교 | 프론트: 접근성 트리,MIT 6.006 9~10강,5,,S5-0a8f62 S4-c5d4a5
+S5-e3b984,FALSE,FALSE,S5 알고리즘,메인,"최단 경로: DAG 완화, 벨만-포드, 다익스트라",작은 지도 데이터에 다익스트라를 돌려 경로 찾아보기,서버: 지도와 경로 API,MIT 6.006 11~14강,6,,S5-30f8e0
+S5-d1e26e,FALSE,FALSE,S5 알고리즘,메인,동적 계획법: SRTBOT으로 문제 쪼개기,"DP 문제 하나를 재귀, 메모이제이션, 표 채우기 순서로 바꿔 보기",프론트: React 메모이제이션(useMemo) | AI: 빔 서치와 디코딩,MIT 6.006 15~18강,6,,S5-e3b984 S4-7ca9d7
+S5-f5800f,FALSE,FALSE,S5 알고리즘,메인,계산 복잡도와 NP-완전성 감 잡기,외판원 문제를 완전 탐색으로 짜서 도시 수를 늘려 보기,,MIT 6.006 19강 / Skiena 11장,2,,S5-d1e26e
+S5-af3ab6,FALSE,FALSE,S5 알고리즘,사이드,6.006 문제 세트 골라 풀기,끌리는 문제를 골라 풀기,,MIT 6.006 Problem Sets,15,,S5-f354f0
+S5-b3c463,FALSE,FALSE,S5 알고리즘,사이드,LeetCode 누적 100문제,재미있었던 문제를 골라 풀이를 블로그에 남기기,,LeetCode,30,,S5-7b7baa
+S5-fac68e,FALSE,FALSE,S5 알고리즘,보스,지하철 노선 최단 경로 탐색기 (직접 만든 힙과 다익스트라로),"C로 짜고, S6 서버에 올릴 수 있게 함수 하나로 감싸 두기",서버: 경로 탐색을 API로 만들기 | 프론트: 노선도 화면 붙이기,직접 구현,6,,S5-f5800f S5-0a8f62 S5-e3b984
+S5-cae668,FALSE,FALSE,S5 알고리즘,복습,시즌 회고와 모의 면접,"시즌 회고를 쓰고, 모의 면접에서 개념을 얼마나 넓혀 갈 수 있는지 보기",,-,1,,S5-fac68e
+S6-ddf5c6,FALSE,FALSE,S6 네트워크,복습,지난 시즌 돌아보기: S5에 쓴 글 다시 읽기,다시 읽다 새로 엮이는 게 있으면 그 글에 덧붙이기,,내 노트,0.5,,S5-cae668
+S6-e158c1,FALSE,FALSE,S6 네트워크,메인,1장 개요: 지연과 계층 구조,ping과 traceroute로 패킷이 거치는 길과 지연 재 보기,서버: 타임아웃과 재시도 설정 | 프론트: 페이지 로딩 성능,Top-Down 1장 / CS 144,3,,S6-ddf5c6
+S6-77bf2c,FALSE,FALSE,S6 네트워크,메인,2장 HTTP와 DNS,curl -v와 dig로 URL 하나가 열리는 과정 따라가기,"서버: REST API 설계와 HTTP 캐시 | 프론트: CORS, 쿠키와 세션 | AI: LLM API도 결국 HTTP와 SSE 스트리밍 | 서버: 도메인, DNS 레코드와 호스팅 | 프론트: SSR, CSR, SSG는 HTML을 어디서 만드는가 | AI: OpenAI 호환 API와 라우터(OpenRouter)",Top-Down 2장,4,,S6-e158c1 S4-2504c0
+S6-e58375,FALSE,FALSE,S6 네트워크,메인,"Wireshark 랩: HTTP, DNS",예상한 패킷 흐름과 실제 캡처 비교하기,프론트: DevTools 네트워크 탭으로 요청 뜯어보기,교재 Wireshark 랩,3,,S6-77bf2c
+S6-4dc900,FALSE,FALSE,S6 네트워크,메인,3장 UDP와 신뢰성 있는 전송의 원리,UDP 위에 간단한 재전송을 직접 붙여 보기,서버: QUIC과 HTTP/3 | 서버: WebSocket과 실시간 통신,Top-Down 3장,4,,S6-e58375
+S6-4ba52c,FALSE,FALSE,S6 네트워크,메인,3장 TCP와 혼잡 제어,Wireshark로 3-way handshake와 혼잡 윈도 변화 직접 보기,"서버: keep-alive와 HTTP 커넥션 풀 | 서버: 롱 폴링과 SSE | 서버: 스로틀링과 레이트 리밋, TCP 혼잡 제어와 같은 생각",Top-Down 3장 / CS 144,4,,S6-4dc900
+S6-638e2a,FALSE,FALSE,S6 네트워크,메인,Wireshark 랩: TCP,캡처에서 재전송과 윈도 변화 찾기,,교재 Wireshark 랩,2,,S6-4ba52c
+S6-49562e,FALSE,FALSE,S6 네트워크,메인,4~5장 IP와 라우팅,내 네트워크의 서브넷과 라우팅 테이블 직접 확인해 보기,"서버: 로드 밸런서, VPC, 서브넷 | 서버: CDN과 엣지 | 서버: 리눅스 서버 보안(방화벽, 권한) | 프론트: 엣지 배포(Vercel, Cloudflare)",Top-Down 4~5장,5,,S6-638e2a
+S6-8583e1,FALSE,FALSE,S6 네트워크,보스,"C 소켓으로 HTTP 서버 만들기: S3 큐로 동시 접속 받고, S5 경로 탐색기 올리기","동시 접속 처리 방식을 S3 개념으로 설명하고, 부하 테스트 결과를 README로","서버: 스프링 MVC가 안에서 하는 일 | 서버: 인증(JWT, OAuth, 세션) | 서버: OpenID Connect, SAML | 프론트: 토큰은 어디에 두나(쿠키와 스토리지)",직접 구현 (C),10,,S6-49562e S3-a6e2fe S5-fac68e S2-40b1c7
+S6-9b01e5,FALSE,FALSE,S6 네트워크,사이드,TCP 직접 구현 랩,구현하며 만난 버그와 고친 과정 남기기,,Stanford CS 144,25,,S6-4ba52c
+S6-49c89a,FALSE,FALSE,S6 네트워크,복습,시즌 회고와 모의 면접,"시즌 회고를 쓰고, 모의 면접에서 개념을 얼마나 넓혀 갈 수 있는지 보기",,-,1,,S6-8583e1
+S7-09aded,FALSE,FALSE,S7 데이터베이스,복습,지난 시즌 돌아보기: S6에 쓴 글 다시 읽기,다시 읽다 새로 엮이는 게 있으면 그 글에 덧붙이기,,내 노트,0.5,,S6-49c89a
+S7-5667c2,FALSE,FALSE,S7 데이터베이스,메인,"디스크, 파일 구조, 버퍼 관리",같은 데이터를 순차와 무작위로 읽어 속도 비교하기,서버: MySQL InnoDB 버퍼 풀 | 서버: MySQL과 PostgreSQL의 저장 방식 차이 | 서버: 컬럼형 DB(ClickHouse)가 분석에 빠른 이유 | AI: 청킹은 문서를 페이지로 나누기,Berkeley CS 186,4,,S7-09aded S3-53c5ba S2-8b0c8b
+S7-0b2966,FALSE,FALSE,S7 데이터베이스,메인,B+Tree 인덱스,작은 B+Tree를 짜서 삽입하며 노드 분할 출력해 보기,서버: 인덱스 설계와 실행 계획(EXPLAIN) | AI: RAG는 검색 인덱스에 생성을 붙인 것,CS 186,4,,S7-5667c2 S5-2433ad
+S7-e842b0,FALSE,FALSE,S7 데이터베이스,메인,해시 인덱스와 외부 정렬,메모리보다 큰 파일을 나눠 정렬하고 합치는 코드 짜 보기,서버: 대용량 정렬과 페이징 쿼리 | 서버: 검색 엔진(Elasticsearch)과 역색인,CS 186,3,,S7-0b2966 S5-5a2f9e S5-70bfb0
+S7-6a2e13,FALSE,FALSE,S7 데이터베이스,메인,조인 알고리즘과 쿼리 최적화,회사 쿼리 하나의 EXPLAIN을 읽고 인덱스를 바꿔 보기,"서버: JPA가 만드는 쿼리, N+1과 fetch join",CS 186,5,,S7-e842b0 S4-12ea74
+S7-6f4ded,FALSE,FALSE,S7 데이터베이스,메인,"트랜잭션, 2PL, MVCC",격리 수준별 이상 현상을 실제 DB에서 재현하기,"서버: @Transactional 격리 수준, 낙관적 락과 비관적 락",CS 186,5,,S7-6a2e13 S3-e54e24
+S7-a2862e,FALSE,FALSE,S7 데이터베이스,메인,로깅과 복구 (ARIES),로그로 복구하는 과정을 흉내 내는 작은 코드 짜 보기,"서버: 백업과 복구, 바이너리 로그",CS 186,3,,S7-6f4ded S3-452bc3
+S7-63660c,FALSE,FALSE,S7 데이터베이스,보스,내 DB 서버: S5 해시 테이블과 append-only 로그로 KV 저장소를 만들어 S6 서버 뒤에 붙이기,"HTTP로 넣고 꺼내고, 서버를 죽였다 살려도 데이터가 남는지 확인하기. 설계와 한계를 README로",서버: Redis도 같은 구조 | AI: 벡터 DB의 저장 구조 | AI: 에이전트의 장기 기억 저장소,직접 구현 (C),12,,S7-a2862e S5-5a2f9e S6-8583e1
+S7-ffd1bf,FALSE,FALSE,S7 데이터베이스,사이드,Red Book 논문 3편 골라 읽기,읽은 논문의 아이디어 하나를 작은 코드로 흉내 내 보기,AI: 벡터 DB 논문 하나 골라 보기,Readings in Database Systems,6,,S7-6f4ded
+S7-c4551a,FALSE,FALSE,S7 데이터베이스,사이드,"BusTub 프로젝트 (버퍼 풀, 인덱스)",버퍼 풀을 구현하고 테스트 통과시키기,,CMU 15-445,30,,S7-5667c2 S7-0b2966
+S7-6969aa,FALSE,FALSE,S7 데이터베이스,복습,시즌 회고와 모의 면접,"시즌 회고를 쓰고, 모의 면접에서 개념을 얼마나 넓혀 갈 수 있는지 보기",,-,1,,S7-63660c
+S8-93dc84,FALSE,FALSE,S8 인터프리터,복습,지난 시즌 돌아보기: S7에 쓴 글 다시 읽기,다시 읽다 새로 엮이는 게 있으면 그 글에 덧붙이기,,내 노트,0.5,,S7-6969aa
+S8-fd0c6a,FALSE,FALSE,S8 인터프리터,메인,시작하기와 스캐너 구현,스캐너로 내 코드 한 줄을 토큰으로 쪼개 보기,AI: LLM 토크나이저(BPE)와 비교,Crafting Interpreters 1~4장,4,,S8-93dc84 S1-d44926
+S8-5fb8bd,FALSE,FALSE,S8 인터프리터,메인,코드 표현과 파서,파서로 식의 파스 트리를 출력해 보기,"프론트: Babel, ESLint가 다루는 AST | 서버: SQL 파서 | 서버: GraphQL은 쿼리 언어, 파서와 리졸버 | 프론트: 브라우저가 HTML과 CSS를 파싱해 DOM 트리를 만드는 과정 | 프론트: SWC, esbuild는 빠르게 짠 컴파일러",Crafting Interpreters 5~6장,5,,S8-fd0c6a S5-2433ad
+S8-791d2d,FALSE,FALSE,S8 인터프리터,메인,"표현식 평가, 문장과 상태",내 인터프리터로 작은 프로그램 돌려 보기,"프론트: JavaScript 엔진(V8) | AI: 에이전트 루프는 읽고, 실행하고, 다시 읽는 인터프리터",Crafting Interpreters 7~8장,5,,S8-5fb8bd
+S8-dd3339,FALSE,FALSE,S8 인터프리터,메인,제어 흐름과 함수,클로저를 지원하게 만들고 카운터 예제 돌려 보기,AI: 함수 호출은 모델이 쓴 호출을 내가 실행하는 것,Crafting Interpreters 9~10장,5,,S8-791d2d
+S8-d48bfa,FALSE,FALSE,S8 인터프리터,메인,"리졸빙, 바인딩, 클래스",SICP 3장의 환경 모델 예제를 내 Lox에서 돌려 보기,프론트: JavaScript의 프로토타입과 클래스 | 서버: 스프링 AOP 프록시 | 프론트: CSS 캐스케이드와 상속은 이름 찾기 규칙,Crafting Interpreters 11~13장,6,,S8-dd3339 S1-00196c
+S8-e31174,FALSE,FALSE,S8 인터프리터,보스,나만의 Lox 완성 + 내 DB 서버에 질의하는 문법 추가,"Lox 코드 몇 줄로 내 DB 서버에 값을 넣고 꺼내 보고, 추가한 문법의 설계를 README로",AI: 내 언어에 도구 호출 문법 붙여 보기 | 프론트: Svelte는 프레임워크가 아니라 컴파일러,직접 구현,8,,S8-d48bfa S7-63660c
+S8-a3f310,FALSE,FALSE,S8 인터프리터,사이드,2부 바이트코드 VM (clox),같은 프로그램을 jlox와 clox로 돌려 속도 비교하기,"서버: JVM 구조와 GC | 서버: 언어마다 다른 실행 모델(인터프리터, JVM, 네이티브)",Crafting Interpreters 2부,30,,S8-e31174 S2-bbb409 S2-8b0c8b
+S8-6ed9a6,FALSE,FALSE,S8 인터프리터,사이드,타입 검사기 붙이기: 정적 타입의 원리,내 Lox에 간단한 타입 검사를 붙여 보기,프론트: TypeScript 타입 검사기 | 서버: 자바 제네릭과 타입 소거 | AI: 구조화된 출력의 스키마 검증,직접 구현,8,,S8-d48bfa
+S8-ff1dda,FALSE,FALSE,S8 인터프리터,복습,시즌 회고와 모의 면접,"시즌 회고를 쓰고, 모의 면접에서 개념을 얼마나 넓혀 갈 수 있는지 보기",,-,1,,S8-e31174
+S9-fed54e,FALSE,FALSE,S9 분산 시스템,복습,지난 시즌 돌아보기: S8에 쓴 글 다시 읽기,다시 읽다 새로 엮이는 게 있으면 그 글에 덧붙이기,,내 노트,0.5,,S8-ff1dda
+S9-c73598,FALSE,FALSE,S9 분산 시스템,메인,"DDIA 1~2장: 신뢰성·확장성, 데이터 모델",우리 회사 시스템 하나를 신뢰성과 확장성 관점에서 그려 보기,"서버: 시스템 설계, 관계형과 문서형 DB | 서버: 문서형, 그래프, 시계열, 컬럼형 NoSQL | 서버: 관측성(로그, 메트릭, 분산 트레이싱) | AI: 컨텍스트 소스와 데이터 카탈로그",DDIA (1판 기준),4,,S9-fed54e
+S9-42a919,FALSE,FALSE,S9 분산 시스템,메인,DDIA 3장: 저장소와 검색,S7에서 만든 KV 저장소에 LSM 방식을 붙여 보기,"서버: LSM 트리(RocksDB, Cassandra) | AI: 벡터 인덱스(HNSW)",DDIA (1판 기준),3,,S9-c73598 S7-63660c
+S9-0875ad,FALSE,FALSE,S9 분산 시스템,메인,DDIA 4장: 인코딩과 진화,같은 데이터를 JSON과 Protobuf로 인코딩하고 스키마를 바꿔 보기,"서버: JSON, Protobuf, gRPC, API 버전 관리 | 프론트: API 스키마로 타입 만들기 | AI: 구조화된 출력과 스키마 | 서버: DB 스키마 마이그레이션 | 서버: OpenAPI 스펙 | 프론트: React Native 브리지와 직렬화 | AI: MCP 메시지는 JSON-RPC",DDIA (1판 기준),2,,S9-42a919
+S9-65b042,FALSE,FALSE,S9 분산 시스템,메인,DDIA 5~6장: 복제와 파티셔닝,로컬에 DB 복제를 띄워 복제 지연을 직접 만들어 보기,"서버: DB 레플리카와 읽기 분리, 샤딩",DDIA (1판 기준),5,,S9-0875ad S7-a2862e
+S9-03be58,FALSE,FALSE,S9 분산 시스템,메인,DDIA 7장: 트랜잭션,두 세션에서 같은 행을 동시에 고쳐 보며 격리 수준 비교하기,서버: 분산 트랜잭션과 사가 패턴,DDIA (1판 기준),3,,S9-65b042 S7-6f4ded
+S9-9cb89e,FALSE,FALSE,S9 분산 시스템,메인,"DDIA 8~9장: 분산 시스템의 문제, 일관성과 합의",시계가 어긋난 두 프로세스를 흉내 내 순서가 꼬이는 걸 재현하기,"서버: 분산 락과 멱등성 키 | 서버: CAP 정리 | 서버: 장애 유형, 서킷 브레이커, 우아한 기능 저하 | AI: 멀티 에이전트는 작은 분산 시스템",DDIA (1판 기준),7,,S9-03be58 S6-e158c1
+S9-513e60,FALSE,FALSE,S9 분산 시스템,메인,MapReduce 논문 + 랩,랩을 완성하고 워커를 일부러 죽여 보기,AI: 대규모 학습 데이터 처리,MIT 6.824 (현 6.5840),12,,S9-9cb89e S1-de69f7
+S9-1eac1f,FALSE,FALSE,S9 분산 시스템,메인,Raft 논문 정독,Raft 시각화(raft.github.io)에서 리더를 죽여 보며 동작 지켜보기,서버: etcd와 쿠버네티스,MIT 6.824,5,,S9-513e60
+S9-c7ca82,FALSE,FALSE,S9 분산 시스템,메인,Raft 랩: 리더 선출,테스트를 여러 번 돌려 실패를 재현하고 고치기,,MIT 6.824,10,,S9-1eac1f
+S9-9885b7,FALSE,FALSE,S9 분산 시스템,메인,Raft 랩: 로그 복제,테스트를 여러 번 돌려 실패를 재현하고 고치기,,MIT 6.824,15,,S9-c7ca82
+S9-24c7c5,FALSE,FALSE,S9 분산 시스템,메인,Raft 랩: 영속성과 스냅샷 + 테스트 수백 번 통과,"랩 테스트를 수백 번 돌려 통과시키고, 어디서 깨졌는지 기록해 두기",,MIT 6.824,15,,S9-9885b7
+S9-7318c7,FALSE,FALSE,S9 분산 시스템,보스,내 DB 서버를 Raft로 복제: Go 랩에서 검증한 Raft를 C로 옮겨 서버 3대 묶기,"서버 한 대를 죽여도 읽고 쓰기가 이어지는지 보여 주고, 1년 동안 자란 나무를 글 한 편으로 정리하기",서버: 레플리카와 장애 조치 | AI: 멀티 에이전트의 합의,"직접 구현 (C, 6.824 테스트를 기준 삼아)",25,,S9-24c7c5 S7-63660c S6-8583e1
+S9-b0ba95,FALSE,FALSE,S9 분산 시스템,사이드,DDIA 10~12장: 배치와 스트림 처리,작은 배치 처리나 스트림 처리 파이프라인 만들어 보기,서버: Kafka와 이벤트 기반 아키텍처 | AI: RAG 데이터 파이프라인,DDIA (1판 기준),6,,S9-65b042 S1-3cf879
+S9-fafeb5,FALSE,FALSE,S9 분산 시스템,복습,엔딩: 1년 회고 + 최종 모의 면접,S0 첫 리포트와 지금의 내 글을 나란히 놓고 비교해 보기,,-,3,,S9-7318c7

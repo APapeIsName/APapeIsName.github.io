@@ -94,6 +94,9 @@ describe("리포트 파일", () => {
   it("잘못된 입력은 한국어 메시지로 거절해요", () => {
     expect(() => validateFields({ ...sample, title: " " })).toThrow("제목을 입력해 주세요.");
     expect(() => validateFields({ ...sample, quest: "S2-zzz" })).toThrow("과제를 골라 주세요.");
+    // 히든 던전(HS 서버, HF 프론트, HA AI)도 리포트를 낼 수 있어요.
+    expect(validateFields({ ...sample, quest: "HS-18df5a" }).quest).toBe("HS-18df5a");
+    expect(() => validateFields({ ...sample, quest: "HX-18df5a" })).toThrow("과제를 골라 주세요.");
     expect(() => validateFields({ ...sample, date: "2026-13-01" })).toThrow("제출일");
     expect(() => validateFields({ ...sample, hours: -1 })).toThrow("쓴 시간");
     expect(() => validateFields({ ...sample, body: "a {% endraw %} b" })).toThrow("endraw");

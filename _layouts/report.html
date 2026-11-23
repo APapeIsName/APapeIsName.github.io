@@ -1,7 +1,7 @@
 ---
 layout: default
 ---
-{% assign q = site.data.quests | where: "id", page.quest | first %}
+{% assign q = site.data.quests | where: "id", page.quest | first %}{% unless q %}{% assign q = site.data.dungeons | where: "id", page.quest | first %}{% endunless %}
 {% assign s = site.data.seasons | where: "id", q.season | first %}
 {% assign body = content | strip %}
 {% assign tpl = site.data.report_template %}
@@ -21,7 +21,7 @@ layout: default
     <table class="cover-table">
       <tbody>
         <tr><th scope="row">과목</th><td>{% if s %}<a href="{{ '/syllabus/' | relative_url }}#{{ s.slug }}">{{ s.code }} {{ s.title }}</a>{% else %}지정 안 됨{% endif %}</td></tr>
-        <tr><th scope="row">과제</th><td>{% if q %}{{ q.quest }}{% else %}{{ page.quest | default: "지정 안 됨" }}{% endif %}</td></tr>
+        <tr><th scope="row">과제</th><td>{% if q %}{{ q.quest | default: q.name }}{% else %}{{ page.quest | default: "지정 안 됨" }}{% endif %}</td></tr>
         {% if q.practice %}<tr><th scope="row">실습 거리</th><td>{{ q.practice }}</td></tr>{% endif %}
         <tr><th scope="row">제출자</th><td>{{ site.student }}</td></tr>
         <tr><th scope="row">제출일</th><td><time datetime="{{ page.date | date: '%Y-%m-%d' }}">{{ page.date | date: "%Y년 %-m월 %-d일" }}</time></td></tr>

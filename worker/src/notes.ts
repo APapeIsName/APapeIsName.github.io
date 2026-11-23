@@ -41,7 +41,7 @@ export function validateNote(input: Record<string, unknown>): NoteFields {
   let quest: string | undefined;
   if (typeof input.quest === "string" && input.quest.trim()) {
     quest = input.quest.trim();
-    if (!/^S\d-[0-9a-f]{6}$/.test(quest)) throw new HttpError(400, "과제가 올바르지 않아요.");
+    if (!/^(S\d|H[SFA])-[0-9a-f]{6}$/.test(quest)) throw new HttpError(400, "과제가 올바르지 않아요.");
   }
   return { title, date, series, quest, tags, hours: checkHours(input.hours), summary: str(input.summary, 300, "한 줄 요약"), body };
 }

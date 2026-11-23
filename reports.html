@@ -21,12 +21,12 @@ permalink: /reports/
 {% if site.posts.size > 0 %}
 <ul class="report-list report-list-full">
   {% for p in site.posts %}
-  {% assign q = site.data.quests | where: "id", p.quest | first %}
+  {% assign q = site.data.quests | where: "id", p.quest | first %}{% assign dq = nil %}{% unless q %}{% assign dq = site.data.dungeons | where: "id", p.quest | first %}{% endunless %}
   <li data-season="{{ q.season }}">
     <time datetime="{{ p.date | date: '%Y-%m-%d' }}">{{ p.date | date: "%Y. %-m. %-d." }}</time>
     <div>
       <a href="{{ p.url | relative_url }}">{{ p.title }}</a>
-      <span class="report-meta">{{ q.season }}, {{ q.quest }}{% if p.kind %} ({{ p.kind }}){% endif %}</span>
+      <span class="report-meta">{% if dq %}히든 {{ dq.field }}, {{ dq.name }}{% else %}{{ q.season }}, {{ q.quest }}{% endif %}{% if p.kind %} ({{ p.kind }}){% endif %}</span>
     </div>
   </li>
   {% endfor %}

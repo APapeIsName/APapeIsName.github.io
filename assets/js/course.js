@@ -117,6 +117,7 @@
   }
   function sumHours(list) { return list.reduce(function (a, q) { return a + q.hours; }, 0); }
   function round1(n) { return Math.round(n * 10) / 10; }
+  function splitIds(v) { return String(v || "").split(/\s+/).filter(Boolean); }
   function codeOf(seasonId) { return String(seasonId || "").split(" ")[0]; }
 
   /* ── 데이터 정리 ───────────────────────────────── */
@@ -136,8 +137,32 @@
       done: bool(q.done) || !!doneByReport,
       recalled: bool(q.recalled) || rs.some(function (r) { return r.recalled && r.recallFilled !== false; }),
       doneDate: ymd(q.date) || doneByReport || "",
+      requires: splitIds(q.requires),
       main: q.type !== "사이드"
     };
+  });
+
+  /* 히든 던전: 분야(서버, 프론트, AI)마다 CS 과제를 깨면 열리는 숨은 과제예요. 주차에는 넣지 않아요. */
+  var dungeons = (C.dungeons || []).map(function (d) {
+    var rs = reportsByQuest[d.id] || [];
+    var doneByReport = rs.filter(reportComplete).map(function (r) { return r.date; }).sort()[0];
+    return {
+      id: d.id, field: d.field, type: d.type, quest: d.name, name: d.name, season: "히든 " + d.field,
+      practice: d.practice, resource: d.resource, branches: "", hours: parseFloat(d.hours) || 0,
+      rooms: String(d.rooms || "").split("|").map(function (x) {
+        x = x.trim(); var i = x.indexOf(":");
+        return i > 0 ? { src: x.slice(0, i), topic: x.slice(i + 1) } : null;
+      }).filter(Boolean),
+      requires: splitIds(d.requires), done: !!doneByReport, doneDate: doneByReport || "",
+      recalled: false, hidden: true, optional: true, main: false
+    };
+  });
+  // 선행 과제를 모두 끝내면 열려요. 끝낸 과제는 늘 열린 걸로 쳐요.
+  var nodeById = {};
+  quests.concat(dungeons).forEach(function (n) { nodeById[n.id] = n; });
+  quests.concat(dungeons).forEach(function (n) {
+    n.missing = n.requires.filter(function (id) { return !(nodeById[id] && nodeById[id].done); });
+    n.open = n.done || !n.missing.length;
   });
 
   var seasons = (C.seasons || []).map(function (meta) {
@@ -205,13 +230,13 @@
   var overdue = quests.filter(function (q) { return !q.optional && !q.done && q.weekEnd < currentWeek; });
   var ahead = quests.filter(function (q) { return !q.optional && q.done && q.weekStart > currentWeek; });
   // 글쓰기 화면(write.js)도 같은 주차 계산을 써요.
-  C.computed = { quests: quests, currentWeek: currentWeek, totalWeeks: totalWeeks, overdue: overdue, weekLabel: weekLabel, weekDates: weekDates };
+  C.computed = { quests: quests, dungeons: dungeons, nodeById: nodeById, currentWeek: currentWeek, totalWeeks: totalWeeks, overdue: overdue, weekLabel: weekLabel, weekDates: weekDates };
   var doneMain = seasons.reduce(function (a, s) { return a + s.mainDoneHours; }, 0);
   var mainCount = seasons.reduce(function (a, s) { return a + s.mainCount; }, 0);
   var mainDoneCount = seasons.reduce(function (a, s) { return a + s.mainDone; }, 0);
   var overallPct = mainCount ? Math.round(mainDoneCount / mainCount * 100) : 0;
 
-  var xp = Math.round(sumHours(quests.filter(function (q) { return q.done; })) * cfg.xpPerHour +
+  var xp = Math.round(sumHours(quests.concat(dungeons).filter(function (q) { return q.done; })) * cfg.xpPerHour +
     quests.filter(function (q) { return q.recalled; }).length * cfg.xpPerRecall);
   var level = Math.floor(xp / cfg.xpPerLevel) + 1;
   var xpInLevel = xp % cfg.xpPerLevel;
@@ -372,6 +397,63 @@
     heatEl.innerHTML = '<div class="cells">' + cells.join("") + '</div><div class="heat-axis"><span>26주 전</span><span>이번 주</span></div>';
   }
 
+  /* ── 히든 던전 목록 ──────────────────────────────── */
+  function nodeName(id) {
+    var n = nodeById[id];
+    if (!n) return id;
+    if (n.hidden && !n.open) return "??? (" + n.field + " 히든 던전)";
+    return (n.hidden ? "" : "[" + codeOf(n.season) + "] ") + n.quest;
+  }
+  C.nodeName = nodeName;
+  /** 잠긴 던전의 여는 조건. 히든 보스는 던전 이름을 늘어놓지 않고 개수로 말해요. */
+  function hintFor(d) {
+    var dun = d.requires.filter(function (id) { return nodeById[id] && nodeById[id].hidden; });
+    var rest = d.missing.filter(function (id) { return !(nodeById[id] && nodeById[id].hidden); });
+    var parts = rest.map(function (id) { return esc(nodeName(id)); });
+    if (dun.length) {
+      var cleared = dun.filter(function (id) { return nodeById[id].done; }).length;
+      parts.unshift(esc(d.field) + " 히든 던전 " + dun.length + "개 모두 깨기 (지금 " + cleared + "개)");
+    }
+    return parts.join(", ");
+  }
+  C.hiddenHint = hintFor;
+  function drawHidden() {
+    var box = document.querySelector("[data-hidden-dungeons]");
+    if (!box) return;
+    var linkOf = function (d) {
+      var rs = reportsByQuest[d.id] || [];
+      return rs.map(function (r, i) { return '<a href="' + esc(r.url) + '">제출 ' + (i + 1) + "</a>"; }).join(" ");
+    };
+    var html = [];
+    ["서버", "프론트", "AI"].forEach(function (field) {
+      var list = dungeons.filter(function (d) { return d.field === field; });
+      if (!list.length) return;
+      var opened = list.filter(function (d) { return d.open; }).length;
+      html.push('<section class="hidden-field window field-' + (field === "서버" ? "server" : field === "프론트" ? "front" : "ai") + '">');
+      html.push('<h3>' + esc(field) + ' <span class="hidden-count">' + opened + "/" + list.length + " 열림</span></h3><ul class=\"dungeon-list\">");
+      list.forEach(function (d) {
+        var cls = "dungeon" + (d.type === "히든 보스" ? " is-boss" : "") + (d.done ? " is-done" : d.open ? " is-open" : " is-locked");
+        html.push('<li class="' + cls + '" data-dungeon="' + esc(d.id) + '">');
+        if (!d.open) {
+          html.push('<p class="dungeon-name">' + (d.type === "히든 보스" ? "??? 히든 보스" : "??? 히든 던전") + "</p>");
+          html.push('<p class="dungeon-hint">열리려면: ' + hintFor(d) + "</p>");
+        } else {
+          html.push('<p class="dungeon-name"><span class="tag tag-' + esc(d.type.replace(" ", "-")) + '">' + esc(d.type) + "</span> " + esc(d.name) + (d.done ? " ✓" : "") + "</p>");
+          html.push('<p class="dungeon-practice">' + esc(d.practice) + ' <span class="dungeon-meta">약 ' + d.hours + "시간, " + esc(d.resource) + "</span></p>");
+          if (d.rooms.length) {
+            html.push('<details class="dungeon-rooms"><summary>방 ' + d.rooms.length + "개</summary><ul>" + d.rooms.map(function (r) {
+              return "<li>" + esc(r.topic) + ' <span class="room-src">' + esc(nodeName(r.src)) + "</span></li>";
+            }).join("") + "</ul></details>");
+          }
+          html.push('<p class="dungeon-act">' + (linkOf(d) || '<a href="' + esc(cfg.writeUrl) + "?quest=" + esc(d.id) + '">리포트 쓰기</a>') + "</p>");
+        }
+        html.push("</li>");
+      });
+      html.push("</ul></section>");
+    });
+    box.innerHTML = html.join("");
+  }
+
   /* ── 계획서 ────────────────────────────────────── */
   var byId = {};
   quests.forEach(function (q) { byId[q.id] = q; });
@@ -381,8 +463,16 @@
       tr.classList.add("is-done");
       var c = tr.querySelector(".check");
       if (c) c.setAttribute("aria-label", "완료");
+    } else if (q && !q.open) {
+      tr.classList.add("is-locked");
     }
+    // 선행 과제 칩: 끝낸 건 채워서 보여 줘요.
+    tr.querySelectorAll(".req[data-req]").forEach(function (el) {
+      var r = nodeById[el.getAttribute("data-req")];
+      if (r && r.done) el.classList.add("is-met");
+    });
   });
+  drawHidden();
   function sel(attr, id) { return document.querySelectorAll("[" + attr + '="' + id.replace(/"/g, '\\"') + '"]'); }
   seasons.forEach(function (s, i) {
     var sec = document.querySelector('.season[data-season="' + s.meta.id.replace(/"/g, '\\"') + '"]');

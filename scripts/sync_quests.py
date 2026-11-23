@@ -10,6 +10,7 @@
      id는 '시즌 코드 + 시즌·과제 이름의 해시'라서, 시트에서 행 순서를 바꿔도 그대로예요.
      (과제 이름을 고치면 id가 바뀌니, 그 과제에 이미 낸 리포트의 quest 값도 고쳐야 해요.)
   3. .pages.yml의 과제 드롭다운 목록을 새 목록으로 바꿔요.
+  선행 관계(requires)는 시트에 없으니, 지금 _data/quests.csv에 있던 값을 id로 이어 받아요.
 
 인자 없이 실행하면 지금 _data/quests.csv를 다시 읽어 id와 드롭다운만 새로 맞춰요.
 """
@@ -29,7 +30,7 @@ HEADER_MAP = {
     "예상(h)": "hours", "완료일": "date",
 }
 COLUMNS = ["id", "done", "recalled", "season", "type", "quest",
-           "practice", "branches", "resource", "hours", "date"]
+           "practice", "branches", "resource", "hours", "date", "requires"]
 
 
 def to_bool(value: str) -> str:
@@ -64,22 +65,36 @@ def read_rows(path: Path):
     sys.exit("'퀘스트' 열이 있는 헤더 행을 찾지 못했어요. 시트의 '퀘스트' 탭을 CSV로 내려받았는지 확인해 주세요.")
 
 
+def existing_requires():
+    """시트에는 선행 관계(requires)가 없어서, 지금 사이트 데이터에 있던 값을 id로 이어 받아요."""
+    if not DATA.exists():
+        return {}
+    with DATA.open(encoding="utf-8", newline="") as f:
+        return {r["id"]: r.get("requires", "") for r in csv.DictReader(f)}
+
+
 def write_data(records):
     seen = set()
+    keep = existing_requires()
+    rows = []
+    for r in records:
+        qid = quest_id(r.get("season", ""), r["quest"])
+        if qid in seen:
+            sys.exit(f"같은 시즌에 이름이 같은 과제가 둘 있어요: {r['season']} / {r['quest']}")
+        seen.add(qid)
+        r["id"] = qid
+        branches = " | ".join(x.strip() for x in re.split(r"[\n|]", r.get("branches", "")) if x.strip())
+        rows.append({
+            "id": qid, "done": to_bool(r.get("done")), "recalled": to_bool(r.get("recalled")),
+            "season": r.get("season", ""), "type": r.get("type", ""), "quest": r["quest"],
+            "practice": r.get("practice", ""), "branches": branches, "resource": r.get("resource", ""),
+            "hours": r.get("hours", "").replace(",", ""), "date": to_date(r.get("date", "")),
+            "requires": r.get("requires") or keep.get(qid, ""),
+        })
     with DATA.open("w", encoding="utf-8", newline="") as f:
-        w = csv.writer(f)
-        w.writerow(COLUMNS)
-        for r in records:
-            qid = quest_id(r.get("season", ""), r["quest"])
-            if qid in seen:
-                sys.exit(f"같은 시즌에 이름이 같은 과제가 둘 있어요: {r['season']} / {r['quest']}")
-            seen.add(qid)
-            hours = r.get("hours", "").replace(",", "")
-            w.writerow([qid, to_bool(r.get("done")), to_bool(r.get("recalled")),
-                        r.get("season", ""), r.get("type", ""), r["quest"],
-                        r.get("recall", ""), r.get("resource", ""), hours,
-                        to_date(r.get("date", ""))])
-            r["id"] = qid
+        w = csv.DictWriter(f, fieldnames=COLUMNS, lineterminator="\n")
+        w.writeheader()
+        w.writerows(rows)
     return records
 
 
@@ -102,6 +117,12 @@ def update_pages_yml(records):
         label = f"[{code}] {r['quest']}"
         lines.append(f"{indent}- name: {yaml_str(r['id'])}")
         lines.append(f"{indent}  label: {yaml_str(label)}")
+    dungeons = ROOT / "_data" / "dungeons.csv"
+    if dungeons.exists():
+        with dungeons.open(encoding="utf-8", newline="") as f:
+            for d in csv.DictReader(f):
+                lines.append(f"{indent}- name: {yaml_str(d['id'])}")
+                lines.append(f"{indent}  label: {yaml_str('[히든 ' + d['field'] + '] ' + d['name'])}")
     lines.append(f"{indent}{end}")
     pattern = re.compile(r"[ \t]*" + re.escape(start) + r".*?" + re.escape(end), re.S)
     PAGES.write_text(pattern.sub(lambda _: "\n".join(lines), text, count=1), encoding="utf-8")

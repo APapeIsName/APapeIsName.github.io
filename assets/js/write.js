@@ -69,10 +69,12 @@
   (C.seasons || []).forEach(function (s) { seasonsById[s.id] = s; });
   var questsById = {};
   computed.quests.forEach(function (q) { questsById[q.id] = q; });
+  (computed.dungeons || []).forEach(function (d) { if (d.open) questsById[d.id] = d; });
 
   function optionFor(q) {
-    var label = "[" + String(q.season).split(" ")[0] + "] " + q.quest;
+    var label = (q.hidden ? "[" + q.field + "] " : "[" + String(q.season).split(" ")[0] + "] ") + q.quest;
     if (q.done) label += " (완료)";
+    else if (q.hidden) label += "";
     else if (!q.optional) label += " (" + computed.weekLabel(q) + ")";
     return node("option", { value: q.id }, label);
   }
@@ -97,6 +99,8 @@
     (C.seasons || []).forEach(function (s) {
       group(s.code + " " + s.title, computed.quests.filter(function (q) { return q.season === s.id && !used[q.id]; }));
     });
+    // 열린 히든 던전만 골라 쓸 수 있어요.
+    group("히든 던전", (computed.dungeons || []).filter(function (d) { return d.open; }));
   }
 
   function defaultQuest() {
@@ -118,7 +122,7 @@
   function syncQuestInfo() {
     var q = questsById[f.quest.value];
     var s = q ? seasonsById[q.season] : null;
-    $("w-subject").textContent = s ? s.code + " " + s.title : "과제를 고르면 채워져요";
+    $("w-subject").textContent = s ? s.code + " " + s.title : q && q.hidden ? q.field + " " + q.type : "과제를 고르면 채워져요";
     $("w-practice").textContent = q && q.practice ? q.practice : "";
     $("w-practice-row").hidden = !(q && q.practice);
     $("w-branches").innerHTML = q && q.branches && C.branchesHtml ? C.branchesHtml(q.branches) : "";
@@ -141,7 +145,7 @@
     badge.setAttribute("data-badge", s ? s.code : "S0");
     if (C.drawBadges) C.drawBadges();
     // 칸마다 과제에 맞는 안내 문구를 넣어요: 과제별 문구 → 양식 문구(실습 거리, 자료로 채움)
-    var raw = (C.quests || []).filter(function (x) { return x.id === f.quest.value; })[0] || {};
+    var raw = (C.quests || []).filter(function (x) { return x.id === f.quest.value; })[0] || questsById[f.quest.value] || {};
     var own = overrides[f.quest.value] || {};
     SECTIONS.forEach(function (x) {
       var text = own[x.key] || x.placeholder;
@@ -223,7 +227,7 @@
   window.ReportWriter = {
     key: function () { return mode.path || "new"; },
     quest: function () {
-      var raw = (C.quests || []).filter(function (x) { return x.id === f.quest.value; })[0] || {};
+      var raw = (C.quests || []).filter(function (x) { return x.id === f.quest.value; })[0] || questsById[f.quest.value] || {};
       return { quest: raw.quest || "", resource: raw.resource || "", title: f.title.value.trim() };
     },
     field: function (k) { return FIELDS.indexOf(k) >= 0 ? f[k] : null; },

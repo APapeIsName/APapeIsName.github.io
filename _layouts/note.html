@@ -6,7 +6,7 @@ layout: default
 <article class="note">
   <header class="note-head">
     {% if s %}<p class="note-series"><a href="{{ '/project/' | relative_url }}?id={{ s.id }}">{{ s.title }}</a></p>
-    {% elsif page.series == "cs" %}{% assign nq = site.data.quests | where: "id", page.quest | first %}<p class="note-series"><a href="{{ '/course/' | relative_url }}">{{ site.course_title }}</a>{% if nq %} <span class="note-quest">{{ nq.season }}, {{ nq.quest }}</span>{% endif %}</p>{% endif %}
+    {% elsif page.series == "cs" %}{% assign nq = site.data.quests | where: "id", page.quest | first %}{% unless nq %}{% assign nd = site.data.dungeons | where: "id", page.quest | first %}{% endunless %}<p class="note-series"><a href="{{ '/course/' | relative_url }}">{{ site.course_title }}</a>{% if nq %} <span class="note-quest">{{ nq.season }}, {{ nq.quest }}</span>{% elsif nd %} <span class="note-quest">히든 {{ nd.field }}, {{ nd.name }}</span>{% endif %}</p>{% endif %}
     <h1>{{ page.title }}</h1>
     {% if page.summary %}<p class="note-summary">{{ page.summary }}</p>{% endif %}
     <p class="note-meta">

@@ -79,7 +79,7 @@ export function validateFields(input: Record<string, unknown>): PostFields {
   const title = str(input.title, 200, "제목");
   if (!title) throw new HttpError(400, "제목을 입력해 주세요.");
   const quest = typeof input.quest === "string" ? input.quest.trim() : "";
-  if (!/^S\d-[0-9a-f]{6}$/.test(quest)) throw new HttpError(400, "과제를 골라 주세요.");
+  if (!/^(S\d|H[SFA])-[0-9a-f]{6}$/.test(quest)) throw new HttpError(400, "과제를 골라 주세요.");
   const date = checkDate(input.date, "제출일");
   const kind = (KINDS as readonly string[]).includes(input.kind as string) ? (input.kind as PostFields["kind"]) : "과제 리포트";
   const hours = checkHours(input.hours);
