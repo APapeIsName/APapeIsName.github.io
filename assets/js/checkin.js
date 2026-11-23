@@ -278,7 +278,10 @@
         li.appendChild(main);
         li.appendChild(node("span", { "class": "checkin-dur" }, c.end ? dur(t(c.end) - t(c.start)) : "진행 중"));
         var acts = node("span", { "class": "checkin-acts" });
-        if (isOwner && c.auto) acts.appendChild(editButton(c, li));
+        // 저절로 끝났거나 지나치게 길면(끝내기를 잊은 듯) 끝난 시간을 고칠 수 있어요
+        var tooLong = c.end && t(c.end) - t(c.start) > 6 * 60 * MIN;
+        if (tooLong && !c.auto) main.appendChild(node("span", { "class": "checkin-flag" }, "끝내기를 잊은 듯"));
+        if (isOwner && (c.auto || tooLong)) acts.appendChild(editButton(c, li));
         if (isOwner) acts.appendChild(deleteButton(c));
         li.appendChild(acts);
         ul.appendChild(li);
