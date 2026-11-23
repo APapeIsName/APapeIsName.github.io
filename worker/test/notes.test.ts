@@ -237,7 +237,7 @@ describe("리포트 완성 기준", () => {
   });
 });
 
-import { resetCheckinMemo } from "../src/checkins";
+import { addPastCheckin, editCheckin, endCheckin, extendCheckin, getStatus, resetCheckinMemo, settle, startCheckin } from "../src/checkins";
 describe("출석 체크", () => {
   beforeEach(() => resetCheckinMemo());
   it("누구나 지금 상태를 볼 수 있어요", async () => {
@@ -272,5 +272,53 @@ describe("출석 체크", () => {
     expect((await api("/api/checkins", "POST", { kind: "공부", text: "" })).status).toBe(400);
     expect((await api("/api/checkins", "POST", { kind: "공부", text: "x".repeat(141) })).status).toBe(400);
     expect((await api(`/api/checkins?id=${d.last.id}`, "DELETE")).status).toBe(200);
+  });
+
+  describe("끝내기를 잊어도 쌓이지 않게", () => {
+    const T = Date.parse("2026-11-23T20:00:00+09:00");
+    const M = 60 * 1000;
+    it("정한 시간이 지나면 저절로 끝나요", async () => {
+      await startCheckin(env, { kind: "공부", text: "OS 4장", minutes: 60 }, T);
+      expect((await getStatus(env, T + 30 * M)).current.until).toBe("2026-11-23T21:00:00+09:00");
+      const after = await getStatus(env, T + 61 * M);
+      expect(after.current).toBe(null);
+      expect(after.last.end).toBe("2026-11-23T21:00:00+09:00");
+      expect(after.last.auto).toBe(true);
+      // 이미 끝났으면 상황 종료는 안내와 함께 거절
+      await expect(endCheckin(env, {}, T + 62 * M)).rejects.toThrow("저절로 끝났다면");
+      // 파일은 다음에 쓸 때 끝난 걸로 고쳐져요
+      await startCheckin(env, { kind: "공부", text: "다음 공부" }, T + 90 * M);
+      const saved = parseYaml(repo.get("_data/checkins.yml")!.text);
+      expect(saved.find((c: { text: string }) => c.text === "OS 4장")).toMatchObject({ end: "2026-11-23T21:00:00+09:00", auto: true });
+    });
+    it("연장하면 더 이어지고, 시간 고르기는 10분~8시간이에요", async () => {
+      await startCheckin(env, { kind: "공부", text: "Shell Lab", minutes: 60 }, T);
+      const r = await extendCheckin(env, { minutes: 30 }, T + 50 * M);
+      expect(r.current.until).toBe("2026-11-23T21:30:00+09:00");
+      expect((await getStatus(env, T + 80 * M)).current).not.toBe(null);
+      await expect(startCheckin(env, { text: "x", minutes: 5 }, T + 81 * M)).rejects.toThrow("10분에서");
+    });
+    it("정한 시간이 없는 옛 기록은 3시간 뒤에 끝난 걸로 쳐요", () => {
+      const list = [{ id: "a", kind: "공부" as const, text: "옛날", start: "2026-11-22T20:22:04+09:00" }];
+      expect(settle(list, Date.parse("2026-11-23T00:00:00+09:00"))).toBe(true);
+      expect(list[0]).toMatchObject({ end: "2026-11-22T23:22:04+09:00", auto: true });
+    });
+    it("저절로 끝난 기록을 실제 끝난 시간으로 고쳐요", async () => {
+      const s0 = await startCheckin(env, { kind: "공부", text: "CS:APP", minutes: 120 }, T);
+      const id = s0.checkin!.id;
+      const r = await editCheckin(env, { id, end: "21:15", note: "생각보다 빨리 끝" }, T + 5 * 60 * M);
+      expect(r.checkin).toMatchObject({ end: "2026-11-23T21:15:00+09:00", note: "생각보다 빨리 끝" });
+      expect(r.checkin!.auto).toBeUndefined();
+      // 시작보다 이른 시각은 자정을 넘긴 걸로 보는데, 그러면 아직 안 온 시간이라 거절해요
+      await expect(editCheckin(env, { id, end: "19:00" }, T + 5 * 60 * M)).rejects.toThrow("아직");
+    });
+    it("깜빡한 공부를 지나고 나서 남겨요", async () => {
+      const r = await addPastCheckin(env, { kind: "독서", text: "DDIA 1장", start: "14:00", end: "15:30" }, T);
+      expect(r.checkin).toMatchObject({ start: "2026-11-23T14:00:00+09:00", end: "2026-11-23T15:30:00+09:00", past: true });
+      await expect(addPastCheckin(env, { text: "겹침", start: "15:00", end: "16:00" }, T)).rejects.toThrow("이미 출석 기록이");
+      await expect(addPastCheckin(env, { text: "미래", start: "19:00", end: "22:00" }, T)).rejects.toThrow("아직");
+      const y = await addPastCheckin(env, { text: "어제 밤", date: "2026-11-22", start: "23:00", end: "01:00" }, T);
+      expect(y.checkin!.end).toBe("2026-11-23T01:00:00+09:00");
+    });
   });
 });

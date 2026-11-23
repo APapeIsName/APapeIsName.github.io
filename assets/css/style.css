@@ -783,7 +783,7 @@ a.chip { text-decoration: none; display: inline-block; }
 .checkin-day h3 { display: flex; justify-content: space-between; gap: 12px; margin: 0 0 6px; font-size: 15px; }
 .checkin-total { color: var(--muted); font-size: 13px; font-weight: 400; }
 .checkin-list { list-style: none; margin: 0; padding: 0; }
-.checkin-list li { display: grid; grid-template-columns: 7.5em minmax(0, 1fr) auto auto; gap: 4px 12px; align-items: baseline; padding: 5px 0; font-size: 14px; }
+.checkin-list li { display: grid; grid-template-columns: 9.5em minmax(0, 1fr) auto auto; gap: 4px 12px; align-items: baseline; padding: 5px 0; font-size: 14px; }
 .checkin-list li.is-live .checkin-time { color: var(--hp); }
 .checkin-time, .checkin-dur { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .checkin-main { font-family: var(--sans); -webkit-font-smoothing: auto; }
@@ -1091,3 +1091,89 @@ tr.is-locked .check { background: var(--lock-fill); }
 .tlink.is-done::before { content: "✓ "; }
 @media (prefers-reduced-motion: reduce) { .tnode { transition: none; } }
 .hidden-dungeons .season-head { grid-template-columns: 1fr; }
+
+/* ── 출석: 정한 시간, 연장, 저절로 끝남 ─────────────── */
+.now-box { height: 10px; margin: 10px 0 0; background: var(--stripe-a); box-shadow: inset 0 0 0 2px var(--line); }
+.now-box span { display: block; height: 100%; background: var(--hp); box-shadow: inset 0 0 0 2px var(--line); }
+.now-box.is-ending span { background: var(--gold); }
+.now-extend { display: flex; gap: 6px; flex: 0 0 auto; }
+.now-extend .px-btn, .box-pick label { padding: 4px 10px; font-size: 13px; }
+.box-pick { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+.box-label { font-size: 13px; color: var(--muted); margin-right: 2px; }
+.box-pick input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.box-pick label { cursor: pointer; box-shadow: inset 0 0 0 2px var(--faint); }
+.box-pick input:checked + label { color: #fff; background: var(--line); box-shadow: none; }
+.box-pick input:focus-visible + label { outline: 3px solid var(--edge-hot); outline-offset: 1px; }
+.now-hint { flex-basis: 100%; margin: 0; font-size: 12px; color: var(--muted); }
+.now-past { flex-basis: 100%; font-size: 13px; }
+.now-past summary { cursor: pointer; color: var(--muted); }
+.now-fix { margin-top: 14px; padding: 10px 12px; background: var(--stripe-a); box-shadow: inset 0 0 0 2px var(--gold); font-size: 14px; }
+.now-fix p { margin: 0 0 8px; }
+.now-fix-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin-top: 6px; }
+.now-fix-row input[type="time"], .now-fix-row input[type="date"] { font-family: var(--sans); padding: 4px 6px; }
+.checkin-list li.is-auto .checkin-time { color: var(--gold); }
+.checkin-flag { margin-left: 6px; padding: 0 5px; font-size: 11px; color: var(--muted); box-shadow: inset 0 0 0 2px var(--faint); }
+.checkin-flag.is-past { color: var(--xp); }
+.checkin-acts { display: inline-flex; gap: 10px; white-space: nowrap; }
+.checkin-edit { grid-column: 1 / -1; }
+
+/* ── 히든 던전 등장 연출 ─────────────────────────── */
+body.dfx-open { overflow: hidden; }
+.dfx { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 16px;
+  background: rgba(8, 11, 22, .82); animation: dfx-in .25s steps(4) both; }
+.dfx::before { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(to bottom, rgba(255,255,255,.04) 0 2px, transparent 2px 4px); }
+.dfx.is-leaving { animation: dfx-out .22s steps(3) both; }
+@keyframes dfx-in { from { opacity: 0; } }
+@keyframes dfx-out { to { opacity: 0; } }
+.dfx-panel { position: relative; width: min(420px, 100%); padding: 22px 22px 18px; text-align: center; color: #e7edf8;
+  background: #1a2138; box-shadow: 0 0 0 4px #0c1120, 0 0 0 8px var(--dfx), 0 0 0 12px #0c1120, 0 0 60px 10px var(--dfx);
+  animation: dfx-drop .5s steps(6) .05s both; }
+@keyframes dfx-drop { from { transform: translateY(-40px) scale(.6); opacity: 0; } 60% { transform: translateY(6px) scale(1.04); opacity: 1; } }
+.dfx-kicker { margin: 0; font-size: 13px; color: var(--dfx-light); }
+.dfx-title { margin: 6px 0 10px; font-size: 30px; line-height: 1.2; color: #fff; text-shadow: 3px 3px 0 var(--dfx), 6px 6px 0 #0c1120;
+  animation: dfx-title 1s steps(2) .5s 3; }
+@keyframes dfx-title { 50% { color: var(--dfx-light); } }
+.dfx-sprite { display: block; width: 176px; height: 176px; margin: 4px auto 10px; image-rendering: pixelated; filter: drop-shadow(0 0 12px var(--dfx)); }
+.dfx-sprite .px { animation: dfx-px .2s steps(2) both; }
+@keyframes dfx-px { from { opacity: 0; } }
+.dfx-name { margin: 0 0 8px; font-size: 18px; color: #fff; }
+.dfx-log { list-style: none; margin: 0 auto 8px; padding: 8px 10px; max-width: 320px; text-align: left; font-size: 12px; color: var(--dfx-light); background: #0c1120; }
+.dfx-log li { animation: dfx-px .2s steps(2) both; }
+.dfx-log li::before { content: "▶ "; font-size: 9px; }
+.dfx-meta { margin: 0 0 14px; font-size: 13px; color: #a5b2c9; }
+.dfx-actions { display: flex; justify-content: center; gap: 10px; }
+.dfx-actions .px-btn { text-decoration: none; }
+/* 서버: LED가 깜빡여요 */
+.dfx-server .px-glow { animation: dfx-px .2s steps(2) both, dfx-led .6s steps(1) 1.2s infinite; }
+@keyframes dfx-led { 50% { opacity: .2; } }
+/* 프론트: 위에서부터 한 줄씩 그려지고, 다 그려지면 화면이 한 번 번쩍 */
+.dfx-front .dfx-sprite { animation: dfx-paint .3s steps(2) 1.3s both; }
+@keyframes dfx-paint { 50% { filter: drop-shadow(0 0 24px #fff) brightness(1.4); } }
+/* AI: 점이 반짝이며 나타나고, 선이 신호처럼 흘러요 */
+.dfx-ai .px-link { animation: dfx-px .2s steps(2) both, dfx-signal 1s steps(2) 1.2s infinite; }
+@keyframes dfx-signal { 50% { fill: #fff; } }
+.dfx-ai .dfx-panel::after { content: ""; position: absolute; inset: -8px; pointer-events: none;
+  background: radial-gradient(circle, var(--dfx-light) 0 2px, transparent 3px) 0 0 / 28px 28px; opacity: .25; animation: dfx-led 1.4s steps(1) infinite; }
+/* 히든 보스: 빨간 경고, 화면 흔들림, 눈이 빛나요 */
+.dfx-boss { background: rgba(40, 4, 4, .86); animation: dfx-in .25s steps(4) both, dfx-flash .9s steps(2) .1s 2; }
+@keyframes dfx-flash { 50% { background: rgba(160, 20, 20, .7); } }
+.dfx-boss .px-glow { animation: dfx-eye .5s steps(1) .6s infinite; }
+@keyframes dfx-eye { 50% { fill: #fff; } }
+.dfx-boss .dfx-sprite { animation: dfx-grow .7s steps(5) .2s both; }
+@keyframes dfx-grow { from { transform: scale(.2); } 70% { transform: scale(1.15); } }
+html.dfx-shake body { animation: dfx-shake .45s steps(6) 2; }
+@keyframes dfx-shake { 25% { transform: translate(-6px, 3px); } 50% { transform: translate(5px, -4px); } 75% { transform: translate(-3px, -2px); } }
+.dfx-warn { position: absolute; left: 0; right: 0; height: 34px; overflow: hidden; white-space: nowrap; font-size: 15px; line-height: 34px; color: #1a0d00;
+  background: repeating-linear-gradient(135deg, #f2c14a 0 18px, #141a2b 18px 36px); }
+.dfx-warn span { display: inline-block; padding: 0 12px; background: #f2c14a; animation: dfx-marquee 6s linear infinite; }
+.dfx-warn-top { top: 10%; }
+.dfx-warn-bottom { bottom: 10%; }
+.dfx-warn-bottom span { animation-direction: reverse; }
+@keyframes dfx-marquee { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
+/* 트리와 계획서: 새로 열린 칸이 한 번 반짝여요 */
+.tnode.is-new, .dungeon.is-new { animation: dfx-new 1s steps(2) 4; }
+@keyframes dfx-new { 50% { box-shadow: inset 0 0 0 3px var(--edge-hot), 0 0 0 4px var(--edge-hot); } }
+@media (prefers-reduced-motion: reduce) {
+  .dfx, .dfx *, .dfx-panel, html.dfx-shake body, .tnode.is-new, .dungeon.is-new { animation: none !important; }
+}
