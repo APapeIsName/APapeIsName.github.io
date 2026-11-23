@@ -52,6 +52,7 @@ permalink: /syllabus/
         <td class="c-quest">
           {% if q.type != "메인" %}<span class="tag tag-{{ q.type }}">{{ q.type }}</span>{% endif %}
           {{ q.quest }}
+          {% assign br = q.branches %}{% include branches.html %}
         </td>
         <td class="c-practice">{{ q.practice }}</td>
         <td class="c-res">{{ q.resource }}</td>

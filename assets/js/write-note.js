@@ -75,6 +75,7 @@
   }
 
   /* ── CS 과정 노트면 어느 과제를 공부했는지 골라요 (나중에 리포트를 쓸 때 모아 보여줘요) ── */
+  if (f.quest) f.quest.addEventListener("change", showBranches);
   function questList() { return (C.computed && C.computed.quests) || C.quests || []; }
   function nextQuestId() {
     var q = questList().filter(function (x) { return !x.done && x.type !== "사이드"; })[0];
@@ -100,6 +101,16 @@
     var isCourse = f.series.value === "cs";
     pick.hidden = !isCourse;
     if (isCourse && !f.quest.options.length) buildQuestOptions(nextQuestId());
+    showBranches();
+  }
+  /** 고른 과제와 엮이는 서버, 프론트, AI 주제를 보여줘요. */
+  function showBranches() {
+    var box = $("n-branches");
+    if (!box) return;
+    var q = f.series.value === "cs" && f.quest.value ? questList().filter(function (x) { return x.id === f.quest.value; })[0] : null;
+    var html = q && q.branches && C.branchesHtml ? C.branchesHtml(q.branches) : "";
+    box.innerHTML = html ? '<span class="quest-branches-label">엮을 거리</span>' + html : "";
+    box.hidden = !html;
   }
 
   function openNewSeries() {

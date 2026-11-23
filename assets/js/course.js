@@ -97,6 +97,19 @@
   function addDays(d, n) { var x = new Date(d.getTime()); x.setDate(x.getDate() + Math.round(n)); return x; }
   function fmtFull(d) { return d.getFullYear() + "년 " + (d.getMonth() + 1) + "월 " + d.getDate() + "일"; }
   function fmtMonth(d) { return d.getFullYear() + "년 " + (d.getMonth() + 1) + "월"; }
+  /** 엮을 거리 "분야: 주제 | 분야: 주제"를 칩 목록으로 바꿔요. */
+  function branchesHtml(text) {
+    var items = String(text || "").split(" | ").filter(Boolean);
+    if (!items.length) return "";
+    var cls = { "서버": "is-server", "프론트": "is-front", "AI": "is-ai" };
+    return '<ul class="branches">' + items.map(function (it) {
+      var k = it.indexOf(": ");
+      var f = k > 0 ? it.slice(0, k) : "", t = k > 0 ? it.slice(k + 2) : it;
+      return '<li class="branch ' + (cls[f] || "") + '">' + (f ? "<b>" + esc(f) + "</b> " : "") + esc(t) + "</li>";
+    }).join("") + "</ul>";
+  }
+  C.branchesHtml = branchesHtml;
+
   function esc(s) {
     return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
@@ -118,7 +131,7 @@
     // 리포트는 "과제 클리어"를 찍고 필수 칸까지 채워야 완성으로 쳐요.
     var doneByReport = rs.filter(reportComplete).map(function (r) { return r.date; }).sort()[0];
     return {
-      id: q.id, season: q.season, type: q.type, quest: q.quest, practice: q.practice,
+      id: q.id, season: q.season, type: q.type, quest: q.quest, practice: q.practice, branches: q.branches || "",
       hours: parseFloat(q.hours) || 0,
       done: bool(q.done) || !!doneByReport,
       recalled: bool(q.recalled) || rs.some(function (r) { return r.recalled && r.recallFilled !== false; }),
@@ -279,6 +292,7 @@
       return '<li class="' + (q.done ? "is-done" : "") + '"><span class="todo-title">' + tags + esc(q.quest) + "</span>" +
         '<span class="todo-meta">' + esc(weekLabel(q)) + ", " + esc(q.season) + ", 약 " + q.hours + "시간" + (q.done ? ", 끝냄" : "") + "</span>" +
         (q.practice && !q.done ? '<span class="todo-practice">실습 거리: ' + esc(q.practice) + "</span>" : "") +
+        (!q.done ? branchesHtml(q.branches) : "") +
         (!q.done ? '<a class="owner-only todo-write" hidden href="' + esc(cfg.writeUrl) + "?quest=" + encodeURIComponent(q.id) + '">리포트 쓰기</a>' : "") + "</li>";
     }
     var html = late.map(function (q) { return item(q, "밀림"); }).join("") + thisWeek.map(function (q) { return item(q); }).join("");

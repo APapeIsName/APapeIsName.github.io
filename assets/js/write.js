@@ -121,6 +121,8 @@
     $("w-subject").textContent = s ? s.code + " " + s.title : "과제를 고르면 채워져요";
     $("w-practice").textContent = q && q.practice ? q.practice : "";
     $("w-practice-row").hidden = !(q && q.practice);
+    $("w-branches").innerHTML = q && q.branches && C.branchesHtml ? C.branchesHtml(q.branches) : "";
+    $("w-branches-row").hidden = !(q && q.branches);
     // 그 과제를 공부하며 쓴 노트를 모아 보여줘요. 리포트를 쓸 때 다시 읽어 보라고요.
     var qNotes = (C.notes || []).filter(function (n) { return q && n.quest === q.id; })
       .sort(function (a, b) { return a.date < b.date ? -1 : 1; });
