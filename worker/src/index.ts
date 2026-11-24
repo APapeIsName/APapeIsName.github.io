@@ -13,7 +13,7 @@ import { getConditions, phaseOf, weatherLabel } from "./weather";
 import { pickRandomEvent, renderScene, situation, type SceneEvents } from "./scene";
 import { activityAt } from "./schedule";
 import { getSignals } from "./activity";
-import { addPastCheckin, deleteCheckin, editCheckin, endCheckin, extendCheckin, getStatus, startCheckin } from "./checkins";
+import { deleteCheckin, editCheckin, getStatus, startCheckin } from "./checkins";
 
 /** 블로그 로파이 플레이어용: 서울의 시간대와 날씨, 생활 시간표, 출석 상태 */
 export async function nowState(env: Env, now = Date.now(), fetcher: typeof fetch = fetch) {
@@ -121,31 +121,19 @@ async function route(req: Request, env: Env, url: URL): Promise<Response> {
     if (m === "DELETE") return json(await deleteNote(env, path, url.searchParams.get("sha")));
   }
 
-  // 출석 체크: 보는 건 누구나, 남기는 건 주인만
+  // 출석부: 보는 건 누구나, 출석과 공부 시간 적기는 주인만
   if (p === "/api/status" && m === "GET") return json(await getStatus(env));
   if (p === "/api/checkins" && m === "POST") {
     await requireOwner(req, env);
     return json(await startCheckin(env, await readJson(req)), 201);
   }
-  if (p === "/api/checkins/end" && m === "POST") {
-    await requireOwner(req, env);
-    return json(await endCheckin(env, await readJson(req)));
-  }
-  if (p === "/api/checkins/extend" && m === "POST") {
-    await requireOwner(req, env);
-    return json(await extendCheckin(env, await readJson(req)));
-  }
   if (p === "/api/checkins/edit" && m === "POST") {
     await requireOwner(req, env);
     return json(await editCheckin(env, await readJson(req)));
   }
-  if (p === "/api/checkins/past" && m === "POST") {
-    await requireOwner(req, env);
-    return json(await addPastCheckin(env, await readJson(req)), 201);
-  }
   if (p === "/api/checkins" && m === "DELETE") {
     await requireOwner(req, env);
-    return json(await deleteCheckin(env, url.searchParams.get("id") || ""));
+    return json(await deleteCheckin(env, url.searchParams.get("date") || ""));
   }
 
   // 시리즈와 태그: 주인만

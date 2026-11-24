@@ -1,13 +1,9 @@
 {% assign ck_last = site.data.checkins | last %}
 <section class="window now-card" id="now-card" aria-labelledby="now-title" aria-live="polite">
-  <h2 id="now-title">지금</h2>
+  <h2 id="now-title">오늘</h2>
   <div class="now-body" id="now-body">
-    {% if ck_last and ck_last.end == nil %}
-      <p class="now-line"><span class="now-dot" aria-hidden="true"></span><span class="kind-pill is-note">{{ ck_last.kind }}</span> {{ ck_last.text }}</p>
-      <p class="now-meta">{{ ck_last.start | slice: 11, 5 }}부터</p>
-    {% elsif ck_last %}
-      <p class="now-line is-idle">지금은 출석 중이 아니에요.</p>
-      <p class="now-meta">마지막 출석: {{ ck_last.text }}{% if ck_last.note %}, "{{ ck_last.note }}"{% endif %}</p>
+    {% if ck_last %}
+      <p class="now-line is-idle">마지막 출석: {{ ck_last.date | default: ck_last.start | slice: 0, 10 }}{% if ck_last.text %}, {{ ck_last.text }}{% endif %}</p>
     {% else %}
       <p class="now-line is-idle">아직 출석 기록이 없어요.</p>
     {% endif %}

@@ -129,7 +129,7 @@ export async function readList<T>(env: Env, path: string): Promise<{ items: T[];
 }
 
 function dump(header: string, items: object[]): string {
-  return `# ${header}\n# 블로그 글쓰기 화면이나 관리 화면에서 바뀌어요. 직접 고쳐도 돼요.\n` + (items.length ? stringifyYaml(items.map(compact), { lineWidth: 0 }) : "[]\n");
+  return `# ${header}\n# 블로그 글쓰기 화면이나 관리 화면에서 바뀌어요. 직접 고쳐도 돼요.\n` + (items.length ? stringifyYaml(items.map(compact), { lineWidth: 0, version: "1.1" }) : "[]\n");
 }
 
 /** 읽고, 바꾸고, 저장해요. 그사이 다른 저장이 끼어들면(409) 한 번 다시 읽어서 해요. */

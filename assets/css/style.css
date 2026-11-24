@@ -1092,30 +1092,29 @@ tr.is-locked .check { background: var(--lock-fill); }
 @media (prefers-reduced-motion: reduce) { .tnode { transition: none; } }
 .hidden-dungeons .season-head { grid-template-columns: 1fr; }
 
-/* ── 출석: 정한 시간, 연장, 저절로 끝남 ─────────────── */
-.now-box { height: 10px; margin: 10px 0 0; background: var(--stripe-a); box-shadow: inset 0 0 0 2px var(--line); }
-.now-box span { display: block; height: 100%; background: var(--hp); box-shadow: inset 0 0 0 2px var(--line); }
-.now-box.is-ending span { background: var(--gold); }
-.now-extend { display: flex; gap: 6px; flex: 0 0 auto; }
-.now-extend .px-btn, .box-pick label { padding: 4px 10px; font-size: 13px; }
-.box-pick { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
-.box-label { font-size: 13px; color: var(--muted); margin-right: 2px; }
-.box-pick input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-.box-pick label { cursor: pointer; box-shadow: inset 0 0 0 2px var(--faint); }
-.box-pick input:checked + label { color: #fff; background: var(--line); box-shadow: none; }
-.box-pick input:focus-visible + label { outline: 3px solid var(--edge-hot); outline-offset: 1px; }
-.now-hint { flex-basis: 100%; margin: 0; font-size: 12px; color: var(--muted); }
-.now-past { flex-basis: 100%; font-size: 13px; }
-.now-past summary { cursor: pointer; color: var(--muted); }
-.now-fix { margin-top: 14px; padding: 10px 12px; background: var(--stripe-a); box-shadow: inset 0 0 0 2px var(--gold); font-size: 14px; }
-.now-fix p { margin: 0 0 8px; }
-.now-fix-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin-top: 6px; }
-.now-fix-row input[type="time"], .now-fix-row input[type="date"] { font-family: var(--sans); padding: 4px 6px; }
-.checkin-list li.is-auto .checkin-time { color: var(--gold); }
-.checkin-flag { margin-left: 6px; padding: 0 5px; font-size: 11px; color: var(--muted); box-shadow: inset 0 0 0 2px var(--faint); }
-.checkin-flag.is-past { color: var(--xp); }
+/* ── 출석부: 하루 하나, 시간은 나중에 ───────────────── */
+.now-stamp { display: inline-block; padding: 1px 6px; font-size: 12px; color: #fff; background: var(--red); transform: rotate(-4deg); box-shadow: 2px 2px 0 var(--line); }
+.ck-today { flex-basis: 100%; }
+.ck-today summary { cursor: pointer; font-size: 14px; }
+.ck-edit { display: grid; gap: 8px; margin-top: 8px; padding: 10px 12px; background: var(--stripe-a); box-shadow: inset 0 0 0 2px var(--faint); grid-column: 1 / -1; }
+.ck-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; font-size: 14px; }
+.ck-label { color: var(--muted); font-size: 13px; margin-right: 4px; }
+.ck-num { width: 4.2em; font-family: var(--sans); padding: 4px 6px; }
+.ck-plus { padding: 3px 10px; font-size: 13px; }
+.ck-note { width: 100%; font-family: var(--sans); font-size: 14px; padding: 6px 10px; resize: vertical; }
+.ck-list { list-style: none; margin: 0; padding: 0; }
+.ck-day { display: grid; grid-template-columns: 8.5em 5.5em minmax(0, 1fr) auto auto; gap: 4px 12px; align-items: baseline; padding: 8px 0; border-top: 2px dotted var(--faint); font-size: 14px; }
+.ck-day:first-child { border-top: 0; }
+.ck-date { font-weight: 700; }
+.ck-at, .ck-min { color: var(--muted); font-size: 13px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.ck-day.is-blank .ck-min { color: var(--gold); }
+.ck-main { font-family: var(--sans); -webkit-font-smoothing: auto; display: grid; gap: 2px; }
 .checkin-acts { display: inline-flex; gap: 10px; white-space: nowrap; }
-.checkin-edit { grid-column: 1 / -1; }
+@media (max-width: 640px) {
+  .ck-day { grid-template-columns: 1fr auto; }
+  .ck-at { display: none; }
+  .ck-main { grid-column: 1 / -1; grid-row: 2; }
+}
 
 /* ── 히든 던전 등장 연출 ─────────────────────────── */
 body.dfx-open { overflow: hidden; }
