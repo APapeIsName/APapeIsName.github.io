@@ -1,6 +1,7 @@
 /**
  * 출석부: 하루에 한 번 출석 버튼을 누르면 그날이 출석으로 남아요. 끝내기 버튼은 없어요.
- * 얼마나 공부했는지는 나중에 그날 기록을 열어 적어요(분 단위). 한 마디와 메모도 고칠 수 있어요.
+ * 얼마나 공부했는지는 나중에 그날 기록을 열어 "몇 시부터 몇 시까지"로 적어요. 하루에 여러 번 적을 수 있어요.
+ * 한 마디와 메모도 고칠 수 있어요.
  * _data/checkins.yml 에 쌓여서 블로그 출석부와 공부 잔디에 쓰여요.
  */
 import type { Env } from "./env";
@@ -13,8 +14,15 @@ export interface Checkin {
   date: string; // 서울 날짜 (예: 2026-11-24). 하루에 하나
   at: string; // 출석 버튼을 누른 시각 (예: 09:24)
   text?: string; // 오늘 할 것 한 마디
-  minutes?: number; // 그날 공부한 시간(분). 나중에 적어요
+  sessions?: Session[]; // 그날 공부한 시간대. 나중에 적어요
+  minutes?: number; // 예전 방식(분만 적음). 시간대를 적으면 지워져요
   note?: string; // 그날 메모
+}
+
+/** 공부한 시간대. to가 from보다 이르면 자정을 넘긴 거예요(23:00~01:00). */
+export interface Session {
+  from: string; // "13:00"
+  to: string; // "15:30"
 }
 
 /** 예전 기록(start, end로 남긴 출석)도 읽어요. 같은 날은 하나로 합쳐요. */
@@ -30,6 +38,7 @@ interface LegacyCheckin {
 const KST = 9 * 3600 * 1000;
 const HEADER = "출석 기록";
 const MAX_MINUTES = 24 * 60;
+const MAX_SESSIONS = 12;
 /** 예전 기록에서 이보다 긴 출석은 끝내기를 잊은 걸로 보고 시간을 비워 둬요. */
 const LEGACY_MAX = 12 * 60;
 
@@ -53,6 +62,44 @@ function minutesOf(v: unknown): number | undefined {
   return n;
 }
 
+const HM = /^([01]\d|2[0-3]):([0-5]\d)$/;
+function toMin(v: string): number {
+  const m = HM.exec(v)!;
+  return Number(m[1]) * 60 + Number(m[2]);
+}
+/** 시간대 하나의 길이(분). 자정을 넘기면 다음 날로 쳐요. */
+export function sessionMinutes(s: Session): number {
+  const a = toMin(s.from), b = toMin(s.to);
+  return b > a ? b - a : b + MAX_MINUTES - a;
+}
+/** 그날 공부한 시간(분): 시간대가 있으면 그 합, 없으면 예전에 적은 분 */
+export function dayMinutes(c: Checkin): number | undefined {
+  if (c.sessions && c.sessions.length) return c.sessions.reduce((a, s) => a + sessionMinutes(s), 0);
+  return c.minutes;
+}
+
+function sessionsOf(v: unknown): Session[] | undefined {
+  if (v === undefined || v === null || v === "") return undefined;
+  if (!Array.isArray(v)) throw new HttpError(400, "공부한 시간대 형식이 맞지 않아요.");
+  if (v.length > MAX_SESSIONS) throw new HttpError(400, `시간대는 하루에 ${MAX_SESSIONS}개까지 적을 수 있어요.`);
+  const list: Session[] = v.map((x, i) => {
+    const from = typeof x?.from === "string" ? x.from.trim() : "";
+    const to = typeof x?.to === "string" ? x.to.trim() : "";
+    if (!HM.test(from) || !HM.test(to)) throw new HttpError(400, `${i + 1}번째 시간대의 시각을 "13:00"처럼 적어 주세요.`);
+    if (from === to) throw new HttpError(400, `${i + 1}번째 시간대는 시작과 끝이 같아요.`);
+    return { from, to };
+  });
+  list.sort((a, b) => toMin(a.from) - toMin(b.from));
+  // 겹치는 시간대는 받지 않아요. 자정을 넘긴 건 끝을 24시 뒤로 펴서 비교해요.
+  const spans = list.map((s) => { const a = toMin(s.from); return [a, a + sessionMinutes(s)] as const; });
+  for (let i = 1; i < spans.length; i++) {
+    if (spans[i][0] < spans[i - 1][1]) throw new HttpError(400, `${list[i - 1].from}~${list[i - 1].to}와 ${list[i].from}~${list[i].to}가 겹쳐요.`);
+  }
+  const total = spans.reduce((a, [x, y]) => a + (y - x), 0);
+  if (total > MAX_MINUTES) throw new HttpError(400, "하루 공부 시간이 24시간을 넘어요.");
+  return list.length ? list : undefined;
+}
+
 /** 예전 형식과 새 형식이 섞여 있어도 하루 하나씩, 날짜 순으로 맞춰요. */
 export function normalize(items: (Checkin | LegacyCheckin)[]): Checkin[] {
   const byDate = new Map<string, Checkin>();
@@ -65,16 +112,16 @@ export function normalize(items: (Checkin | LegacyCheckin)[]): Checkin[] {
     const l = raw as LegacyCheckin;
     if (!l.start) continue;
     const date = l.start.slice(0, 10);
-    let mins: number | undefined;
+    let ses: Session | undefined;
     if (l.end) {
       const m = Math.round((Date.parse(l.end) - Date.parse(l.start)) / 60000);
-      if (m > 0 && m <= LEGACY_MAX) mins = m;
+      if (m > 0 && m <= LEGACY_MAX) ses = { from: l.start.slice(11, 16), to: l.end.slice(11, 16) };
     }
     const prev = byDate.get(date);
     if (!prev) {
-      byDate.set(date, { date, at: l.start.slice(11, 16), ...(l.text ? { text: l.text } : {}), ...(mins !== undefined ? { minutes: mins } : {}), ...(l.note ? { note: l.note } : {}) });
+      byDate.set(date, { date, at: l.start.slice(11, 16), ...(l.text ? { text: l.text } : {}), ...(ses ? { sessions: [ses] } : {}), ...(l.note ? { note: l.note } : {}) });
     } else {
-      if (mins !== undefined) prev.minutes = (prev.minutes || 0) + mins;
+      if (ses) prev.sessions = [...(prev.sessions || []), ses];
       if (l.note) prev.note = prev.note ? `${prev.note} / ${l.note}` : l.note;
     }
   }
@@ -138,6 +185,10 @@ export async function editCheckin(env: Env, input: Record<string, unknown>, now 
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new HttpError(400, "날짜를 골라 주세요.");
   const patch: Partial<Checkin> = {};
   if ("minutes" in input) patch.minutes = minutesOf(input.minutes);
+  if ("sessions" in input) {
+    patch.sessions = sessionsOf(input.sessions);
+    patch.minutes = undefined; // 시간대를 적으면 예전 방식의 분은 지워요
+  }
   if ("text" in input) patch.text = oneLine(input.text, 140, "한 마디");
   if ("note" in input) patch.note = oneLine(input.note, 500, "메모");
   await write(env, `출석 기록 고침: ${date}`, now, (list) => {

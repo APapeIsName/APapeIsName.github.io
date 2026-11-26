@@ -3,7 +3,9 @@
 - date: "2026-11-20"
   at: "16:28"
   text: Missing Semester 공부 중
-  minutes: 258
+  sessions:
+    - from: "16:28"
+      to: "20:45"
   note: 오늘은 여기까지~... 내일 이어서 셸을 공부하고 Git을 들어갈 예정입니다.
 - date: "2026-11-22"
   at: "20:22"

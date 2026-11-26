@@ -237,7 +237,7 @@ describe("리포트 완성 기준", () => {
   });
 });
 
-import { editCheckin, normalize, resetCheckinMemo, startCheckin } from "../src/checkins";
+import { dayMinutes, editCheckin, normalize, resetCheckinMemo, startCheckin } from "../src/checkins";
 describe("출석부", () => {
   beforeEach(() => resetCheckinMemo());
   const T = Date.parse("2026-11-24T09:24:30+09:00");
@@ -270,6 +270,22 @@ describe("출석부", () => {
     const r = await api("/api/checkins?date=2026-11-24", "DELETE");
     expect(r.status).toBe(200);
   });
+  it("공부한 시간은 몇 시부터 몇 시까지로, 하루에 여러 번 적어요", async () => {
+    await startCheckin(env, {}, T);
+    await editCheckin(env, { date: "2026-11-24", minutes: 60 }, T);
+    const d = await editCheckin(env, { date: "2026-11-24", sessions: [{ from: "20:00", to: "22:30" }, { from: "09:30", to: "11:00" }] }, T);
+    expect(d.today!.sessions).toEqual([{ from: "09:30", to: "11:00" }, { from: "20:00", to: "22:30" }]); // 시간 순으로
+    expect(d.today!.minutes).toBeUndefined(); // 예전 방식의 분은 지워요
+    expect(dayMinutes(d.today!)).toBe(240);
+    // 자정을 넘긴 시간대
+    const n = await editCheckin(env, { date: "2026-11-24", sessions: [{ from: "23:00", to: "01:00" }] }, T);
+    expect(dayMinutes(n.today!)).toBe(120);
+    await expect(editCheckin(env, { date: "2026-11-24", sessions: [{ from: "10:00", to: "12:00" }, { from: "11:00", to: "13:00" }] }, T)).rejects.toThrow("겹쳐요");
+    await expect(editCheckin(env, { date: "2026-11-24", sessions: [{ from: "9:00", to: "10:00" }] }, T)).rejects.toThrow("13:00");
+    await expect(editCheckin(env, { date: "2026-11-24", sessions: [{ from: "10:00", to: "10:00" }] }, T)).rejects.toThrow("같아요");
+    const cleared = await editCheckin(env, { date: "2026-11-24", sessions: [] }, T);
+    expect(cleared.today!.sessions).toBeUndefined();
+  });
   it("예전 기록(시작, 끝)은 하루 하나로 합치고, 끝내기를 잊은 긴 기록은 시간을 비워요", () => {
     const list = normalize([
       { id: "a", kind: "공부", text: "Missing Semester", start: "2026-11-20T16:28:15+09:00", end: "2026-11-20T20:45:47+09:00", note: "셸 다음엔 Git" },
@@ -277,8 +293,9 @@ describe("출석부", () => {
       { id: "c", kind: "공부", text: "한 번 더", start: "2026-11-20T21:00:00+09:00", end: "2026-11-20T21:30:00+09:00" },
     ]);
     expect(list).toEqual([
-      { date: "2026-11-20", at: "16:28", text: "Missing Semester", minutes: 288, note: "셸 다음엔 Git" },
+      { date: "2026-11-20", at: "16:28", text: "Missing Semester", sessions: [{ from: "16:28", to: "20:45" }, { from: "21:00", to: "21:30" }], note: "셸 다음엔 Git" },
       { date: "2026-11-22", at: "20:22", text: "셸" },
     ]);
+    expect(dayMinutes(list[0])).toBe(257 + 30);
   });
 });
