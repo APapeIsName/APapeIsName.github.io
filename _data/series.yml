@@ -4,15 +4,3 @@
   title: 토비의 스프링 6
   description: 스프링의 핵심 원리를 DAO 리팩터링부터 차근차근 따라가요.
   link: https://www.inflearn.com/course/%ED%86%A0%EB%B9%84%EC%9D%98-%EC%8A%A4%ED%94%84%EB%A7%816-%EC%9D%B4%ED%95%B4%EC%99%80-%EC%9B%90%EB%A6%AC/dashboard?cid=332188
-- id: handmade-shell
-  title: 맨손으로 쉘 만들기
-  description: C로 시스템 콜을 직접 불러 가며 나만의 쉘을 만들어요.
-  status: 진행 중
-  goal: 파이프와 리다이렉션이 되는 쉘을 C로 직접 만들고, 프로세스가 어떻게 만들어지고 이어지는지 내 말로 설명하기
-  todos:
-    - text: 입력을 읽고 프로그램 하나 실행하기 (fork, exec, wait)
-    - text: 내장 명령 cd, exit
-    - text: 파이프 |
-    - text: 리다이렉션 >, <
-    - text: Ctrl+C 같은 시그널 처리
-    - text: (선택) 백그라운드 실행과 작업 관리
