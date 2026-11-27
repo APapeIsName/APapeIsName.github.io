@@ -57,7 +57,7 @@ permalink: /syllabus/
           {% assign q_code = q.season | split: " " | first %}{% assign reqs = q.requires | split: " " %}{% assign cross = "" %}
           {% for rid in reqs %}{% assign r_code = rid | split: "-" | first %}{% if r_code != q_code %}{% assign cross = cross | append: rid | append: " " %}{% endif %}{% endfor %}
           {% assign cross_ids = cross | strip | split: " " %}
-          {% if cross_ids.size > 0 %}<p class="reqs"><span class="reqs-label">받아 오는 지식</span>{% for rid in cross_ids %}{% assign rq = site.data.quests | where: "id", rid | first %}<span class="req" data-req="{{ rid }}">{{ rid | split: "-" | first }} {{ rq.quest }}</span>{% endfor %}</p>{% endif %}
+          {% assign cross = cross | strip %}{% if cross != "" %}<p class="reqs"><span class="reqs-label">받아 오는 지식</span>{% for rid in cross_ids %}{% assign rq = site.data.quests | where: "id", rid | first %}<span class="req" data-req="{{ rid }}">{{ rid | split: "-" | first }} {{ rq.quest }}</span>{% endfor %}</p>{% endif %}
         </td>
         <td class="c-practice">{{ q.practice }}</td>
         <td class="c-res">{{ q.resource }}</td>

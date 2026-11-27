@@ -1181,3 +1181,13 @@ html.dfx-shake body { animation: dfx-shake .45s steps(6) 2; }
 @media (prefers-reduced-motion: reduce) {
   .dfx, .dfx *, .dfx-panel, html.dfx-shake body, .tnode.is-new, .dungeon.is-new { animation: none !important; }
 }
+
+/* 엮을 거리 칩 → 히든 던전 */
+.branch-link { color: inherit; text-decoration: none; }
+.branch-link:hover .branch-dun, .branch-link:focus-visible .branch-dun { text-decoration: underline; }
+.branch-dun { margin-left: 5px; padding: 0 4px; font-size: 11px; color: #fff; background: #6b4fb0; white-space: nowrap; }
+.is-server .branch-dun { background: #3f6fb5; }
+.is-front .branch-dun { background: #b5603f; }
+.branch-link.is-locked .branch-dun { background: repeating-linear-gradient(135deg, #4a5874 0 4px, #56647f 4px 8px); letter-spacing: 1px; }
+.branch-link.is-done .branch-dun { background: var(--hp-dark); }
+.has-sel .tnode.is-roomed { opacity: 1; outline: 3px dashed var(--edge-hot); outline-offset: 1px; }

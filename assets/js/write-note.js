@@ -109,8 +109,9 @@
     var box = $("n-branches");
     if (!box) return;
     var q = f.series.value === "cs" && f.quest.value ? questList().filter(function (x) { return x.id === f.quest.value; })[0] : null;
-    var html = q && q.branches && C.branchesHtml ? C.branchesHtml(q.branches) : "";
+    var html = q && q.branches && C.branchesHtml ? C.branchesHtml(q.branches, q.id) : "";
     box.innerHTML = html ? '<span class="quest-branches-label">엮을 거리</span>' + html : "";
+    if (C.linkBranches) C.linkBranches(box);
     box.hidden = !html;
   }
 

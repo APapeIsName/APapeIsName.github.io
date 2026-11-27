@@ -98,14 +98,15 @@
   function fmtFull(d) { return d.getFullYear() + "년 " + (d.getMonth() + 1) + "월 " + d.getDate() + "일"; }
   function fmtMonth(d) { return d.getFullYear() + "년 " + (d.getMonth() + 1) + "월"; }
   /** 엮을 거리 "분야: 주제 | 분야: 주제"를 칩 목록으로 바꿔요. */
-  function branchesHtml(text) {
+  /** 엮을 거리 칩. srcId(과제 id)를 주면 칩마다 그 주제가 방으로 들어 있는 히든 던전으로 이어져요. */
+  function branchesHtml(text, srcId) {
     var items = String(text || "").split(" | ").filter(Boolean);
     if (!items.length) return "";
     var cls = { "서버": "is-server", "프론트": "is-front", "AI": "is-ai" };
-    return '<ul class="branches">' + items.map(function (it) {
+    return '<ul class="branches"' + (srcId ? ' data-src="' + esc(srcId) + '"' : "") + ">" + items.map(function (it) {
       var k = it.indexOf(": ");
       var f = k > 0 ? it.slice(0, k) : "", t = k > 0 ? it.slice(k + 2) : it;
-      return '<li class="branch ' + (cls[f] || "") + '">' + (f ? "<b>" + esc(f) + "</b> " : "") + esc(t) + "</li>";
+      return '<li data-topic="' + esc(t) + '" class="branch ' + (cls[f] || "") + '">' + (f ? "<b>" + esc(f) + "</b> " : "") + esc(t) + "</li>";
     }).join("") + "</ul>";
   }
   C.branchesHtml = branchesHtml;
@@ -164,6 +165,10 @@
     n.missing = n.requires.filter(function (id) { return !(nodeById[id] && nodeById[id].done); });
     n.open = n.done || !n.missing.length;
   });
+  // 엮을 거리 칩 하나 = 어느 히든 던전의 방 하나. "과제id|주제" → 던전
+  var roomIndex = {};
+  dungeons.forEach(function (d) { d.rooms.forEach(function (r) { roomIndex[r.src + "|" + r.topic] = d; }); });
+  C.dungeonOfRoom = function (src, topic) { return roomIndex[src + "|" + topic] || null; };
 
   var seasons = (C.seasons || []).map(function (meta) {
     var qs = quests.filter(function (q) { return q.season === meta.id; });
@@ -317,7 +322,7 @@
       return '<li class="' + (q.done ? "is-done" : "") + '"><span class="todo-title">' + tags + esc(q.quest) + "</span>" +
         '<span class="todo-meta">' + esc(weekLabel(q)) + ", " + esc(q.season) + ", 약 " + q.hours + "시간" + (q.done ? ", 끝냄" : "") + "</span>" +
         (q.practice && !q.done ? '<span class="todo-practice">실습 거리: ' + esc(q.practice) + "</span>" : "") +
-        (!q.done ? branchesHtml(q.branches) : "") +
+        (!q.done ? branchesHtml(q.branches, q.id) : "") +
         (!q.done ? '<a class="owner-only todo-write" hidden href="' + esc(cfg.writeUrl) + "?quest=" + encodeURIComponent(q.id) + '">리포트 쓰기</a>' : "") + "</li>";
     }
     var html = late.map(function (q) { return item(q, "밀림"); }).join("") + thisWeek.map(function (q) { return item(q); }).join("");
@@ -405,6 +410,29 @@
     return (n.hidden ? "" : "[" + codeOf(n.season) + "] ") + n.quest;
   }
   C.nodeName = nodeName;
+  /** 엮을 거리 칩을 그 주제가 들어 있는 히든 던전으로 이어요. 안 열린 던전은 ???로 보여요. */
+  function linkBranches(root) {
+    (root || document).querySelectorAll("li.branch[data-topic]:not([data-linked])").forEach(function (li) {
+      li.setAttribute("data-linked", "");
+      var holder = li.closest("[data-src]") || li.closest("[data-quest]");
+      var src = holder && (holder.getAttribute("data-src") || holder.getAttribute("data-quest"));
+      var d = src && roomIndex[src + "|" + li.getAttribute("data-topic")];
+      if (!d) return;
+      var short = String(d.name).split(":")[0];
+      var a = document.createElement("a");
+      a.className = "branch-link" + (d.open ? " is-open" : " is-locked") + (d.done ? " is-done" : "");
+      a.href = (cfg.treeUrl || "/tree/") + "#" + encodeURIComponent(d.id);
+      a.title = d.open ? short + "의 방이에요" + (d.done ? " (깬 던전)" : "") : d.field + " 히든 던전의 방이에요. 열리려면: " + hintFor(d).replace(/<[^>]+>/g, "");
+      while (li.firstChild) a.appendChild(li.firstChild);
+      var tag = document.createElement("span");
+      tag.className = "branch-dun";
+      tag.textContent = d.open ? short + (d.done ? " ✓" : "") : "??? 던전";
+      a.appendChild(tag);
+      li.appendChild(a);
+    });
+  }
+  C.linkBranches = linkBranches;
+
   /** 잠긴 던전의 여는 조건. 히든 보스는 던전 이름을 늘어놓지 않고 개수로 말해요. */
   function hintFor(d) {
     var dun = d.requires.filter(function (id) { return nodeById[id] && nodeById[id].hidden; });
@@ -473,6 +501,7 @@
     });
   });
   drawHidden();
+  linkBranches(document);
   function sel(attr, id) { return document.querySelectorAll("[" + attr + '="' + id.replace(/"/g, '\\"') + '"]'); }
   seasons.forEach(function (s, i) {
     var sec = document.querySelector('.season[data-season="' + s.meta.id.replace(/"/g, '\\"') + '"]');

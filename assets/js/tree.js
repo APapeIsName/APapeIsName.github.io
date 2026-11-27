@@ -205,6 +205,10 @@
     var anc = id ? walk(id, function (x) { return byId[x] ? byId[x].requires : []; }, {}) : {};
     var desc = id ? walk(id, function (x) { return kids[x]; }, {}) : {};
     canvas.classList.toggle("has-sel", !!id);
+    var roomed = {};
+    if (id && byId[id] && !byId[id].hidden) {
+      (K.dungeons || []).forEach(function (d) { d.rooms.forEach(function (r) { if (r.src === id) roomed[d.id] = true; }); });
+    }
     Object.keys(btns).forEach(function (k) {
       var b = btns[k];
       b.classList.toggle("is-sel", k === id);
@@ -212,6 +216,8 @@
       b.classList.toggle("is-desc", !!desc[k]);
       // 바로 앞, 바로 다음은 진하게. 더 먼 뿌리와 가지는 옅게.
       b.classList.toggle("is-near", !!id && (byId[id].requires.indexOf(k) >= 0 || (kids[id] || []).indexOf(k) >= 0));
+      // 이 과제의 엮을 거리가 방으로 들어 있는 던전도 같이 켜요
+      b.classList.toggle("is-roomed", !!id && !!roomed[k]);
       b.setAttribute("aria-pressed", k === id ? "true" : "false");
     });
     edgeEls.forEach(function (p) {
@@ -262,6 +268,10 @@
       h.push("</div>");
     }
     h.push("</div>");
+    // 과제의 엮을 거리: 칩 하나가 어느 히든 던전의 방 하나예요
+    if (!n.hidden && n.branches && C.branchesHtml) {
+      h.push("<h3>엮을 거리 <span>칩마다 그 주제가 방으로 들어 있는 히든 던전이에요</span></h3>" + C.branchesHtml(n.branches, n.id));
+    }
     if (!masked && n.rooms && n.rooms.length) {
       h.push('<h3>방 ' + n.rooms.length + "개</h3><ul class=\"tree-rooms\">" + n.rooms.map(function (r) {
         return "<li>" + esc(r.topic) + " " + link(r.src) + "</li>";
@@ -271,6 +281,7 @@
       h.push('<p><a href="' + esc(C.config.writeUrl) + "?quest=" + esc(id) + '">이 과제로 리포트 쓰기</a></p>');
     }
     detail.innerHTML = h.join("");
+    if (C.linkBranches) C.linkBranches(detail);
   }
   detail.addEventListener("click", function (e) {
     var t = e.target.closest("[data-go]");
