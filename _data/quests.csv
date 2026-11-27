@@ -23,7 +23,7 @@ S2-aaa2ce,FALSE,FALSE,S2 CS:APP,메인,6장 메모리 계층과 캐시,배열을
 S2-2e91c0,FALSE,FALSE,S2 CS:APP,메인,Cache Lab,행렬 전치를 캐시 친화적으로 바꾸며 미스 수 줄여 보기,서버: ArrayList와 LinkedList의 실제 속도 차이 | 서버: 프로파일러로 병목 찾기,CS:APP 랩,8,,S2-aaa2ce
 S2-74e823,FALSE,FALSE,S2 CS:APP,메인,7장 링킹,작은 정적 라이브러리를 만들어 링크하고 nm으로 심볼 보기,"서버: Gradle 의존성, JAR, 클래스 로딩 | 프론트: 번들러(Vite)와 트리 셰이킹 | 프론트: 패키지 매니저(npm, pnpm)와 의존성 해결",CS:APP 7장,3,,S2-2e91c0
 S2-376122,FALSE,FALSE,S2 CS:APP,메인,8장 프로세스와 시그널,fork를 여러 번 쓰는 프로그램을 짜서 출력 순서 실험하기,"서버: 그레이스풀 셧다운(SIGTERM)과 스프링 종료 훅 | 서버: 컨테이너 안의 PID 1 | 서버: Twelve-Factor 앱(설정은 환경 변수, 프로세스는 언제든 버려도 되게)",CS:APP 8장,5,,S2-74e823
-S2-1ccc9d,FALSE,FALSE,S2 CS:APP,메인,Shell Lab,"작업 관리가 되는 셸을 완성하고, 맨손 쉘 프로젝트와 비교해 보기",서버: 도커 컨테이너도 결국 프로세스 | 맨손으로 쉘 만들기 프로젝트와 비교 | AI: MCP의 stdio 전송은 파이프,CS:APP 랩,10,,S2-376122 S0-863670
+S2-1ccc9d,FALSE,FALSE,S2 CS:APP,메인,Shell Lab,"작업 관리가 되는 셸을 완성하고, 셸과 커널이 주고받는 시스템 콜(fork, exec, wait, 시그널)을 그림으로 정리하기","서버: 도커 컨테이너도 결국 프로세스 | 서버: 맨손으로 쉘 만들기: Shell Lab 셸에 파이프, 리다이렉션, 빌트인 붙이기 | AI: MCP의 stdio 전송은 파이프",CS:APP 랩,10,,S2-376122 S0-863670
 S2-6b09a2,FALSE,FALSE,S2 CS:APP,메인,9장 가상 메모리,/proc/self/maps로 내 프로그램의 메모리 지도 들여다보기,"서버: JVM 힙, GC, 메모리 누수 | AI: 모델 가중치를 메모리에 올리기(mmap) | AI: Ollama로 모델 직접 돌려 보기",CS:APP 9장 / CS 61C,5,,S2-1ccc9d
 S2-8b0c8b,FALSE,FALSE,S2 CS:APP,보스,Malloc Lab,내 할당기의 설계와 성능 개선 과정을 README로. C 코드는 S7 DB 서버에 끼워 볼 수 있게 남겨 두기,"서버: JVM GC 알고리즘 비교(G1, ZGC)",CS:APP 랩,20,,S2-6b09a2
 S2-40b1c7,FALSE,FALSE,S2 CS:APP,사이드,10~12장 + Proxy Lab,동시 접속을 받는 작은 프록시를 만들어 브라우저로 붙어 보기,서버: 톰캣 스레드 풀과 요청 처리 | 서버: Nginx 리버스 프록시 | 서버: 서비스 메시와 사이드카 프록시,CS:APP 10~12장,20,,S2-376122 S2-6b09a2
