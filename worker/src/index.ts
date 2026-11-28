@@ -14,6 +14,7 @@ import { pickRandomEvent, renderScene, situation, type SceneEvents } from "./sce
 import { activityAt } from "./schedule";
 import { getSignals } from "./activity";
 import { deleteCheckin, editCheckin, getStatus, startCheckin } from "./checkins";
+import { uploadImage } from "./uploads";
 
 /** 블로그 로파이 플레이어용: 서울의 시간대와 날씨, 생활 시간표, 출석 상태 */
 export async function nowState(env: Env, now = Date.now(), fetcher: typeof fetch = fetch) {
@@ -150,6 +151,10 @@ async function route(req: Request, env: Env, url: URL): Promise<Response> {
     await requireOwner(req, env);
     if (m === "POST") return json(await saveLink(env, await readJson(req)));
     if (m === "DELETE") return json(await deleteLink(env, url.searchParams.get("id") || ""));
+  }
+  if (p === "/api/uploads" && m === "POST") {
+    await requireOwner(req, env);
+    return json(await uploadImage(env, await readJson(req)), 201);
   }
   if (p === "/api/interview" && m === "POST") {
     await requireOwner(req, env);

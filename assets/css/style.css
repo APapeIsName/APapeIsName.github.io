@@ -1191,3 +1191,11 @@ html.dfx-shake body { animation: dfx-shake .45s steps(6) 2; }
 .branch-link.is-locked .branch-dun { background: repeating-linear-gradient(135deg, #4a5874 0 4px, #56647f 4px 8px); letter-spacing: 1px; }
 .branch-link.is-done .branch-dun { background: var(--hp-dark); }
 .has-sel .tnode.is-roomed { opacity: 1; outline: 3px dashed var(--edge-hot); outline-offset: 1px; }
+
+/* 사진 넣기 */
+.img-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 4px 0 0; }
+.img-btn { padding: 3px 10px; font-size: 13px; }
+.img-thumbs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.img-thumbs img { height: 64px; width: auto; box-shadow: 0 0 0 2px var(--line); background: #fff; }
+textarea.is-drop { outline: 3px dashed var(--edge-hot); outline-offset: 2px; }
+.is-preview .img-bar, .is-preview .img-thumbs { display: none; }

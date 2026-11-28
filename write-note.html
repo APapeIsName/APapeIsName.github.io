@@ -8,6 +8,7 @@ scripts:
   - /assets/lib/marked.umd.js
   - /assets/lib/purify.min.js
   - /assets/js/write-note.js
+  - /assets/js/image-upload.js
 ---
 {% include write-tabs.html %}
 <div class="dialog write-gate" id="write-gate" role="status">
@@ -68,7 +69,7 @@ scripts:
 
   <div class="window note-body note-body-edit">
     <label class="sr" for="n-body">본문</label>
-    <textarea id="n-body" class="field field-body field-plain" rows="18" maxlength="100000" placeholder="공부하며 배운 것을 적어요. 마크다운을 쓸 수 있어요. (## 소제목, **굵게**, `코드`, ``` 코드 블록)"></textarea>
+    <textarea id="n-body" data-images class="field field-body field-plain" rows="18" maxlength="100000" placeholder="공부하며 배운 것을 적어요. 마크다운을 쓸 수 있어요. (## 소제목, **굵게**, `코드`, ``` 코드 블록)"></textarea>
     <div class="preview prose-text" data-for="n-body" hidden></div>
   </div>
 

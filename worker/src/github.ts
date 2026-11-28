@@ -62,6 +62,15 @@ export async function putFile(env: Env, path: string, text: string, message: str
   return { sha: r.content.sha, commit: r.commit.sha };
 }
 
+/** 사진처럼 글자가 아닌 파일을 그대로(base64) 올려요. */
+export async function putBinary(env: Env, path: string, base64: string, message: string): Promise<{ sha: string; commit: string }> {
+  const r = await gh<{ content: { sha: string }; commit: { sha: string } }>(env, contentsUrl(env, path), {
+    method: "PUT",
+    body: JSON.stringify({ message, content: base64, branch: env.REPO_BRANCH }),
+  });
+  return { sha: r.content.sha, commit: r.commit.sha };
+}
+
 export async function deleteFile(env: Env, path: string, sha: string, message: string): Promise<void> {
   await gh(env, contentsUrl(env, path), {
     method: "DELETE",

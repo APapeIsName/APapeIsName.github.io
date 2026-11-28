@@ -299,3 +299,23 @@ describe("출석부", () => {
     expect(dayMinutes(list[0])).toBe(257 + 30);
   });
 });
+
+describe("사진 올리기", () => {
+  // 1x1 PNG
+  const PNG = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
+  it("주인만, 진짜 사진만 올리고 assets/uploads/연-월/ 에 저장해요", async () => {
+    expect((await api("/api/uploads", "POST", { name: "x.png", data: PNG }, guest)).status).toBe(403);
+    const r = await api("/api/uploads", "POST", { name: "프로세스 그림 1.png", data: "data:image/png;base64," + PNG });
+    expect(r.status).toBe(201);
+    const j = await r.json();
+    expect(j.path).toMatch(/^assets\/uploads\/\d{4}-\d{2}\/프로세스-그림-1-\d{8}[a-z0-9]{3}\.png$/);
+    expect(j.url).toBe("/" + j.path);
+    expect(repo.has(j.path)).toBe(true);
+    expect(commits.at(-1)).toMatch(/^사진 올림: /);
+  });
+  it("사진이 아니거나 너무 크면 거절해요", async () => {
+    expect((await api("/api/uploads", "POST", { name: "a.txt", data: btoa("hello, not an image") })).status).toBe(415);
+    expect((await api("/api/uploads", "POST", { name: "a.png", data: "!!!" })).status).toBe(400);
+    expect((await api("/api/uploads", "POST", { name: "big.png", data: PNG.slice(0, 20) + "A".repeat(7 * 1024 * 1024) })).status).toBe(413);
+  });
+});
