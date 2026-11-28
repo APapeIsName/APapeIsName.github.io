@@ -201,18 +201,35 @@
   var weekly = cfg.weeklyHours || 7;
 
   /* 주차 배정: 시트의 '주차' 열과 같은 계산이에요.
-     메인·보스·복습 과제를 주당 공부 시간으로 채워 나가고, 시즌은 항상 새 주차에서 시작해요. 사이드는 '선택'. */
-  var EPS = 1e-6, cum = 0, prevSeason = null;
-  quests.forEach(function (q) {
-    if (prevSeason !== null && q.season !== prevSeason) cum = Math.ceil(cum / weekly - EPS) * weekly;
-    prevSeason = q.season;
-    if (!q.main) { q.optional = true; return; }
-    var from = cum, to = cum + q.hours;
-    cum = to;
-    q.weekStart = Math.floor(from / weekly + EPS) + 1;
-    q.weekEnd = Math.max(q.weekStart, Math.ceil(to / weekly - EPS));
-  });
-  var totalWeeks = Math.max(1, Math.ceil(cum / weekly - EPS));
+     메인·보스·복습 과제를 주당 공부 시간으로 채워 나가고, 시즌은 항상 새 주차에서 시작해요. 사이드는 '선택'.
+     밀리면 뒤로 밀어요: 리포트를 안 낸 과제는 이번 주차부터 다시 채워요. 끝낸 과제는 끝낸 주차에 남아요.
+     원래 계획(planStart, planEnd)도 따로 계산해 둬서, 얼마나 밀렸는지 보여 줘요. */
+  var EPS = 1e-6;
+  var currentWeekRaw = start ? Math.floor((today - start) / DAY / 7) + 1 : 1;
+  function layout(rolling) {
+    var cum = rolling ? Math.max(0, currentWeekRaw - 1) * weekly : 0, prevSeason = null;
+    quests.forEach(function (q) {
+      if (prevSeason !== null && q.season !== prevSeason) cum = Math.ceil(cum / weekly - EPS) * weekly;
+      prevSeason = q.season;
+      if (!q.main) { q.optional = true; return; }
+      if (rolling && q.done) {
+        // 끝낸 과제는 끝낸 날의 주차에 남아요
+        var w = start && q.doneDate ? Math.max(1, Math.floor((toDate(q.doneDate) - start) / DAY / 7) + 1) : 1;
+        q.weekStart = q.weekEnd = w;
+        return;
+      }
+      var from = cum, to = cum + q.hours;
+      cum = to;
+      var ws = Math.floor(from / weekly + EPS) + 1, we = Math.max(ws, Math.ceil(to / weekly - EPS));
+      if (rolling) { q.weekStart = ws; q.weekEnd = we; } else { q.planStart = ws; q.planEnd = we; }
+    });
+    return cum;
+  }
+  var planWeeks = Math.max(1, Math.ceil(layout(false) / weekly - EPS));
+  var cum = layout(true);
+  var lastDoneWeek = quests.reduce(function (a, q) { return !q.optional && q.done ? Math.max(a, q.weekEnd) : a; }, 1);
+  var totalWeeks = Math.max(1, lastDoneWeek, Math.ceil(cum / weekly - EPS));
+  var slipWeeks = Math.max(0, totalWeeks - planWeeks);
   function weekLabel(q) { return q.optional ? "선택" : q.weekStart === q.weekEnd ? q.weekStart + "주차" : q.weekStart + "~" + q.weekEnd + "주차"; }
   function weekStartDate(w) { return addDays(start, (w - 1) * 7); }
   function fmtShort(d) { return (d.getMonth() + 1) + "월 " + d.getDate() + "일"; }
@@ -229,13 +246,13 @@
       s.planEnd = addDays(weekStartDate(s.weekTo), 6);
     }
   });
-  var currentWeek = start ? Math.floor((today - start) / DAY / 7) + 1 : 1;
+  var currentWeek = currentWeekRaw;
   var viewWeek = Math.max(1, Math.min(currentWeek, totalWeeks));
   var courseEnd = start ? addDays(weekStartDate(totalWeeks), 6) : null;
   var overdue = quests.filter(function (q) { return !q.optional && !q.done && q.weekEnd < currentWeek; });
   var ahead = quests.filter(function (q) { return !q.optional && q.done && q.weekStart > currentWeek; });
   // 글쓰기 화면(write.js)도 같은 주차 계산을 써요.
-  C.computed = { quests: quests, dungeons: dungeons, nodeById: nodeById, currentWeek: currentWeek, totalWeeks: totalWeeks, overdue: overdue, weekLabel: weekLabel, weekDates: weekDates };
+  C.computed = { quests: quests, dungeons: dungeons, nodeById: nodeById, currentWeek: currentWeek, totalWeeks: totalWeeks, planWeeks: planWeeks, slipWeeks: slipWeeks, overdue: overdue, weekLabel: weekLabel, weekDates: weekDates };
   var doneMain = seasons.reduce(function (a, s) { return a + s.mainDoneHours; }, 0);
   var mainCount = seasons.reduce(function (a, s) { return a + s.mainCount; }, 0);
   var mainDoneCount = seasons.reduce(function (a, s) { return a + s.mainDone; }, 0);
@@ -284,7 +301,7 @@
     var note;
     if (today < start) note = (start.getMonth() + 1) + "월 " + start.getDate() + "일에 개강해요. 첫 과제부터 천천히 가봐요.";
     else if (allDone) note = "모든 배지를 모았어요.";
-    else if (overdue.length) note = "지난 주차에서 밀린 과제가 " + overdue.length + "개 있어요. 오늘 15분만 해볼까요?";
+    else if (slipWeeks) note = "리포트를 못 낸 과제는 이번 주차로 옮겼어요. 그만큼 일정이 " + slipWeeks + "주 밀려 종강이 " + totalWeeks + "주차가 됐어요(원래 " + planWeeks + "주차). 밀린 건 실패가 아니라 이 속도로 가고 있다는 뜻이에요.";
     else if (ahead.length) note = "다음 주차 과제를 " + ahead.length + "개 미리 끝냈어요. 일정보다 앞서 있어요.";
     else note = "딱 일정대로 가고 있어요.";
     noteEl.textContent = note;
@@ -317,10 +334,12 @@
     var thisWeek = quests.filter(function (q) { return !q.optional && q.weekStart <= w && q.weekEnd >= w; });
     var late = currentWeek >= 1 ? overdue.filter(function (q) { return thisWeek.indexOf(q) === -1; }) : [];
     function item(q, extraTag) {
+      // 원래 계획보다 뒤로 옮겨진 과제에는 '밀림'과 원래 주차를 붙여요
+      if (!extraTag && !q.done && q.planStart && q.weekStart > q.planStart) extraTag = "밀림";
       var tags = (extraTag ? '<span class="tag tag-밀림">' + extraTag + "</span> " : "") +
         (q.type !== "메인" ? '<span class="tag tag-' + esc(q.type) + '">' + esc(q.type) + "</span> " : "");
       return '<li class="' + (q.done ? "is-done" : "") + '"><span class="todo-title">' + tags + esc(q.quest) + "</span>" +
-        '<span class="todo-meta">' + esc(weekLabel(q)) + ", " + esc(q.season) + ", 약 " + q.hours + "시간" + (q.done ? ", 끝냄" : "") + "</span>" +
+        '<span class="todo-meta">' + esc(weekLabel(q)) + (!q.done && q.planStart && q.weekStart > q.planStart ? " (원래 " + q.planStart + "주차)" : "") + ", " + esc(q.season) + ", 약 " + q.hours + "시간" + (q.done ? ", 끝냄" : "") + "</span>" +
         (q.practice && !q.done ? '<span class="todo-practice">실습 거리: ' + esc(q.practice) + "</span>" : "") +
         (!q.done ? branchesHtml(q.branches, q.id) : "") +
         (!q.done ? '<a class="owner-only todo-write" hidden href="' + esc(cfg.writeUrl) + "?quest=" + encodeURIComponent(q.id) + '">리포트 쓰기</a>' : "") + "</li>";
